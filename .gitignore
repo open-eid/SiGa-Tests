@@ -26,5 +26,5 @@
 /build/
 logs/
 
-### Ignite work dirs ###
-ignite/
+### Maven ###
+.mvn/wrapper/maven-wrapper.jar
