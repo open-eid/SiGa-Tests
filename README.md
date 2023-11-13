@@ -15,5 +15,5 @@ https://github.com/open-eid/SiGa#running-siga-with-docker, then the default conf
 
 Execute the command:
 ```bash
-./mvnw clean verify -Pintegration-tests
+./mvnw clean verify
 ```
