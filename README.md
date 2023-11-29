@@ -14,7 +14,7 @@ Modify the file [application-test.properties](src/test/resources/application-tes
 environment where SiGa is running at. If you are running SiGa in local docker-compose setup as described at
 https://github.com/open-eid/SiGa#running-siga-with-docker, then the default configuration should work.
 
-**Description of `application.properties` values:**
+**Descriptions of parameters in `application.properties`:**
 
 | Parameter                               | Example                              | Description                                                    |
 |:----------------------------------------|:-------------------------------------|:---------------------------------------------------------------|
@@ -30,25 +30,24 @@ https://github.com/open-eid/SiGa#running-siga-with-docker, then the default conf
 ## Running tests
 **NB!** [MonitoringT](src/test/java/ee/openeid/siga/test/MonitoringT.java) tests do not pass locally as SIVA status is always DOWN.
 
-First generate dynamic classes from WADL and XSD. 
-```bash
-./mvnw clean compile
-```
-
 ### Using Maven
 Run tests
 ```bash
 ./mvnw clean verify
 ```
-**PS!** Groovy tests do not run automatically. 
+**PS!** Groovy and Scala tests do not run automatically. 
 
 ### Using IntelliJ
 
-1. Open this project in IntelliJ (community version will do)
-2. Open File -> Project Structure
-3. In the view:
+1. At first, generate dynamic classes from WADL and XSD.
+```bash
+./mvnw clean compile
+```
+2. Open this project in IntelliJ (community version will do)
+3. Open File -> Project Structure
+4. In the view:
     * Make sure Project -> SDK points to Java 11
-4. Open `*T.java` or `*Spec.groovy` file and JUnit Run option should be displayed.
+5. Open `*T.java` or `*Spec.groovy` file and JUnit Run option should be displayed.
    ![Run Tests](docs/img/run_tests.png)
 
 ### Report:
