@@ -5,7 +5,6 @@
 ## Prerequisites
 
 * Java 11 JDK
-* Maven
 * [Signature Gateway](https://github.com/open-eid/SiGa) running in local or remote environment
 
 ## Configuring the tests
@@ -53,7 +52,7 @@ Run tests
 ### Report:
 
 For a report, Allure is
-required ([instructions for download.](https://docs.qameta.io/allure/#_installing_a_commandline)).
+required ([instructions for download](https://docs.qameta.io/allure/#_installing_a_commandline)).
 
 After running the tests, you can serve locally Allure report:
 

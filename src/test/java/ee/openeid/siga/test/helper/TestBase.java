@@ -138,7 +138,7 @@ public abstract class TestBase {
 
     @Step("add data file")
     protected Response addDataFile(SigaApiFlow flow, JSONObject request) throws InvalidKeyException, NoSuchAlgorithmException {
-        return post(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES + "/", flow, request.toString());
+        return post(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow, request.toString());
     }
 
     @Step("Get container")
