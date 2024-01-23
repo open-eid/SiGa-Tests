@@ -47,6 +47,22 @@ class ValidateHashcodeContainerT extends TestBase {
     }
 
     @Test
+    void validateHashcodeContainerWithManySignatures() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        Response response = postContainerValidationReport(flow, hashcodeContainerRequestFromFile("hashcode105Signatures.asice"));
+
+        assertThat(response.statusCode(), equalTo(200));
+        assertThat(response.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(105));
+        assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(105));
+        assertThat(response.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
+
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signedBy"), equalTo("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001019906"));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].indication"), equalTo("TOTAL-PASSED"));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2021-04-26T12:31:08Z"));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[104].signedBy"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[104].indication"), equalTo("TOTAL-PASSED"));
+    }
+
+    @Test
     void validateDDOCHashcodeContainer() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         Response response = postContainerValidationReport(flow, hashcodeContainerRequestFromFile("hashcodeDdoc.ddoc"));
 
