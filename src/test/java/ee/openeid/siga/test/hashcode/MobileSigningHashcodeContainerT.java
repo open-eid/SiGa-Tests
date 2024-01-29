@@ -426,6 +426,16 @@ class MobileSigningHashcodeContainerT extends TestBase {
         assertThat(response.statusCode(), equalTo(200));
     }
 
+    @Test
+    void trySignWithMobileIdUsingSidStatusPolling() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
+        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
+        String signatureId = response.as(CreateHashcodeContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
+
+        Response sidResponse = pollForSidSigning(flow, signatureId);
+        expectError(sidResponse, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to finalize signature for signing type: MOBILE_ID");
+    }
+
     @Override
     public String getContainerEndpoint() {
         return HASHCODE_CONTAINERS;

@@ -522,6 +522,16 @@ class MobileSigningAsicContainerT extends TestBase {
         expectError(response, 405, INVALID_REQUEST);
     }
 
+    @Test
+    void trySignWithMobileIdUsingSidStatusPolling() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
+        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
+        String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
+
+        Response sidResponse = pollForSidSigning(flow, signatureId);
+        expectError(sidResponse, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to finalize signature for signing type: MOBILE_ID");
+    }
+
     @Override
     public String getContainerEndpoint() {
         return CONTAINERS;

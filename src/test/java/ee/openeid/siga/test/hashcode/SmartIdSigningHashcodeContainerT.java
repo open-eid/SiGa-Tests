@@ -602,6 +602,22 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
         expectError(pollResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
+    @Test
+    void trySignWithSmartIdUsingMidStatusPolling() throws Exception {
+        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
+        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
+        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
+
+        pollForSidCertificateStatus(flow, generatedCertificateId);
+
+        String documentNumber = flow.getSidCertificateStatus().as(GetHashcodeContainerSmartIdCertificateChoiceStatusResponse.class).getDocumentNumber();
+        Response signingResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", documentNumber));
+        String generatedSignatureId = signingResponse.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
+
+        Response midResponse = pollForMidSigning(flow, generatedSignatureId);
+        expectError(midResponse, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to finalize signature for signing type: SMART_ID");
+    }
+
     @Override
     public String getContainerEndpoint() {
         return HASHCODE_CONTAINERS;
