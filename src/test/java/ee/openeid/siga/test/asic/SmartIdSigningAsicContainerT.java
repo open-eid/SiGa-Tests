@@ -5,8 +5,6 @@ import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdCertificateChoiceResponse;
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse;
-import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoiceResponse;
-import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdSigningResponse;
 import ee.openeid.siga.webapp.json.GetContainerSmartIdCertificateChoiceStatusResponse;
 import io.restassured.response.Response;
 import org.json.JSONException;
@@ -821,13 +819,13 @@ class SmartIdSigningAsicContainerT extends TestBase {
     void trySignWithSmartIdUsingMidStatusPolling() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
+        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
 
         pollForSidCertificateStatus(flow, generatedCertificateId);
 
         String documentNumber = flow.getSidCertificateStatus().as(GetContainerSmartIdCertificateChoiceStatusResponse.class).getDocumentNumber();
         Response signingResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", documentNumber));
-        String generatedSignatureId = signingResponse.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
+        String generatedSignatureId = signingResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
 
         Response midResponse = pollForMidSigning(flow, generatedSignatureId);
         expectError(midResponse, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to finalize signature for signing type: SMART_ID");
