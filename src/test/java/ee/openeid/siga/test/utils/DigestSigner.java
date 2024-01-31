@@ -8,7 +8,7 @@ import java.util.Base64;
 public class DigestSigner {
 
     public static String signDigest(String digestToSign, String algo) {
-        return signDigestWithKeystore(digestToSign, algo, "sign_ESTEID2018.p12", "1234");
+        return signDigestWithKeystore(digestToSign, algo, "sign_ECC_from_TEST_of_ESTEID2018.p12", "1234");
     }
 
     public static String signDigestWithKeystore(String digestToSign, String algo, String keystoreName, String keystorePassword) {
