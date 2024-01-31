@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 
 import static ee.openeid.siga.test.helper.TestData.*;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
@@ -23,6 +24,7 @@ import static ee.openeid.siga.test.utils.RequestBuilder.remoteSigningSignatureVa
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @EnabledIfSigaProfileActive("datafileContainer")
 class RetrieveSignaturesAsicContainerT extends TestBase {
@@ -83,9 +85,15 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
         response.then()
                 .statusCode(200)
                 .body("signatures[0].id", notNullValue())
-                .body("signatures[0].signerInfo", equalTo("SERIALNUMBER=PNOEE-38001085718, GIVENNAME=JAAK-KRISTJAN, SURNAME=JÕEORG, CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\", C=EE"))
                 .body("signatures[0].signatureProfile", equalTo("LT"))
                 .body("signatures[0].generatedSignatureId", notNullValue());
+
+        assertThat(Arrays.asList(response.jsonPath().get("signatures[0].signerInfo").toString().split(", ")),
+                containsInAnyOrder("SERIALNUMBER=PNOEE-38001085718",
+                        "GIVENNAME=JAAK-KRISTJAN",
+                        "SURNAME=JÕEORG",
+                        "CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\"",
+                        "C=EE"));
     }
 
     @Test
@@ -116,7 +124,6 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
         response.then()
                 .statusCode(200)
                 .body("id", notNullValue())
-                .body("signerInfo", equalTo("SERIALNUMBER=PNOEE-38001085718, GIVENNAME=JAAK-KRISTJAN, SURNAME=JÕEORG, CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\", C=EE"))
                 .body("signatureProfile", equalTo("LT"))
                 .body("signingCertificate", equalTo(SIGNER_CERT_ESTEID2018_PEM))
                 .body("ocspCertificate", notNullValue())
@@ -125,6 +132,13 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
                 .body("timeStampCreationTime", notNullValue())
                 .body("trustedSigningTime", notNullValue())
                 .body("claimedSigningTime", notNullValue());
+
+        assertThat(Arrays.asList(response.jsonPath().get("signerInfo").toString().split(", ")),
+                containsInAnyOrder("SERIALNUMBER=PNOEE-38001085718",
+                        "GIVENNAME=JAAK-KRISTJAN",
+                        "SURNAME=JÕEORG",
+                        "CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\"",
+                        "C=EE"));
     }
 
     @Test
@@ -138,13 +152,19 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
         response.then()
                 .statusCode(200)
                 .body("id", notNullValue())
-                .body("signerInfo", equalTo("SERIALNUMBER=PNOEE-38001085718, GIVENNAME=JAAK-KRISTJAN, SURNAME=JÕEORG, CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\", C=EE"))
                 .body("signatureProfile", equalTo("LT"))
                 .body("signatureProductionPlace.countryName", equalTo("Estonia"))
                 .body("signatureProductionPlace.city", equalTo("Tallinn"))
                 .body("signatureProductionPlace.stateOrProvince", equalTo("Harju"))
                 .body("signatureProductionPlace.postalCode", equalTo("4953"))
                 .body("roles[0]", equalTo("Member of board"));
+
+        assertThat(Arrays.asList(response.jsonPath().get("signerInfo").toString().split(", ")),
+                containsInAnyOrder("SERIALNUMBER=PNOEE-38001085718",
+                        "GIVENNAME=JAAK-KRISTJAN",
+                        "SURNAME=JÕEORG",
+                        "CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\"",
+                        "C=EE"));
     }
 
     @Test
