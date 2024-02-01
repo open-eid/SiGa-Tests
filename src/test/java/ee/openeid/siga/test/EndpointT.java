@@ -32,18 +32,20 @@ class EndpointT extends TestBase {
         Response responseContainer = post(containerEndpointWithSlash, flow, hashcodeContainersDataRequestWithDefault().toString());
         responseContainer.then().statusCode(200);
 
-        String certificateEndpointWithSlash = getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/";
+        String smartIdSigningUrl = getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING;
+
+        String certificateEndpointWithSlash = smartIdSigningUrl + CERTIFICATE_CHOICE + "/";
         Response responseCertificate = post(certificateEndpointWithSlash, flow, smartIdCertificateChoiceRequest("30303039914", "EE").toString());
         responseCertificate.then().statusCode(200);
 
-        String signingEndpointWithSlash = getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/";
+        String signingEndpointWithSlash = smartIdSigningUrl + "/";
         pollForSidCertificateStatus(flow, responseCertificate.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId());
         String documentNumber = flow.getSidCertificateStatus().as(GetHashcodeContainerSmartIdCertificateChoiceStatusResponse.class).getDocumentNumber();
         Response responseSigning = post(signingEndpointWithSlash, flow, smartIdSigningRequestWithDefault("LT", documentNumber).toString());
         responseSigning.then().statusCode(200);
 
         String signatureId = responseSigning.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        String statusEndpointWithSlash = getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS + "/";
+        String statusEndpointWithSlash = smartIdSigningUrl + "/" + signatureId + STATUS + "/";
         Response responseStatus = get(statusEndpointWithSlash, flow);
         responseStatus.then().statusCode(200);
     }
