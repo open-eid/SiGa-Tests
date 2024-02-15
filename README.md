@@ -52,7 +52,7 @@ Run tests
 ### Report:
 
 For a report, Allure is
-required ([instructions for download](https://docs.qameta.io/allure/#_installing_a_commandline)).
+required ([instructions for download](https://allurereport.org/docs/gettingstarted-installation/)).
 
 After running the tests, you can serve locally Allure report:
 
