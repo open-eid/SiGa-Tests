@@ -34,6 +34,7 @@
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
         <cxf-wadl2java-plugin.version>3.6.1</cxf-wadl2java-plugin.version>
         <javax.ws.rs-api.version>2.1.1</javax.ws.rs-api.version>
+        <aspectj.version>1.9.21.1</aspectj.version>
     </properties>
 
     <dependencies>
@@ -261,6 +262,12 @@
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-engine</artifactId>
                         <version>5.9.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjweaver</artifactId>
+                        <version>${aspectj.version}</version>
+                        <scope>runtime</scope>
                     </dependency>
                 </dependencies>
                 <configuration>
