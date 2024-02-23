@@ -10,14 +10,19 @@
 ## Configuring the tests
 
 Modify the file [application-test.properties](src/test/resources/application-test.properties) according to the
-environment where SiGa is running at. If you are running SiGa in local docker-compose setup as described at
+environment where SiGa is running at. 
+Running in remote environment, it´s necessary to configure valid Client authorization data in 
+[TestData.java](src/test/java/ee/openeid/siga/test/helper/TestData.java). 
+More about authorization - [Authorization](https://github.com/open-eid/SiGa/wiki/Authorization).
+
+If you are running SiGa in local docker-compose setup as described at
 https://github.com/open-eid/SiGa#running-siga-with-docker, then the default configuration should work.
 
 **Descriptions of parameters in `application.properties`:**
 
 | Parameter                               | Example                              | Description                                                    |
 |:----------------------------------------|:-------------------------------------|:---------------------------------------------------------------|
-| siga.application-context-path           | `/siga-webapp-2.0.1`                 | Custom service context.                               |
+| siga.application-context-path           | `/siga-webapp-2.0.1`                 | Custom service context.                                        |
 | siga.hostname                           | `localhost`                          | Service URL.                                                   |
 | siga.port                               | `8443`                               | Service port.                                                  |
 | siga.protocol                           | `https`                              | Service protocol.                                              |
@@ -56,4 +61,4 @@ required ([instructions for download](https://allurereport.org/docs/gettingstart
 
 After running the tests, you can serve locally Allure report:
 
-`allure serve .\allure-results\`
+`allure serve ./allure-results/`
