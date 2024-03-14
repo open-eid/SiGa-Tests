@@ -50,7 +50,7 @@ class GenericAsicSigningFlowT extends TestBase {
         String midSignatureId2 = midSignRequest2.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
         pollForMidSigning(flow, midSignatureId2);
 
-        Response sidSignRequest1 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-905H-Q"));
+        Response sidSignRequest1 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-MOCK-Q"));
         String sidSignatureId1 = sidSignRequest1.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         pollForSidSigning(flow, sidSignatureId1);
 
@@ -103,7 +103,7 @@ class GenericAsicSigningFlowT extends TestBase {
         CreateContainerRemoteSigningResponse dataToSignResponse2 = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
         putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse2.getDataToSign(), dataToSignResponse2.getDigestAlgorithm())), dataToSignResponse2.getGeneratedSignatureId());
 
-        Response sidSignRequest1 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-905H-Q"));
+        Response sidSignRequest1 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-MOCK-Q"));
         String sidSignatureId1 = sidSignRequest1.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         pollForSidSigning(flow, sidSignatureId1);
 

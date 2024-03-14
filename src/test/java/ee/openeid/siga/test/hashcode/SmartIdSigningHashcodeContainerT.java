@@ -423,7 +423,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdRetryAfterUserCancel() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response signingRequest1 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-905H-Q"));
+        Response signingRequest1 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-MOCK-Q"));
         Response signingRequest2 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
         String signatureId1 = signingRequest1.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         String signatureId2 = signingRequest2.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
@@ -452,7 +452,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     void createNewHashcodeSidContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
 
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault(signatureProfile, "PNOEE-30403039917-905H-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault(signatureProfile, "PNOEE-30403039917-MOCK-Q"));
 
         expectError(response, 400, INVALID_REQUEST, "Invalid signature profile");
     }
@@ -463,7 +463,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     void uploadHashcodeSidSigningContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
 
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault(signatureProfile, "PNOEE-30403039917-905H-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault(signatureProfile, "PNOEE-30403039917-MOCK-Q"));
 
         expectError(response, 400, INVALID_REQUEST, "Invalid signature profile");
     }
@@ -471,7 +471,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefused() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-905H-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);
@@ -480,7 +480,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefusedDisplayTextAndPin() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039928-3ZF3-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039928-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);
@@ -489,7 +489,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefusedVerificationCodeChoice() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039939-SFKN-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039939-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);
@@ -498,7 +498,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefusedConfirmationMessage() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039946-TZSW-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039946-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);
@@ -507,7 +507,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefusedConfirmationMessageWithVerificationCodeChoice() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039950-XMFV-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039950-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);
@@ -516,7 +516,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefusedCertChoice() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039961-THFM-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039961-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);
@@ -525,7 +525,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserChoosesWrongVerificationCode() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039972-5ND9-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039972-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_SELECTED_WRONG_VC);
@@ -535,7 +535,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     @Test
     void signWithSmartIdUserTimeout() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039983-5NFT-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039983-MOCK-Q"));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigningWithPollParameters(10000, 120000, flow, signatureId);
         expectSmartIdStatus(signingResponse, EXPIRED_TRANSACTION);
