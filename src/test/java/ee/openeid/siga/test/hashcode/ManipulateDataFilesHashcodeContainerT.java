@@ -111,6 +111,16 @@ class ManipulateDataFilesHashcodeContainerT extends TestBase {
     }
 
     @Test
+    void uploadHashcodeContainerDatafileNameWithPlusSignInInvalidEncodingAndRetrieveDataFilesList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("hashcodePlusInFileNameReferenceWithInvalidEncoding.asice"));
+
+        Response response = getDataFileList(flow);
+        response.then()
+                .statusCode(200)
+                .body("dataFiles[0].fileName", equalTo("Müük+hüpo+pank+muu.txt"));
+    }
+
+    @Test
     void createHashcodeContainerAndRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
 

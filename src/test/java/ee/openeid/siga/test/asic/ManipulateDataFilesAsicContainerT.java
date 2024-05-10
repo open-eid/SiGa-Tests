@@ -116,6 +116,16 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
+    void uploadAsicContainerDatafileNameWithPlusSignInInvalidEncodingAndRetrieveDataFilesList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("plusInFileNameReferenceWithInvalidEncoding.asice"));
+
+        Response response = getDataFileList(flow);
+        response.then()
+                .statusCode(200)
+                .body("dataFiles[0].fileName", equalTo("Müük+hüpo+pank+muu.txt"));
+    }
+
+    @Test
     void createAsicContainerAndRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 

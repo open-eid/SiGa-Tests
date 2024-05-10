@@ -31,6 +31,8 @@ import static ee.openeid.siga.test.utils.RequestBuilder.remoteSigningRequestWith
 import static ee.openeid.siga.test.utils.RequestBuilder.remoteSigningSignatureValueRequest;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @EnabledIfSigaProfileActive("datafileContainer")
 class ValidateAsicContainerT extends TestBase {
@@ -319,6 +321,27 @@ class ValidateAsicContainerT extends TestBase {
         assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
+    }
+
+    @Test
+    void validateAsicContainerPlusInFileNameReferenceWithValidEncoding() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        Response response = postContainerValidationReport(flow, asicContainerRequestFromFile("plusInFileNameReferenceWithValidEncoding.asice"));
+
+        assertThat(response.statusCode(), equalTo(200));
+        assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(response.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signatureScopes.name"),
+                containsInAnyOrder(".txt", "+.txt", "Test Test + Test .txt", "test test test.txt", "test+test+test.txt", "Müük+hüpo+pank+muu.txt"));
+    }
+
+    @Test
+    void validateAsicContainerPlusInFileNameReferenceWithInvalidEncoding() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        Response response = postContainerValidationReport(flow, asicContainerRequestFromFile("plusInFileNameReferenceWithInvalidEncoding.asice"));
+
+        assertThat(response.statusCode(), equalTo(200));
+        assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(response.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(0));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signatureScopes.name"), contains("Müük+hüpo+pank+muu.txt"));
     }
 
     @Override
