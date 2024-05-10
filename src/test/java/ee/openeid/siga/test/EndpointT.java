@@ -7,7 +7,10 @@ import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdSigningResponse
 import ee.openeid.siga.webapp.json.GetHashcodeContainerSmartIdCertificateChoiceStatusResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static ee.openeid.siga.test.helper.TestData.CERTIFICATE_CHOICE;
 import static ee.openeid.siga.test.helper.TestData.HASHCODE_CONTAINERS;
@@ -48,6 +51,14 @@ class EndpointT extends TestBase {
         String statusEndpointWithSlash = smartIdSigningUrl + "/" + signatureId + STATUS + "/";
         Response responseStatus = get(statusEndpointWithSlash, flow);
         responseStatus.then().statusCode(200);
+    }
+
+    @Disabled("SIGA-831 - enable if done")
+    @ParameterizedTest
+    @ValueSource(strings = {"/error", "/actuator/error"})
+    void errorEndpointNotAllowed(String endponint) throws Exception {
+        Response response = get(endponint, flow);
+        expectError(response, 404, "RESOURCE_NOT_FOUND_EXCEPTION");
     }
 
     @Override
