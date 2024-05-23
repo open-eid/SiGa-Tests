@@ -141,6 +141,11 @@ public abstract class TestBase {
         return post(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow, request.toString());
     }
 
+    @Step("Augment signatures in container")
+    protected Response augment(SigaApiFlow flow) throws InvalidKeyException, NoSuchAlgorithmException {
+        return put(getContainerEndpoint() + "/" + flow.getContainerId() + "/augmentation", flow, "request");
+    }
+
     @Step("Get container")
     protected Response getContainer(SigaApiFlow flow) throws InvalidKeyException, NoSuchAlgorithmException {
         return get(getContainerEndpoint() + "/" + flow.getContainerId(), flow);

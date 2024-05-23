@@ -6,14 +6,18 @@ import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoi
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdSigningResponse;
 import ee.openeid.siga.webapp.json.GetHashcodeContainerSmartIdCertificateChoiceStatusResponse;
 import io.restassured.response.Response;
+import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 import static ee.openeid.siga.test.helper.TestData.CERTIFICATE_CHOICE;
 import static ee.openeid.siga.test.helper.TestData.HASHCODE_CONTAINERS;
+import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.SMARTID_SIGNING;
 import static ee.openeid.siga.test.helper.TestData.STATUS;
 import static ee.openeid.siga.test.utils.RequestBuilder.hashcodeContainersDataRequestWithDefault;
@@ -58,6 +62,15 @@ class EndpointT extends TestBase {
     void errorEndpointNotAllowed(String endponint) throws Exception {
         Response response = get(endponint, flow);
         expectError(response, 404, "RESOURCE_NOT_FOUND_EXCEPTION");
+    }
+
+    @Test
+    void augmentHashcodeContainerNotAllowed() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
+        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
+
+        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + "/augmentation", flow, "request");
+
+        expectError(response, 404, RESOURCE_NOT_FOUND);
     }
 
     @Override

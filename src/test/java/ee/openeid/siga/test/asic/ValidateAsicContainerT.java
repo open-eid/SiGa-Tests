@@ -124,6 +124,49 @@ class ValidateAsicContainerT extends TestBase {
     }
 
     @Test
+    void createAsicContainerWithLtaSignatureAndValidate() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
+        postCreateContainer(flow, asicContainersDataRequestWithDefault());
+        CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LTA")).as(CreateContainerRemoteSigningResponse.class);
+        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
+    }
+
+    @Test
+    void uploadAsicContainerWithLtaSignatureAndValidateInSession() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("validAsiceLta.asice"));
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
+    }
+
+    @Test
+    void validateAsicContainerWithLtaSignatureWithoutSession() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        Response validationResponse = postContainerValidationReport(flow, asicContainerRequestFromFile("validAsiceLta.asice"));
+
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
+    }
+
+    @Test
     void validateAsicContainerSignedWithExpiredOcsp() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         Response validationResponse = postContainerValidationReport(flow, asicContainerRequestFromFile("esteid2018signerAiaOcspLT.asice"));
 
@@ -217,42 +260,42 @@ class ValidateAsicContainerT extends TestBase {
     }
 
     @Test //SIGA handles this as DELETE to containerId
-    void deleteToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void deleteToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
         Response response = delete(getContainerEndpoint() + VALIDATIONREPORT, flow);
 
         assertThat(response.statusCode(), equalTo(200));
     }
 
     @Test
-    void putToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void putToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
         Response response = put(getContainerEndpoint() + VALIDATIONREPORT, flow, "request");
 
         expectError(response, 405, INVALID_REQUEST);
     }
 
     @Test //SIGA handles this as DELETE to containerId
-    void getToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void getToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
         Response response = get(getContainerEndpoint() + VALIDATIONREPORT, flow);
 
         assertThat(response.statusCode(), equalTo(400));
     }
 
     @Test
-    void headToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void headToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
         Response response = head(getContainerEndpoint() + VALIDATIONREPORT, flow);
 
         assertThat(response.statusCode(), equalTo(400));
     }
 
     @Test
-    void optionsToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void optionsToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
         Response response = options(getContainerEndpoint() + VALIDATIONREPORT, flow);
 
         assertThat(response.statusCode(), equalTo(405));
     }
 
     @Test
-    void patchToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void patchToValidateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
         Response response = patch(getContainerEndpoint() + VALIDATIONREPORT, flow);
 
         expectError(response, 405, INVALID_REQUEST);
