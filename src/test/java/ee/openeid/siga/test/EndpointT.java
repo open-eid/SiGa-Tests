@@ -53,7 +53,6 @@ class EndpointT extends TestBase {
         responseStatus.then().statusCode(200);
     }
 
-    @Disabled("SIGA-831 - enable if done")
     @ParameterizedTest
     @ValueSource(strings = {"/error", "/actuator/error"})
     void errorEndpointNotAllowed(String endponint) throws Exception {
