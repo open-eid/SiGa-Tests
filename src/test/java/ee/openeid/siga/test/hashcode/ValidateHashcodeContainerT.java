@@ -73,7 +73,7 @@ class ValidateHashcodeContainerT extends TestBase {
         assertThat(response.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
         assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
         assertThat(response.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
-        assertThat(response.getBody().path("validationConclusion.validationWarnings.content"), hasItem("Please add Time-Stamp to the file for long term DDOC validation. This can be done with Time-Stamping application TeRa"));
+        assertThat(response.getBody().path("validationConclusion.validationWarnings.content"), hasItem("The algorithm SHA1 used in DDOC is no longer considered reliable for signature creation!"));
         assertThat(response.getBody().path(REPORT_SIGNATURE_FORM), equalTo("DIGIDOC_XML_1.3_hashcode"));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("DIGIDOC_XML_1.3"));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2012-10-03T07:46:51Z"));
