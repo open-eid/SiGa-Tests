@@ -11,6 +11,7 @@ import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -246,9 +247,10 @@ class AugmentAsicContainerT extends TestBase {
         expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Cannot augment signature profile T");
     }
 
+    @Disabled("SIGA-840, container with expired signer and TS certificate needed")
     @Test
     void uploadAsicContainerAndTryAugmentingWithExpiredSignerCertificateAndExpiredTsCertificateFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignature.asice"));
+        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleExpiredSignatureTsValidUntil-2024-02-09.asice"));
 
         augment(flow).then()
                 // TODO SIGA-840: Handling this error should be improved in SiGa, so it would return error 400 with more useful message
