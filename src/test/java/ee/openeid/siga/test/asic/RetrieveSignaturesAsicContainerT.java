@@ -44,7 +44,7 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body("signatures[0].id", equalTo("S0"))
+                .body("signatures[0].id", equalTo("id-8c2a30729f251c6cb8336844b97f0657"))
                 .body("signatures[0].signerInfo", equalTo("SERIALNUMBER=11404176865, GIVENNAME=MÄRÜ-LÖÖZ, SURNAME=ŽÕRINÜWŠKY, CN=\"ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865\", OU=digital signature, O=ESTEID, C=EE"))
                 .body("signatures[0].signatureProfile", equalTo("LT"))
                 .body("signatures[0].generatedSignatureId", notNullValue());
@@ -104,13 +104,13 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body("id", equalTo("S0"))
+                .body("id", equalTo("id-8c2a30729f251c6cb8336844b97f0657"))
                 .body("signerInfo", equalTo("SERIALNUMBER=11404176865, GIVENNAME=MÄRÜ-LÖÖZ, SURNAME=ŽÕRINÜWŠKY, CN=\"ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865\", OU=digital signature, O=ESTEID, C=EE"))
                 .body("signatureProfile", equalTo("LT"))
-                .body("ocspResponseCreationTime", equalTo("2014-11-17T14:11:46Z"))
-                .body("timeStampCreationTime", equalTo("2014-11-17T14:11:46Z"))
-                .body("trustedSigningTime", equalTo("2014-11-17T14:11:46Z"))
-                .body("claimedSigningTime", equalTo("2014-11-17T14:11:47Z"));
+                .body("ocspResponseCreationTime", equalTo("2018-11-23T12:24:05Z"))
+                .body("timeStampCreationTime", equalTo("2018-11-23T12:24:04Z"))
+                .body("trustedSigningTime", equalTo("2018-11-23T12:24:04Z"))
+                .body("claimedSigningTime", equalTo("2018-11-23T12:24:04Z"));
     }
 
     @Test

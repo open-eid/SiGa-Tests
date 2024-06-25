@@ -56,7 +56,7 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
 
     @Test
     void uploadAsicContainerAndRetrieveDataFilesList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
+        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureTwoDatafiles.asice"));
 
         Response response = getDataFileList(flow);
 

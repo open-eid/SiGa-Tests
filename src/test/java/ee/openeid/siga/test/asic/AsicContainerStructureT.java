@@ -14,7 +14,6 @@ import java.security.NoSuchAlgorithmException;
 
 import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
-import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
 import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
@@ -55,7 +54,7 @@ class AsicContainerStructureT extends TestBase {
 
     @Test
     void uploadAsicContainerAndVerifyStructure() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
+        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureTwoDatafiles.asice"));
         String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
 
         assertTrue(fileExistsInContainer(MANIFEST, containerBase64));
@@ -77,8 +76,7 @@ class AsicContainerStructureT extends TestBase {
     protected Boolean fileExistsInContainer(String fileName, String containerBase64) {
         try {
             extractEntryFromContainer(fileName, containerBase64);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
         return true;

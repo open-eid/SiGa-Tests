@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_LENGHT;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
@@ -48,12 +49,12 @@ class RetrieveAsicContainerT extends TestBase {
         Response response = getContainer(flow);
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(11812))
+                .body(CONTAINER + ".length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGHT))
                 .body(CONTAINER_NAME, equalTo(DEFAULT_ASICE_CONTAINER_NAME));
 
         XmlPath manifest = manifestAsXmlPath(extractEntryFromContainer(MANIFEST, response.path(CONTAINER).toString()));
 
-        assertEquals("text/xml", manifest.getString("manifest:manifest.manifest:file-entry[" + (1) + "].@manifest:media-type"));
+        assertEquals("text/plain", manifest.getString("manifest:manifest.manifest:file-entry[" + (1) + "].@manifest:media-type"));
     }
 
     @Test
@@ -97,7 +98,7 @@ class RetrieveAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(11812));
+                .body(CONTAINER + ".length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGHT));
     }
 
     @Test
@@ -122,7 +123,7 @@ class RetrieveAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(11812));
+                .body(CONTAINER + ".length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGHT));
     }
 
     @Test
@@ -137,7 +138,7 @@ class RetrieveAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(11812));
+                .body(CONTAINER + ".length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGHT));
     }
 
     @Test
@@ -164,7 +165,7 @@ class RetrieveAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(11812));
+                .body(CONTAINER + ".length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGHT));
     }
 
     @Test
@@ -176,7 +177,7 @@ class RetrieveAsicContainerT extends TestBase {
 
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(11812));
+                .body(CONTAINER + ".length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGHT));
     }
 
     @Test

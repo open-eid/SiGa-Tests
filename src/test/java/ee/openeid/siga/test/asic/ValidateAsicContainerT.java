@@ -53,7 +53,7 @@ class ValidateAsicContainerT extends TestBase {
         assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
         assertThat(response.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signedBy"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2014-11-17T14:11:46Z"));
+        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2018-11-23T12:24:04Z"));
 
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
