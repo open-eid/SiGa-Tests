@@ -269,7 +269,7 @@ class AugmentAsicContainerT extends TestBase {
 
     @Test
     void uploadAsicContainerAndTryAugmentingWithExpiredOcspCertificate() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("esteid2018signerAiaOcspLT.asice"));
+        postUploadContainer(flow, asicContainerRequestFromFile("signedContainerWithEmptyDatafiles.asice"));
 
         augment(flow).then()
                 // TODO SIGA-840: Trying to augment a signature with expired OCSP certificate should probably throw error 400.
