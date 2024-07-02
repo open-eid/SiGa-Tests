@@ -121,6 +121,58 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
+    @Disabled("TODO SIGA-856: Enable when the augmentation validation in SiGa has been updated")
+    // TODO SIGA-865: Signature with expired OCSP should maybe not be augmented
+    void uploadAsicContainerWithSignatureWithExpiredOcspAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asice_ocsp_cert_expired.asice"));
+
+        augment(flow)
+                .then()
+                .statusCode(200);
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
+    }
+
+    @Test
+    @Disabled("TODO SIGA-856: Enable when the augmentation validation in SiGa has been updated")
+    void uploadAsicContainerWithESealWithExpiredOcspAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asice_e-seal_ocsp_cert_expired.asice"));
+
+        Response response = augment(flow);
+
+        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. The only Estonian signatures in the container are e-Seals");
+    }
+
+    @Test
+    @Disabled("TODO SIGA-856: Enable when the augmentation validation in SiGa has been updated")
+    void uploadAsicContainerWithSignatureAndESealAndOnlySignatureGetsAugmented() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("LT_sig_and_LT_seal.asice"));
+
+        augment(flow)
+                .then()
+                .statusCode(200);
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(2));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(2));
+
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].signatureFormat"), equalTo("XAdES_BASELINE_LT"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.commonName"), equalTo("Nortal QSCD Test Seal"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.serialNumber"), equalTo("10391131"));
+    }
+
+    @Test
     void getSignatureListAndGetDatafileListReturnCorrectResponseForAugmentedContainer() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureValidUntil-2026-01-22.asice"));
 
