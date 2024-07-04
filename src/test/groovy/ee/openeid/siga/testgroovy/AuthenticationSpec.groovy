@@ -7,7 +7,6 @@ import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoiceResponse
 import ee.openeid.siga.webapp.json.GetContainerSmartIdCertificateChoiceStatusResponse
 import io.restassured.response.Response
-import org.junit.Test
 
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS
 import static ee.openeid.siga.test.utils.RequestBuilder.*
@@ -21,8 +20,7 @@ class AuthenticationSpec extends TestBaseSpecification {
         flow = SigaApiFlow.buildForTestClient3Service1()
     }
 
-    @Test
-    def "Sign with SID as Client 3 (no contact info)"() {
+    def "Sign with SID as Client 3 - no contact info"() {
         expect:
         postCreateContainer(flow, asicContainersDataRequestWithDefault())
         Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
@@ -42,8 +40,7 @@ class AuthenticationSpec extends TestBaseSpecification {
                 .body("validationConclusion.validSignaturesCount", equalTo(1))
     }
 
-    @Test
-    def "Sign with MID as Client 3 (no contact info)"() {
+    def "Sign with MID as Client 3 - no contact info"() {
         expect:
         postCreateContainer(flow, asicContainersDataRequestWithDefault())
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"))
