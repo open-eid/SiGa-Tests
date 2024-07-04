@@ -1,9 +1,14 @@
 package ee.openeid.siga.test
 
+import ee.openeid.siga.test.model.SigaProfile
 import org.aeonbits.owner.Config
+import org.aeonbits.owner.Config.ConverterClass
 import org.aeonbits.owner.Config.DefaultValue
 import org.aeonbits.owner.Config.Key
 import org.aeonbits.owner.Config.Sources
+import org.aeonbits.owner.Converter
+
+import java.lang.reflect.Method
 
 @Sources(["classpath:application.properties"])
 interface TestConfig extends Config {
@@ -21,6 +26,7 @@ interface TestConfig extends Config {
     String sigaProtocol()
 
     @Key("siga.profiles.active")
+    @ConverterClass(SigaProfileConverter.class)
     List<SigaProfile> sigaProfilesActive()
 
     @Key("test-files-directory")
@@ -33,4 +39,11 @@ interface TestConfig extends Config {
     @DefaultValue("10000")
     Integer loggingCharacterSplitLimit()
 
+}
+
+class SigaProfileConverter implements Converter<SigaProfile> {
+    @Override
+    SigaProfile convert(Method method, String input) {
+        SigaProfile.fromName(input)
+    }
 }

@@ -1,4 +1,4 @@
-package ee.openeid.siga.test
+package ee.openeid.siga.test.model
 
 enum SigaProfile {
     DIGIDOC4J_PROD(name: "digidoc4jProd"),
@@ -12,5 +12,9 @@ enum SigaProfile {
 
     SigaProfile(Map<String, String> params) {
         this.name = params.name
+    }
+
+    static SigaProfile fromName(String name) {
+        values().find { it.name == name }
     }
 }
