@@ -4,7 +4,6 @@ import ee.openeid.siga.test.helper.EnabledIfSigaProfileActive;
 import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import io.restassured.response.Response;
-import jodd.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
@@ -12,6 +11,7 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import static ee.openeid.siga.test.helper.TestData.CONNECTION_LIMIT_EXCEPTION;
@@ -95,7 +95,7 @@ class ConnectionLimitsT extends TestBase {
     void requestMaxSizeReached() throws Exception {
         File dataFile = ResourceUtils.getFile("classpath:20mb.jpg");
         byte[] dataFileString = Files.readAllBytes(dataFile.toPath());
-        Response response = postCreateContainer(flow, asicContainersDataRequest(DEFAULT_FILENAME, Base64.encodeToString(dataFileString), DEFAULT_ASICE_CONTAINER_NAME));
+        Response response = postCreateContainer(flow, asicContainersDataRequest(DEFAULT_FILENAME, Base64.getEncoder().encodeToString(dataFileString), DEFAULT_ASICE_CONTAINER_NAME));
         expectError(response, 400, REQUEST_SIZE_LIMIT_EXCEPTION);
     }
 

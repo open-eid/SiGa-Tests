@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-* Java 11 JDK
+* Java 21 JDK
 * [Signature Gateway](https://github.com/open-eid/SiGa) running in local or remote environment
 
 ## Configuring the tests
@@ -50,7 +50,7 @@ Run tests
 2. Open this project in IntelliJ (community version will do)
 3. Open File -> Project Structure
 4. In the view:
-    * Make sure Project -> SDK points to Java 11
+    * Make sure Project -> SDK points to Java 21
 5. Open `*T.java` or `*Spec.groovy` file and JUnit Run option should be displayed.
    ![Run Tests](docs/img/run_tests.png)
 

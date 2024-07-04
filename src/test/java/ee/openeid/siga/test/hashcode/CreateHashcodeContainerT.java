@@ -2,7 +2,7 @@ package ee.openeid.siga.test.hashcode;
 
 import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
-import eu.europa.esig.dss.model.MimeType;
+import eu.europa.esig.dss.enumerations.MimeType;
 import io.restassured.path.xml.XmlPath;
 import io.restassured.response.Response;
 import org.json.JSONArray;
