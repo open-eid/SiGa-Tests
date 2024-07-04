@@ -1,14 +1,13 @@
 package ee.openeid.siga.testgroovy.helper
 
+import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.SigaRequests
 import ee.openeid.siga.test.model.SigaApiFlow
-import ee.openeid.siga.test.helper.LoggingFilter
 import io.qameta.allure.Step
-import io.qameta.allure.restassured.AllureRestAssured
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import io.restassured.response.Response
 import org.json.JSONObject
-import spock.lang.Specification
 
 import java.security.InvalidKeyException
 import java.security.NoSuchAlgorithmException
@@ -19,35 +18,10 @@ import static ee.openeid.siga.test.utils.RequestBuilder.signRequest
 import static io.restassured.RestAssured.given
 import static io.restassured.config.EncoderConfig.encoderConfig
 import static java.util.concurrent.TimeUnit.MILLISECONDS
-
 import static org.awaitility.Awaitility.with
-
 import static org.hamcrest.CoreMatchers.equalTo
 
-abstract class TestBaseSpecification extends Specification {
-
-        protected static Properties properties
-
-        static {
-            properties = new Properties()
-            try {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader()
-                String path = classLoader.getResource("application-test.properties").getPath()
-                properties.load(new FileInputStream(new File(path)))
-            } catch (IOException e) {
-                e.printStackTrace()
-                throw new RuntimeException(e)
-            }
-            RestAssured.useRelaxedHTTPSValidation()
-
-            boolean isLoggingEnabled = Boolean.parseBoolean(properties.getProperty("siga-test.logging.enabled"))
-            if (isLoggingEnabled) {
-                int characterSplitLimit = Integer.parseInt(properties.getProperty("siga-test.logging.character-split-limit"))
-                RestAssured.filters(new AllureRestAssured(), new LoggingFilter(characterSplitLimit))
-            } else {
-                RestAssured.filters(new AllureRestAssured())
-            }
-        }
+abstract class TestBaseSpecification extends GenericSpecification {
 
         @Step("Create container")
         protected Response postCreateContainer(SigaApiFlow flow, JSONObject request) throws InvalidKeyException, NoSuchAlgorithmException {
@@ -210,7 +184,7 @@ abstract class TestBaseSpecification extends Specification {
         }
 
         protected String createUrl(String endpoint) {
-            return properties.get("siga.protocol") + "://" + properties.get("siga.hostname") + ":" + properties.get("siga.port") + properties.get("siga.application-context-path") + endpoint
+            return SigaRequests.sigaServiceUrl + endpoint
         }
 
         @Step("HTTP POST {0}")

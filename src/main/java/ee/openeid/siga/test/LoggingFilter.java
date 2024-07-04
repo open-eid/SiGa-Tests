@@ -1,8 +1,4 @@
-package ee.openeid.siga.test.helper;
-
-import java.util.Map;
-
-import org.apache.commons.collections4.MapUtils;
+package ee.openeid.siga.test;
 
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
@@ -12,6 +8,9 @@ import io.restassured.response.Response;
 import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class LoggingFilter implements Filter {
@@ -20,8 +19,8 @@ public class LoggingFilter implements Filter {
 
     @Override
     public Response filter(FilterableRequestSpecification reqSpec,
-            FilterableResponseSpecification resSpec,
-            FilterContext filterContext) {
+                           FilterableResponseSpecification resSpec,
+                           FilterContext filterContext) {
         StringBuilder requestSb = new StringBuilder();
 
         // initial line shows "POST https://test.com"
