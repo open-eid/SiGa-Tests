@@ -1,9 +1,9 @@
 package ee.openeid.siga.test.helper;
 
-import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.test.LoggingFilter;
+import ee.openeid.siga.test.model.SigaApiFlow;
+import ee.openeid.siga.test.util.AllureRestAssuredWithStep;
 import io.qameta.allure.Step;
-import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -18,9 +18,9 @@ import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
+import static ee.openeid.siga.test.BeforeAll.addRestAssuredFilterSafely;
 import static ee.openeid.siga.test.helper.TestData.*;
 import static ee.openeid.siga.test.utils.RequestBuilder.signRequest;
-import static ee.openeid.siga.test.BeforeAll.addRestAssuredFilterSafely;
 import static io.restassured.RestAssured.given;
 import static io.restassured.config.EncoderConfig.encoderConfig;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -42,14 +42,14 @@ public abstract class TestBase {
             throw new RuntimeException(e);
         }
         RestAssured.useRelaxedHTTPSValidation();
-        
+
         boolean isLoggingEnabled = Boolean.parseBoolean(properties.getProperty("siga-test.logging.enabled"));
         if (isLoggingEnabled) {
             int characterSplitLimit = Integer.parseInt(properties.getProperty("siga-test.logging.character-split-limit"));
-            addRestAssuredFilterSafely(new AllureRestAssured());
+            addRestAssuredFilterSafely(new AllureRestAssuredWithStep());
             addRestAssuredFilterSafely(new LoggingFilter(characterSplitLimit));
         } else {
-            addRestAssuredFilterSafely(new AllureRestAssured());
+            addRestAssuredFilterSafely(new AllureRestAssuredWithStep());
         }
     }
 
@@ -198,7 +198,7 @@ public abstract class TestBase {
     }
 
     protected Response pollForSidSigning(SigaApiFlow flow, String signatureId) {
-           return pollForSidSigningWithPollParameters(3500,28000, flow, signatureId);
+        return pollForSidSigningWithPollParameters(3500, 28000, flow, signatureId);
     }
 
     @Step("Poll for Smart-ID signing response")

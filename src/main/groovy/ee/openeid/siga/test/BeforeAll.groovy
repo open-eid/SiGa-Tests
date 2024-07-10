@@ -1,9 +1,10 @@
 package ee.openeid.siga.test
 
-import io.qameta.allure.restassured.AllureRestAssured
+import ee.openeid.siga.test.util.AllureRestAssuredWithStep
 import io.restassured.RestAssured
 import io.restassured.filter.Filter
 
+@Singleton(strict = false)
 class BeforeAll {
 
     TestConfig conf = ConfigHolder.getConf()
@@ -12,9 +13,9 @@ class BeforeAll {
 
         // Rest Assured settings
         // Log all requests and responses in allure report
-//        RestAssured.filters(new AllureRestAssured())
+//        RestAssured.filters(new AllureRestAssuredWithStep())
 //         Temporary solution to prevent log duplication in Allure report. TODO: remove once JUnit tests are removed.
-        addRestAssuredFilterSafely(new AllureRestAssured())
+        addRestAssuredFilterSafely(new AllureRestAssuredWithStep())
         // Relax validation
         RestAssured.useRelaxedHTTPSValidation()
         // Log requests and responses to console for debugging

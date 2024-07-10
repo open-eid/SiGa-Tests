@@ -1,8 +1,8 @@
 package ee.openeid.siga.testgroovy.helper
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.SigaRequests
 import ee.openeid.siga.test.model.SigaApiFlow
+import ee.openeid.siga.test.request.SigaRequests
 import io.qameta.allure.Step
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
