@@ -23,10 +23,10 @@ abstract class SigaRequests {
 
     abstract String getBasePath()
 
-    static RequestSpecification sigaRequestBase(Flow flow, Method method, String endpoint, String request) {
+    static RequestSpecification sigaRequestBase(Flow flow, Method method, String endpoint, String requestBody) {
         RequestSpecification requestSpecification =
                 RestAssured.given()
-                        .header("X-Authorization-Signature", signRequest(flow, request ?: "", method, endpoint))
+                        .header("X-Authorization-Signature", signRequest(flow, requestBody ?: "", method, endpoint))
                         .header("X-Authorization-Timestamp", flow.getSigningTime())
                         .header("X-Authorization-ServiceUUID", flow.getServiceUuid())
                         .header("X-Authorization-Hmac-Algorithm", flow.getHmacAlgorithm())
@@ -34,46 +34,51 @@ abstract class SigaRequests {
                         .contentType(ContentType.JSON)
                         .baseUri(sigaServiceUrl)
                         .basePath(endpoint)
-        if (request != null) {
-            requestSpecification.body(request)
+        if (requestBody != null) {
+            requestSpecification.body(requestBody)
         }
         requestSpecification.metaClass.allureStepName = "${method} ${endpoint}"
         return requestSpecification
     }
 
-    static RequestSpecification sigaRequestBase(Flow flow, Method method, String endpoint, Map request) {
-        sigaRequestBase(flow, method, endpoint, JsonOutput.toJson(request))
+    static RequestSpecification sigaRequestBase(Flow flow, Method method, String endpoint, Map requestBody) {
+        sigaRequestBase(flow, method, endpoint, JsonOutput.toJson(requestBody))
     }
 
     static RequestSpecification sigaRequestBase(Flow flow, Method method, String endpoint) {
         sigaRequestBase(flow, method, endpoint, null)
     }
 
-    static String signRequest(Flow flow, String request, Method method, String url) {
+    static String signRequest(Flow flow, String requestBody, Method method, String url) {
         if (!flow.getForceSigningTime()) {
             flow.setSigningTime(Instant.now().getEpochSecond().toString())
         }
 
         String urlEncodeString = UriUtils.encode(url.substring(url.lastIndexOf("/") + 1), StandardCharsets.UTF_8.toString())
 
-        String signableString = flow.getServiceUuid() + ":" + flow.getSigningTime() + ":" + method.toString() + ":" + url.substring(0, url.lastIndexOf("/") + 1) + urlEncodeString + ":" + request
+        String signableString = flow.getServiceUuid() + ":" + flow.getSigningTime() + ":" + method.toString() + ":" + url.substring(0, url.lastIndexOf("/") + 1) + urlEncodeString + ":" + requestBody
 
         return HmacSigner.generateHmacSignature(flow.getServiceSecret(), signableString, flow.getHmacAlgorithm())
     }
 
-    RequestSpecification createContainerRequest(Flow flow, Method method, Map request) {
+    RequestSpecification createContainerRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = getBasePath()
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
-    RequestSpecification uploadContainerRequest(Flow flow, Method method, Map request) {
+    RequestSpecification uploadContainerRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "/upload${getBasePath()}"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
-    RequestSpecification dataFileRequest(Flow flow, Method method, Map request) {
+    RequestSpecification addDataFilesRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/datafiles"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
+    }
+
+    RequestSpecification getDataFilesRequest(Flow flow, Method method) {
+        String endpoint = "${getBasePath()}/${flow.getContainerId()}/datafiles"
+        return sigaRequestBase(flow, method, endpoint)
     }
 
     RequestSpecification deleteDataFileRequest(Flow flow, Method method, String datafileName) {
@@ -81,19 +86,19 @@ abstract class SigaRequests {
         return sigaRequestBase(flow, method, endpoint)
     }
 
-    RequestSpecification startRemoteSigningRequest(Flow flow, Method method, Map request) {
+    RequestSpecification startRemoteSigningRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/remotesigning"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
-    RequestSpecification finalizeRemoteSigningRequest(Flow flow, Method method, Map request, String signatureId) {
+    RequestSpecification finalizeRemoteSigningRequest(Flow flow, Method method, Map requestBody, String signatureId) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/remotesigning/${signatureId}"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
-    RequestSpecification startMidSigningRequest(Flow flow, Method method, Map request) {
+    RequestSpecification startMidSigningRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/mobileidsigning"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
     RequestSpecification getMidSigningStatusRequest(Flow flow, Method method, String signatureId) {
@@ -101,9 +106,9 @@ abstract class SigaRequests {
         return sigaRequestBase(flow, method, endpoint)
     }
 
-    RequestSpecification startSidCertificateChoiceRequest(Flow flow, Method method, Map request) {
+    RequestSpecification startSidCertificateChoiceRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/smartidsigning/certificatechoice"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
     RequestSpecification getSidCertificateStatusRequest(Flow flow, Method method, String certificateId) {
@@ -111,9 +116,9 @@ abstract class SigaRequests {
         return sigaRequestBase(flow, method, endpoint)
     }
 
-    RequestSpecification startSidSigningRequest(Flow flow, Method method, Map request) {
+    RequestSpecification startSidSigningRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/smartidsigning"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
     RequestSpecification getSidSigningStatusRequest(Flow flow, Method method, String signatureId) {
@@ -136,9 +141,9 @@ abstract class SigaRequests {
         return sigaRequestBase(flow, method, endpoint)
     }
 
-    RequestSpecification getValidationReportWithoutSessionRequest(Flow flow, Method method, Map request) {
+    RequestSpecification getValidationReportWithoutSessionRequest(Flow flow, Method method, Map requestBody) {
         String endpoint = "${getBasePath()}/validationreport"
-        return sigaRequestBase(flow, method, endpoint, request)
+        return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
     RequestSpecification getContainerRequest(Flow flow, Method method) {

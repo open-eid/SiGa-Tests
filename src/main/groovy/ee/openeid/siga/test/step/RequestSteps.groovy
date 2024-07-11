@@ -27,15 +27,15 @@ abstract class RequestSteps {
     }
 
     @Step("Add data file")
-    Response addDataFile(Flow flow, Map request) {
-        Response response = getIntance().dataFileRequest(flow, Method.POST, request).post()
+    Response addDataFiles(Flow flow, Map request) {
+        Response response = getIntance().addDataFilesRequest(flow, Method.POST, request).post()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get data files list")
-    Response getDataFileList(Flow flow, Map request) {
-        Response response = getIntance().dataFileRequest(flow, Method.GET, request).get()
+    Response getDataFilesList(Flow flow) {
+        Response response = getIntance().getDataFilesRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
