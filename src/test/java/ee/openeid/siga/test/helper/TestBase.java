@@ -3,6 +3,7 @@ package ee.openeid.siga.test.helper;
 import ee.openeid.siga.test.LoggingFilter;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.test.util.AllureRestAssuredWithStep;
+import ee.openeid.siga.test.util.Utils;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -42,14 +43,11 @@ public abstract class TestBase {
             throw new RuntimeException(e);
         }
         RestAssured.useRelaxedHTTPSValidation();
-
-        boolean isLoggingEnabled = Boolean.parseBoolean(properties.getProperty("siga-test.logging.enabled"));
+        addRestAssuredFilterSafely(new AllureRestAssuredWithStep());
+        boolean isLoggingEnabled = Boolean.parseBoolean(properties.getProperty("siga-test.logging.enabled")) || Utils.isLocal();
         if (isLoggingEnabled) {
             int characterSplitLimit = Integer.parseInt(properties.getProperty("siga-test.logging.character-split-limit"));
-            addRestAssuredFilterSafely(new AllureRestAssuredWithStep());
             addRestAssuredFilterSafely(new LoggingFilter(characterSplitLimit));
-        } else {
-            addRestAssuredFilterSafely(new AllureRestAssuredWithStep());
         }
     }
 
