@@ -4,6 +4,7 @@ import ee.openeid.siga.common.model.Result;
 import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerRemoteSigningResponse;
+import io.restassured.path.xml.XmlPath;
 import io.restassured.response.Response;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import static ee.openeid.siga.test.helper.TestData.AUTH_CERT_PEM;
 import static ee.openeid.siga.test.helper.TestData.AUTH_CERT_PEM_HEX;
+import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.DATA_TO_SIGN;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILESIZE;
@@ -26,13 +28,17 @@ import static ee.openeid.siga.test.helper.TestData.INVALID_CERTIFICATE_EXCEPTION
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SIGNATURE;
+import static ee.openeid.siga.test.helper.TestData.MANIFEST;
 import static ee.openeid.siga.test.helper.TestData.MID_SID_CERT_REMOTE_SIGNING;
 import static ee.openeid.siga.test.helper.TestData.RESULT;
+import static ee.openeid.siga.test.helper.TestData.SIGNATURES0;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_EXPIRED_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_EXPIRED_PEM_HEX;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_MID_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_PEM_HEX;
+import static ee.openeid.siga.test.utils.ContainerUtil.manifestAsXmlPath;
+import static ee.openeid.siga.test.utils.ContainerUtil.signaturesFileAsXmlPath;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
 import static ee.openeid.siga.test.utils.RequestBuilder.addDataFileToHashcodeRequest;
 import static ee.openeid.siga.test.utils.RequestBuilder.hashcodeContainerRequest;
@@ -44,6 +50,7 @@ import static ee.openeid.siga.test.utils.RequestBuilder.remoteSigningSignatureVa
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 class RemoteSigningHashcodeContainerT extends TestBase {
 
@@ -398,6 +405,45 @@ class RemoteSigningHashcodeContainerT extends TestBase {
         Response response = putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
 
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
+    }
+
+    @Test
+    void signContainerWithCustomMimetypesInManifest() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("TestManifestMimeTypeCustom.asice"));
+
+        CreateHashcodeContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateHashcodeContainerRemoteSigningResponse.class);
+        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
+
+        String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
+
+        XmlPath manifest = manifestAsXmlPath(MANIFEST, containerBase64);
+        XmlPath signaturesFile = signaturesFileAsXmlPath(SIGNATURES0, containerBase64);
+
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[1].@manifest:media-type"), is("text/xml"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[2].@manifest:media-type"), is("application/somerandom"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[3].@manifest:media-type"), is("text/html;charset=UTF-8"));
+        assertThat(signaturesFile.get("XAdESSignatures.Signature.Object.QualifyingProperties.SignedProperties.SignedDataObjectProperties.DataObjectFormat[0].MimeType"), is("text/xml"));
+        assertThat(signaturesFile.get("XAdESSignatures.Signature.Object.QualifyingProperties.SignedProperties.SignedDataObjectProperties.DataObjectFormat[1].MimeType"), is("application/somerandom"));
+        assertThat(signaturesFile.get("XAdESSignatures.Signature.Object.QualifyingProperties.SignedProperties.SignedDataObjectProperties.DataObjectFormat[2].MimeType"), is("text/html;charset=UTF-8"));
+
+    }
+
+    @Test
+    void signContainerWithNonConformantMimetypesInManifest() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("TestManifestMimeTypeNonConformant.asice"));
+
+        CreateHashcodeContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateHashcodeContainerRemoteSigningResponse.class);
+        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
+
+        String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
+
+        XmlPath manifest = manifestAsXmlPath(MANIFEST, containerBase64);
+        XmlPath signaturesFile = signaturesFileAsXmlPath(SIGNATURES0, containerBase64);
+
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[1].@manifest:media-type"), is("file"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[2].@manifest:media-type"), is("%sas04["));
+        assertThat(signaturesFile.get("XAdESSignatures.Signature.Object.QualifyingProperties.SignedProperties.SignedDataObjectProperties.DataObjectFormat[0].MimeType"), is("file"));
+        assertThat(signaturesFile.get("XAdESSignatures.Signature.Object.QualifyingProperties.SignedProperties.SignedDataObjectProperties.DataObjectFormat[1].MimeType"), is("%sas04["));
     }
 
     @Override
