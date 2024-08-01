@@ -4,6 +4,7 @@ import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
+import io.restassured.path.xml.XmlPath;
 import io.restassured.response.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONObject;
@@ -11,10 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static ee.openeid.siga.test.helper.TestData.*;
+import static ee.openeid.siga.test.utils.ContainerUtil.manifestAsXmlPath;
 import static ee.openeid.siga.test.utils.RequestBuilder.hashcodeContainerRequest;
 import static ee.openeid.siga.test.utils.RequestBuilder.hashcodeContainerRequestFromFile;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @Epic("/hashcodecontainers")
 @Feature("/upload/hashcodecontainers")
@@ -35,6 +38,54 @@ class UploadHashcodeContainerT extends TestBase {
         response.then()
                 .statusCode(200)
                 .body(CONTAINER_ID + ".length()", equalTo(36));
+    }
+
+    @Test
+    void uploadHashcodeContainerWithSpecialManifestMimetypeOneFile() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("TestManifestMimeTypeOneFile.asice"));
+
+        String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
+
+        XmlPath manifest = manifestAsXmlPath(MANIFEST, containerBase64);
+
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[1].@manifest:media-type"), is("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+    }
+
+    @Test
+    void uploadHashcodeContainerWithSpecialManifestMimetypeMultipleFiles() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("TestManifestMimeType.asice"));
+
+        String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
+
+        XmlPath manifest = manifestAsXmlPath(MANIFEST, containerBase64);
+
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[1].@manifest:media-type"), is("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[2].@manifest:media-type"), is("application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
+    }
+
+    @Test
+    void uploadHashcodeContainerWithCustomManifestMimetypeMultipleFiles() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("TestManifestMimeTypeCustom.asice"));
+
+        String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
+
+        XmlPath manifest = manifestAsXmlPath(MANIFEST, containerBase64);
+
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[1].@manifest:media-type"), is("text/xml"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[2].@manifest:media-type"), is("application/somerandom"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[3].@manifest:media-type"), is("text/html;charset=UTF-8"));
+    }
+
+    @Test
+    void uploadHashcodeContainerWithNonConformantManifestMimetypeMultipleFiles() throws Exception {
+        postUploadContainer(flow, hashcodeContainerRequestFromFile("TestManifestMimeTypeNonConformant.asice"));
+
+        String containerBase64 = getContainer(flow).getBody().path(CONTAINER).toString();
+
+        XmlPath manifest = manifestAsXmlPath(MANIFEST, containerBase64);
+
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[1].@manifest:media-type"), is("file"));
+        assertThat(manifest.get("manifest:manifest.manifest:file-entry[2].@manifest:media-type"), is("%sas04["));
     }
 
     @Test

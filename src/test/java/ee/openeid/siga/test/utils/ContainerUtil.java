@@ -78,6 +78,14 @@ public final class ContainerUtil {
         }
     }
 
+    public static XmlPath signaturesFileAsXmlPath(String entryPath, String containerBase64String) {
+        try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(extractEntryFromContainer(entryPath, containerBase64String))) {
+            return XmlPath.from(byteArrayInputStream);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to read signatures file", e);
+        }
+    }
+
     public static boolean getHashcodeSha512FilePresent(String container) {
         try {
             hashcodeDataFileAsXmlPath(HASHCODE_SHA512, container);
