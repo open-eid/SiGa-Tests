@@ -103,7 +103,7 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsicContainerWithLtProfileAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureValidUntil-2026-01-22.asice"));
 
         augment(flow)
@@ -141,17 +141,24 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    @Disabled("TODO SIGA-856: Enable when the augmentation validation in SiGa has been updated")
-    void uploadAsicContainerWithESealWithExpiredOcspAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsicContainerWithNonEstonianSignatureOnlyAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("latvian_LT_signature_with_7min_difference_between_TS_and_OCSP.asice"));
+
+        Response response = augment(flow);
+
+        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. Container does not contain any Estonian signatures");
+    }
+
+    @Test
+    void uploadAsicContainerWithESealAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("asice_e-seal_ocsp_cert_expired.asice"));
 
         Response response = augment(flow);
 
-        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. The only Estonian signatures in the container are e-Seals");
+        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. Container contains only e-seals, but no Estonian personal signatures");
     }
 
     @Test
-    @Disabled("TODO SIGA-856: Enable when the augmentation validation in SiGa has been updated")
     void uploadAsicContainerWithSignatureAndESealAndOnlySignatureGetsAugmented() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("LT_sig_and_LT_seal.asice"));
 
@@ -170,6 +177,15 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].signatureFormat"), equalTo("XAdES_BASELINE_LT"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.commonName"), equalTo("Nortal QSCD Test Seal"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.serialNumber"), equalTo("10391131"));
+    }
+
+    @Test
+    void uploadAsicContainerWithTLevelSignatureOnlyAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("tLevelSignature.asice"));
+
+        Response response = augment(flow);
+
+        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. Container does not contain any Estonian signatures with LT or LTA profile");
     }
 
     @Test
@@ -198,7 +214,7 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void createRemotelySignedAsicContainerAndAugmentTwiceSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
+    void createRemotelySignedAsicContainerWithLtProfileAndAugmentTwiceSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
         putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
@@ -221,7 +237,7 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void createMobileIdSignedAsicContainerAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
+    void createMobileIdSignedAsicContainerWithLtProfileAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -242,7 +258,7 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void createSmartIdSignedAsicContainerAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
+    void createSmartIdSignedAsicContainerWithLtProfileAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
         String signatureId = response.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
@@ -288,21 +304,22 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
     }
 
+    @Disabled("SIGA-855: wrap into ASIC-S")
     @Test
-    void createSignedAsicContainerWithTAndLtSignaturesAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void createSignedAsicContainerWithTAndLtSignaturesAndAugmentReturnsAsics() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("tLevelSignature.asice"));
         CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
         putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
 
         Response response = augment(flow);
 
-        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Cannot augment signature profile T");
+        // TODO SIGA-855
     }
 
-    @Disabled("SIGA-840, container with expired signer and TS certificate needed")
+    @Disabled("SIGA-840, container with expired signer and TS certificate needed; currently used testfile will be suitable starting from 03.09.2024")
     @Test
     void uploadAsicContainerAndTryAugmentingWithExpiredSignerCertificateAndExpiredTsCertificateFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleExpiredSignatureTsValidUntil-2024-02-09.asice"));
+        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleExpiredSignatureTsValidUntil-2024-09-02.asice"));
 
         augment(flow).then()
                 // TODO SIGA-840: Handling this error should be improved in SiGa, so it would return error 400 with more useful message
@@ -320,11 +337,10 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndTryAugmentingWithExpiredOcspCertificate() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsicContainerWithExpiredOcspCertificateAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("signedContainerWithEmptyDatafiles.asice"));
 
         augment(flow).then()
-                // TODO SIGA-840: Trying to augment a signature with expired OCSP certificate should probably throw error 400.
                 .statusCode(200);
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
