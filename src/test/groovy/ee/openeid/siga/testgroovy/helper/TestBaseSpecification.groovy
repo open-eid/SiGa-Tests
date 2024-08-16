@@ -163,7 +163,7 @@ abstract class TestBaseSpecification extends GenericSpecification {
         }
 
         protected Response pollForSidSigning(SigaApiFlow flow, String signatureId) {
-            return pollForSidSigningWithPollParameters(3500,18000, flow, signatureId)
+            return pollForSidSigningWithPollParameters(3500,28000, flow, signatureId)
         }
 
         @Step("Poll for Smart-ID signing response")
