@@ -6,6 +6,7 @@ import io.qameta.allure.Step
 import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import spock.util.concurrent.PollingConditions
 
 abstract class RequestSteps {
     abstract SigaRequests getIntance()
@@ -68,9 +69,22 @@ abstract class RequestSteps {
         return response
     }
 
+    @Step("Poll MID signing status")
+    Response pollForMidSigningStatus(Flow flow, String signatureId) {
+        def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
+        conditions.eventually {
+            assert isMidFinished(flow, signatureId)
+        }
+        return flow.getMidStatus()
+    }
+
+    Boolean isMidFinished(Flow flow, String signatureId) {
+        return "SIGNATURE".equals(getMidSigningStatus(flow, signatureId).jsonPath().get("midStatus"))
+    }
+
     @Step("Get MID signing status")
     Response getMidSigningStatus(Flow flow, String signatureId) {
-        Response response = getIntance().getMidSigningStatusRequest(flow, Method.POST, signatureId).get()
+        Response response = getIntance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.setMidStatus(response)
         return response
