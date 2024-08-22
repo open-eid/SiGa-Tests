@@ -70,16 +70,11 @@ abstract class RequestSteps {
     }
 
     @Step("Poll MID signing status")
-    Response pollForMidSigningStatus(Flow flow, String signatureId) {
+    pollForMidSigningStatus(Flow flow, String signatureId) {
         def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
         conditions.eventually {
-            assert isMidFinished(flow, signatureId)
+            assert getMidSigningStatus(flow, signatureId).path("midStatus") == "SIGNATURE"
         }
-        return flow.getMidStatus()
-    }
-
-    Boolean isMidFinished(Flow flow, String signatureId) {
-        return "SIGNATURE".equals(getMidSigningStatus(flow, signatureId).jsonPath().get("midStatus"))
     }
 
     @Step("Get MID signing status")
