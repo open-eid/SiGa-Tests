@@ -2,6 +2,10 @@ package ee.openeid.siga.test.request
 
 class RequestData {
 
+    static Map createHashcodeRequestBody(List dataFiles) {
+        [dataFiles: dataFiles]
+    }
+
     static Map uploadDatafileRequestBody(String containerBase64, String containerName) {
         [container    : containerBase64,
          containerName: containerName]
