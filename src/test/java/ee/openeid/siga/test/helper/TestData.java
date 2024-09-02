@@ -99,6 +99,7 @@ public class TestData {
     public static final String REPORT_VALID_SIGNATURES_COUNT = "validationConclusion.validSignaturesCount";
     public static final String REPORT_SIGNATURES_COUNT = "validationConclusion.signaturesCount";
     public static final String REPORT_SIGNATURES = "validationConclusion.signatures";
+    public static final String REPORT_TIMESTAMP_TOKENS = "validationConclusion.timeStampTokens";
     public static final String REPORT_SIGNATURE_FORM = "validationConclusion.signatureForm";
 
     // Error response strings

@@ -6,6 +6,7 @@ import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateContainerMobileIdSigningResponse;
 import ee.openeid.siga.webapp.json.CreateContainerRemoteSigningResponse;
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse;
+import eu.europa.esig.dss.enumerations.MimeTypeEnum;
 import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
@@ -14,17 +15,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
+import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
+import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
+import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES_COUNT;
+import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURE_FORM;
+import static ee.openeid.siga.test.helper.TestData.REPORT_TIMESTAMP_TOKENS;
 import static ee.openeid.siga.test.helper.TestData.REPORT_VALID_SIGNATURES_COUNT;
 import static ee.openeid.siga.test.helper.TestData.SID_EE_DEFAULT_DOCUMENT_NUMBER;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
+import static ee.openeid.siga.test.utils.ContainerUtil.assertZipFilesEqual_entriesInExactOrder;
+import static ee.openeid.siga.test.utils.ContainerUtil.extractEntryFromContainer;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainerRequestFromFile;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainersDataRequestWithDefault;
@@ -36,6 +47,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSigaProfileActive("datafileContainer")
 @Epic("/containers/{containerId}/augmentation")
@@ -121,7 +133,6 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    @Disabled("TODO SIGA-856: Enable when the augmentation validation in SiGa has been updated")
     // TODO SIGA-865: Signature with expired OCSP should maybe not be augmented
     void uploadAsicContainerWithSignatureWithExpiredOcspAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("asice_ocsp_cert_expired.asice"));
@@ -304,19 +315,96 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
     }
 
-    @Disabled("SIGA-855: wrap into ASIC-S")
     @Test
-    void createSignedAsicContainerWithTAndLtSignaturesAndAugmentReturnsAsics() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("tLevelSignature.asice"));
-        CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
+    void uploadAsicContainerWithLtTmSignatureAndAugmentReturnsAsics() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("valid-bdoc-tm-newer.bdoc"));
 
-        Response response = augment(flow);
+        augment(flow)
+                .then()
+                .statusCode(200);
 
-        // TODO SIGA-855
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
+        assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+
+        Response containerResponse = getContainer(flow);
+        assertThat(containerResponse.statusCode(), equalTo(200));
+        assertThat(containerResponse.getBody().path(CONTAINER_NAME), equalTo("valid-bdoc-tm-newer.asics"));
+        String augmentedContainerBase64 = containerResponse.getBody().path(CONTAINER);
+        String mimeType = new String(extractEntryFromContainer(MIMETYPE, augmentedContainerBase64));
+        assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
+
+        byte[] innerContainer = extractEntryFromContainer("valid-bdoc-tm-newer.bdoc", augmentedContainerBase64);
+        byte[] originalContainer = readFile("asic/valid-bdoc-tm-newer.bdoc");
+        // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
+        //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
+        //       In that case, the zip archive contents comparison is not needed.
+        assertZipFilesEqual_entriesInExactOrder(originalContainer, innerContainer);
     }
 
-    @Disabled("SIGA-840, container with expired signer and TS certificate needed; currently used testfile will be suitable starting from 03.09.2024")
+    @Test
+    void uploadAsicContainerWithInvalidSignatureAndAugmentReturnsAsics() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("esteid2018signerAiaOcspLT.asice"));
+
+        augment(flow)
+                .then()
+                .statusCode(200);
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
+        assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+
+        Response containerResponse = getContainer(flow);
+        assertThat(containerResponse.statusCode(), equalTo(200));
+        assertThat(containerResponse.getBody().path(CONTAINER_NAME), equalTo("esteid2018signerAiaOcspLT.asics"));
+        String augmentedContainerBase64 = containerResponse.getBody().path(CONTAINER);
+        String mimeType = new String(extractEntryFromContainer(MIMETYPE, augmentedContainerBase64));
+        assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
+
+        byte[] innerContainer = extractEntryFromContainer("esteid2018signerAiaOcspLT.asice", augmentedContainerBase64);
+        byte[] originalContainer = readFile("asic/esteid2018signerAiaOcspLT.asice");
+        // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
+        //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
+        //       In that case, the zip archive contents comparison is not needed.
+        assertZipFilesEqual_entriesInExactOrder(originalContainer, innerContainer);
+    }
+
+    @Test
+    void uploadSignedAsicContainerWithTAndLtSignaturesAndAugmentReturnsAsics() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("tAndLtLevelSignatures.asice"));
+
+        augment(flow)
+                .then()
+                .statusCode(200);
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
+        assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+
+        Response containerResponse = getContainer(flow);
+        assertThat(containerResponse.statusCode(), equalTo(200));
+        assertThat(containerResponse.getBody().path(CONTAINER_NAME), equalTo("tAndLtLevelSignatures.asics"));
+        String augmentedContainerBase64 = containerResponse.getBody().path(CONTAINER);
+        String mimeType = new String(extractEntryFromContainer(MIMETYPE, augmentedContainerBase64));
+        assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
+
+        byte[] innerContainer = extractEntryFromContainer("tAndLtLevelSignatures.asice", augmentedContainerBase64);
+        byte[] originalContainer = readFile("asic/tAndLtLevelSignatures.asice");
+        // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
+        //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
+        //       In that case, the zip archive contents comparison is not needed.
+        assertZipFilesEqual_entriesInExactOrder(originalContainer, innerContainer);
+    }
+
     @Test
     void uploadAsicContainerAndTryAugmentingWithExpiredSignerCertificateAndExpiredTsCertificateFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerSingleExpiredSignatureTsValidUntil-2024-09-02.asice"));
@@ -356,5 +444,11 @@ class AugmentAsicContainerT extends TestBase {
     @Override
     public String getContainerEndpoint() {
         return CONTAINERS;
+    }
+
+    private byte[] readFile(String path) throws IOException {
+        ClassLoader classLoader = AugmentAsicContainerT.class.getClassLoader();
+        File file = new File(classLoader.getResource(path).getFile());
+        return Files.readAllBytes(file.toPath());
     }
 }

@@ -6,12 +6,19 @@ import lombok.experimental.UtilityClass;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.junit.jupiter.api.Assertions;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import static ee.openeid.siga.test.helper.TestData.HASHCODE_SHA512;
 
@@ -95,6 +102,55 @@ public final class ContainerUtil {
             }
         }
         return true;
+    }
+
+    public static List<Pair<ZipEntry, byte[]>> getAllZipEntries(ZipInputStream zipInputStream) {
+        List<Pair<ZipEntry, byte[]>> extractedZipEntries = new ArrayList<>();
+        try {
+            ZipEntry zipEntry;
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                extractedZipEntries.add(Pair.of(zipEntry, IOUtils.toByteArray(zipInputStream)));
+                zipInputStream.closeEntry();
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to extract ZIP entries", e);
+        }
+        return extractedZipEntries;
+    }
+
+    public static void assertZipFilesEqual_entriesInExactOrder(byte[] expectedZipFileBytes, byte[] actualZipFileBytes) {
+        try (
+                ZipInputStream expectedZipInputStream = new ZipInputStream(new ByteArrayInputStream(expectedZipFileBytes));
+                ZipInputStream actualZipInputStream = new ZipInputStream(new ByteArrayInputStream(actualZipFileBytes));
+        ) {
+            assertZipFilesEqual_entriesInExactOrder(expectedZipInputStream, actualZipInputStream);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to map byte arrays to ZIP input streams");
+        }
+    }
+
+    public static void assertZipFilesEqual_entriesInExactOrder(ZipInputStream expectedZipInputStream, ZipInputStream actualZipInputStream) {
+        List<Pair<ZipEntry, byte[]>> expectedZipEntries = getAllZipEntries(expectedZipInputStream);
+        List<Pair<ZipEntry, byte[]>> actualZipEntries = getAllZipEntries(actualZipInputStream);
+
+        int expectedZipEntryCount = expectedZipEntries.size();
+        Assertions.assertEquals(expectedZipEntryCount, actualZipEntries.size(), String.format(
+                "ZIP file ZIP entry count mismatch: expected %d, actual %d", expectedZipEntryCount, actualZipEntries.size()));
+
+        for (int i = 0; i < expectedZipEntryCount; ++i) {
+            Pair<ZipEntry, byte[]> expectedZipEntry = expectedZipEntries.get(i);
+            Pair<ZipEntry, byte[]> actualZipEntry = actualZipEntries.get(i);
+
+            assertZipEntriesEqual(expectedZipEntry.getKey(), actualZipEntry.getKey());
+            Assertions.assertArrayEquals(expectedZipEntry.getValue(), actualZipEntry.getValue(),
+                    "ZIP entry bytes not equal: " + expectedZipEntry.getKey().getName());
+        }
+    }
+
+    private static void assertZipEntriesEqual(ZipEntry expected, ZipEntry actual) {
+        Assertions.assertEquals(expected.getName(), actual.getName(), String.format("Container ZIP entry name mismatch: expected %s, actual %s", expected.getName(), actual.getName()));
+        Assertions.assertEquals(expected.getMethod(), actual.getMethod(), String.format("Container ZIP entry compression method mismatch: expected %d, actual %d",
+                expected.getMethod(), actual.getMethod()));
     }
 
 }
