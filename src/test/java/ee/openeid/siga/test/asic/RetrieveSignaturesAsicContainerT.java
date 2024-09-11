@@ -62,6 +62,52 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
     }
 
     @Test
+    void uploadAsicsContainerWithoutSignaturesAndTimestampsAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithTxtFileWithoutTimestampAndSignature.asics"));
+
+        Response response = getSignatureList(flow);
+
+        response.then()
+                .statusCode(200)
+                .body("signatures[0]", equalTo(null));
+    }
+
+    @Test
+    void uploadNestedAsicsContainerWithTimestampButWithoutSignaturesAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+
+        Response response = getSignatureList(flow);
+
+        response.then()
+                .statusCode(200)
+                .body("signatures[0]", equalTo(null));
+    }
+
+    @Test
+    void uploadAsicsContainerWithSignatureButWithoutTimestampAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
+
+        Response response = getSignatureList(flow);
+
+        response.then()
+                .statusCode(200)
+                .body("signatures[0].id", equalTo("id-42f7f6960f18344d433c5578313b43e2"))
+                .body("signatures[0].signerInfo", equalTo("SERIALNUMBER=PNOEE-38001085718, CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\", SURNAME=JÕEORG, GIVENNAME=JAAK-KRISTJAN, C=EE"));
+    }
+
+    @Test
+    void uploadNestedAsicsContainerWithSignatureAndTimestampAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithDdocAndSignatureAndTimestamp.asics"));
+
+        Response response = getSignatureList(flow);
+
+        response.then()
+                .statusCode(200)
+                .body("signatures[0].id", equalTo("S1"))
+                .body("signatures[0].signerInfo", equalTo("SERIALNUMBER=49001272746, GIVENNAME=MERIL, SURNAME=VAHT, CN=\"VAHT,MERIL,49001272746\", OU=digital signature, O=ESTEID, C=EE"));
+    }
+
+    @Test
     void uploadAsicContainerWithInvalidSignatureAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("unknownOcspResponder.asice"));
 
@@ -97,7 +143,7 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsiceContainerAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
 
         Response response = getSignatureInfo(flow, getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"));
@@ -114,7 +160,24 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
     }
 
     @Test
-    void createLtProfileSignatureAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsicsContainerAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
+
+        Response response = getSignatureInfo(flow, getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"));
+
+        response.then()
+                .statusCode(200)
+                .body("id", equalTo("id-42f7f6960f18344d433c5578313b43e2"))
+                .body("signerInfo", equalTo("SERIALNUMBER=PNOEE-38001085718, CN=\"JÕEORG,JAAK-KRISTJAN,38001085718\", SURNAME=JÕEORG, GIVENNAME=JAAK-KRISTJAN, C=EE"))
+                .body("signatureProfile", equalTo("LT"))
+                .body("ocspResponseCreationTime", equalTo("2024-09-11T10:20:32Z"))
+                .body("timeStampCreationTime", equalTo("2024-09-11T10:20:32Z"))
+                .body("trustedSigningTime", equalTo("2024-09-11T10:20:32Z"))
+                .body("claimedSigningTime", equalTo("2024-09-11T10:20:31Z"));
+    }
+
+    @Test
+    void createLtProfileSignatureAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
         putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
@@ -142,7 +205,7 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
     }
 
     @Test
-    void createSignatureWithSigningInfoAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void createSignatureWithSigningInfoAndRetrieveSignatureInfo() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequest(SIGNER_CERT_ESTEID2018_PEM, "LT", "Member of board", "Tallinn", "Harju", "4953", "Estonia")).as(CreateContainerRemoteSigningResponse.class);
         putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());

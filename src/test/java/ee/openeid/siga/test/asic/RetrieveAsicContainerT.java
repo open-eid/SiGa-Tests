@@ -15,6 +15,7 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_LENGHT;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
@@ -44,7 +45,7 @@ class RetrieveAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndRetrieveIt() throws Exception {
+    void uploadAsiceContainerAndRetrieveIt() throws Exception {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
         Response response = getContainer(flow);
         response.then()
@@ -55,6 +56,20 @@ class RetrieveAsicContainerT extends TestBase {
         XmlPath manifest = manifestAsXmlPath(extractEntryFromContainer(MANIFEST, response.path(CONTAINER).toString()));
 
         assertEquals("text/plain", manifest.getString("manifest:manifest.manifest:file-entry[" + (1) + "].@manifest:media-type"));
+    }
+
+    @Test
+    void uploadAsicsContainerAndRetrieveIt() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+        Response response = getContainer(flow);
+        response.then()
+                .statusCode(200)
+                .body(CONTAINER + ".length()", equalTo(9024))
+                .body(CONTAINER_NAME, equalTo(DEFAULT_ASICS_CONTAINER_NAME));
+
+        XmlPath manifest = manifestAsXmlPath(extractEntryFromContainer(MANIFEST, response.path(CONTAINER).toString()));
+
+        assertEquals("application/x-ddoc", manifest.getString("manifest:manifest.manifest:file-entry[" + (1) + "].@manifest:media-type"));
     }
 
     @Test

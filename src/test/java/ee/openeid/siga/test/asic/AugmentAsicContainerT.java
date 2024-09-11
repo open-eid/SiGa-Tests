@@ -12,7 +12,6 @@ import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -25,7 +24,11 @@ import java.util.List;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.ERROR_MESSAGE;
+import static ee.openeid.siga.test.helper.TestData.INVALID_CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
+import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES_COUNT;
@@ -47,6 +50,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSigaProfileActive("datafileContainer")
@@ -115,7 +119,51 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerWithLtProfileAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsicsContainerWithTimestampAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+
+        augment(flow)
+                .then()
+                .statusCode(200)
+                .body("result", equalTo("OK"));
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        // TODO SIGA-903: There are actually 2 timestamps in this container after augmenting, but the validation report
+        //  from SiVa does not currently take into account augmented timestamps. When this has been fixed, update the
+        //  number of timestamp tokens and add validation for each timestamp.
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
+        assertThat(validationResponse.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-09-09T12:13:34Z"));
+        // TODO SIGA-903: Current SHA-512 timestamp fails probably because SiVa only accepts SHA-256 hash - in that case, the validation should pass.
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-FAILED"));
+    }
+
+    @Test
+    void uploadAsicsContainerWithSignatureAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
+
+        Response response = augment(flow);
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
+        assertThat(response.getBody().path(ERROR_MESSAGE), equalTo("Unable to augment. Container does not contain any timestamp tokens."));
+    }
+
+    @Test
+    void uploadAsicsContainerWithSignatureAndTimestampAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithDdocAndSignatureAndTimestamp.asics"));
+
+        Response response = augment(flow);
+
+        expectError(response, 400, INVALID_CONTAINER);
+        assertThat(response.getBody().path(ERROR_MESSAGE), equalTo("Unable to augment. Invalid contents found for ASiC-S container."));
+    }
+
+    @Test
+    void uploadAsiceContainerWithLtProfileAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureValidUntil-2026-01-22.asice"));
 
         augment(flow)

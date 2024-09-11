@@ -24,6 +24,7 @@ import static ee.openeid.siga.test.helper.TestData.CERTIFICATE_CHOICE;
 import static ee.openeid.siga.test.helper.TestData.CLIENT_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.EXPIRED_TRANSACTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_DATA;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
@@ -201,6 +202,15 @@ class SmartIdSigningAsicContainerT extends TestBase {
         Response response = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
 
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to sign container with empty datafiles");
+    }
+
+    @Test
+    void postWithSmartIdCertificateChoiceAsicsContainerFails() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+
+        Response response = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
     }
 
     @Test
@@ -462,6 +472,15 @@ class SmartIdSigningAsicContainerT extends TestBase {
         Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOLT-10101020001-K87V-NQ"));
 
         expectError(response, 400, CLIENT_EXCEPTION);
+    }
+
+    @Test
+    void signAsicsContainerWithSmartIdFails() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-MOCK-Q"));
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
     }
 
     @Test

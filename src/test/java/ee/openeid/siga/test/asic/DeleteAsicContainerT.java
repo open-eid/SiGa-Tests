@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.RESULT;
 import static ee.openeid.siga.test.helper.TestData.SERVICE_SECRET_1;
@@ -38,8 +39,17 @@ class DeleteAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndDelete() throws Exception {
+    void uploadAsiceContainerAndDelete() throws Exception {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
+        deleteContainer(flow);
+
+        Response response = getSignatureList(flow);
+        expectError(response, 400, RESOURCE_NOT_FOUND);
+    }
+
+    @Test
+    void uploadAsicsContainerAndDelete() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
         deleteContainer(flow);
 
         Response response = getSignatureList(flow);

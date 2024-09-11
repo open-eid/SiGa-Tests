@@ -9,6 +9,7 @@ import io.restassured.response.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -22,11 +23,13 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DATAFILES;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_DATAFILE_CONTENT;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.DUPLICATE_DATA_FILE;
 import static ee.openeid.siga.test.helper.TestData.INVALID_DATA;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
+import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.TEST_FILE_EXTENSIONS;
@@ -178,6 +181,15 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
+    void uploadAsicsContainerWithTimestampsAndTryToRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+
+        Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Removing datafile not supported for container type: ASICS");
+    }
+
+    @Test
     void uploadAsicContainerWithSpecialCharactersAndTryToRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("NonconventionalCharactersInDataFile.asice"));
 
@@ -201,7 +213,7 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsiceContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
 
         addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
@@ -214,6 +226,16 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
                 .body("dataFiles[0].fileContent", startsWith("c2VlIG9uIHRlc3RmYWls"))
                 .body("dataFiles[1].fileName", equalTo("testFile.txt"))
                 .body("dataFiles[1].fileContent", equalTo("eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
+    }
+
+    @Test
+    @Disabled("TODO DD4J-1101: Enable this test when fixed")
+    void uploadAsicsContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithTxtFileWithoutTimestampAndSignature.asics"));
+
+        Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
+
+        expectError(response, 400, INVALID_REQUEST, "ASiC-S container can not contain more than one datafile");
     }
 
     @Test

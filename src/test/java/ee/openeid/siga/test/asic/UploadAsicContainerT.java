@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_ID;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DUPLICATE_DATA_FILE;
 import static ee.openeid.siga.test.helper.TestData.INVALID_CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
@@ -33,8 +34,17 @@ class UploadAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerShouldReturnContainerId() throws Exception {
+    void uploadAsiceContainerShouldReturnContainerId() throws Exception {
         Response response = postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
+
+        response.then()
+                .statusCode(200)
+                .body(CONTAINER_ID + ".length()", equalTo(36));
+    }
+
+    @Test
+    void uploadAsicsContainerShouldReturnContainerId() throws Exception {
+        Response response = postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
 
         response.then()
                 .statusCode(200)

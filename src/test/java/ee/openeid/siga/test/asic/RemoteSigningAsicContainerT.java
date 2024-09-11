@@ -22,6 +22,7 @@ import static ee.openeid.siga.test.helper.TestData.AUTH_CERT_PEM_HEX;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DATA_TO_SIGN;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DIGEST_ALGO;
 import static ee.openeid.siga.test.helper.TestData.INVALID_CERTIFICATE_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
@@ -362,6 +363,33 @@ class RemoteSigningAsicContainerT extends TestBase {
         Response response = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT"));
 
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to sign container with empty datafiles");
+    }
+
+    @Test
+    void startAsicsRemoteSigningContainerWithoutTimestampsAndSignaturesFails() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithBdocWithoutTimestamp.asics"));
+
+        Response response = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT"));
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
+    }
+
+    @Test
+    void startAsicsRemoteSigningContainerWithTimestampFails() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+
+        Response response = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT"));
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
+    }
+
+    @Test
+    void startAsicsRemoteSigningContainerWithSignatureFails() throws Exception {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
+
+        Response response = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT"));
+
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
     }
 
     @Test
