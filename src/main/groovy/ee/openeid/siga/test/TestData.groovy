@@ -11,39 +11,4 @@ class TestData {
          fileHashSha512: "hQVz9wirVZNvP/q3HoaW8nu0FfvrGkZinhADKE4Y4j/dUuGfgONfR4VYdu0p/dj/yGH0qlE0FGsmUB2N3oLuhA==",
          fileSize      : 189]
     }
-
-    // Error codes
-    static final String INVALID_REQUEST = "REQUEST_VALIDATION_EXCEPTION"
-
-    // MID error codes
-    static final String SENDING_ERROR = "SENDING_ERROR"
-    static final String USER_CANCEL = "USER_CANCEL"
-    static final String NOT_VALID = "NOT_VALID"
-    static final String PHONE_ABSENT = "PHONE_ABSENT"
-    static final String EXPIRED_TRANSACTION = "EXPIRED_TRANSACTION"
-
-    static final String RESOURCE_NOT_FOUND = "RESOURCE_NOT_FOUND_EXCEPTION"
-    static final String CLIENT_EXCEPTION = "CLIENT_EXCEPTION"
-    static final String MID_EXCEPTION = "MID_EXCEPTION"
-    static final String NOT_FOUND = "NOT_FOUND"
-    static final String SIM_ERROR = "SIM_ERROR"
-    static final String INVALID_CONTAINER = "INVALID_CONTAINER_EXCEPTION"
-    static final String AUTHORIZATION_ERROR = "AUTHORIZATION_ERROR"
-    static final String INVALID_SIGNATURE = "SIGNATURE_CREATION_EXCEPTION"
-    static final String INVALID_LANGUAGE = "INVALID_LANGUAGE_EXCEPTION"
-    static final String INVALID_DATA = "INVALID_SESSION_DATA_EXCEPTION"
-    static final String DUPLICATE_DATA_FILE = "DUPLICATE_DATA_FILE_EXCEPTION"
-    static final String INVALID_CERTIFICATE_EXCEPTION = "INVALID_CERTIFICATE_EXCEPTION"
-    static final String INVALID_SIGNATURE_EXCEPTION = "INVALID_SIGNATURE_EXCEPTION"
-    static final String SMARTID_EXCEPTION = "SMARTID_EXCEPTION"
-    static final String USER_SELECTED_WRONG_VC = "USER_SELECTED_WRONG_VC"
-    static final String CONNECTION_LIMIT_EXCEPTION = "CONNECTION_LIMIT_EXCEPTION"
-    static final String REQUEST_SIZE_LIMIT_EXCEPTION = "REQUEST_SIZE_LIMIT_EXCEPTION"
-    static final String INVALID_CONTAINER_EXCEPTION = "INVALID_CONTAINER_EXCEPTION"
-    static final String INVALID_SESSION_DATA_EXCEPTION = "INVALID_SESSION_DATA_EXCEPTION"
-    
-
-
-
-
 }

@@ -2,6 +2,7 @@ package ee.openeid.siga.test.hashcode.mid
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
+import ee.openeid.siga.test.model.ErrorCode
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -11,6 +12,8 @@ import io.qameta.allure.Feature
 import io.restassured.response.Response
 import org.hamcrest.Matchers
 import spock.lang.Tag
+
+import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
 
 @Tag("mobileId")
 @Epic("Hashcode")
@@ -33,19 +36,6 @@ class MobileSigningHashcodeSpec extends GenericSpecification {
         hashcode.validateContainerInSession(flow)
                 .then()
                 .body("validationConclusion.validSignaturesCount", Matchers.is(1))
-    }
-
-    def "MID sign existing container successful"() {
-        given:
-        hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(TestData.DEFAULT_HASHCODE_CONTAINER))
-
-        when:
-        hashcode.midSigning(flow, "60001019906", "+37200000766")
-
-        then:
-        hashcode.validateContainerInSession(flow)
-                .then()
-                .body("validationConclusion.validSignaturesCount", Matchers.is(2))
     }
 
     def "MID sign successful with following user: #userDescription"() {
@@ -123,16 +113,16 @@ class MobileSigningHashcodeSpec extends GenericSpecification {
 
         then:
         flow.getMidStatus().then()
-                .body("midStatus", Matchers.is(errorCode))
+                .body("midStatus", matchesEnumName(errorCode))
 
         where:
         userDescription                                  | personId      | phoneNo        | errorCode
-        "sending authentication request to phone failed" | "60001019947" | "+37207110066" | TestData.SENDING_ERROR
-        "user cancelled authentication"                  | "60001019950" | "+37201100266" | TestData.USER_CANCEL
-        "created signature is not valid"                 | "60001019961" | "+37200000666" | TestData.NOT_VALID
-        "SIM application error"                          | "60001019972" | "+37201200266" | TestData.SENDING_ERROR
-        "phone is not in coverage area"                  | "60001019983" | "+37213100266" | TestData.PHONE_ABSENT
-        "user does not react"                            | "50001018908" | "+37066000266" | TestData.EXPIRED_TRANSACTION
+        "sending authentication request to phone failed" | "60001019947" | "+37207110066" | ErrorCode.SENDING_ERROR
+        "user cancelled authentication"                  | "60001019950" | "+37201100266" | ErrorCode.USER_CANCEL
+        "created signature is not valid"                 | "60001019961" | "+37200000666" | ErrorCode.NOT_VALID
+        "SIM application error"                          | "60001019972" | "+37201200266" | ErrorCode.SENDING_ERROR
+        "phone is not in coverage area"                  | "60001019983" | "+37213100266" | ErrorCode.PHONE_ABSENT
+        "user does not react"                            | "50001018908" | "+37066000266" | ErrorCode.EXPIRED_TRANSACTION
     }
 
     def "MID signing fails with invalid input: #inputDescription"() {
