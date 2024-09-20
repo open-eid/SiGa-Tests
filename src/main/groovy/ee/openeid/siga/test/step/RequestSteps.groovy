@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.step
 
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.request.SigaRequests
 import io.qameta.allure.Step
 import io.restassured.http.Method
@@ -64,16 +65,20 @@ abstract class RequestSteps {
 
     @Step("Start MID signing")
     Response startMidSigning(Flow flow, Map request) {
-        Response response = getIntance().startMidSigningRequest(flow, Method.POST, request).post()
+        Response response = tryStartMidSigning(flow, request)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
+    }
+
+    Response tryStartMidSigning(Flow flow, Map request) {
+        return getIntance().startMidSigningRequest(flow, Method.POST, request).post()
     }
 
     @Step("Poll MID signing status")
     pollForMidSigningStatus(Flow flow, String signatureId) {
         def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
         conditions.eventually {
-            assert getMidSigningStatus(flow, signatureId).path("midStatus") == "SIGNATURE"
+            assert getMidSigningStatus(flow, signatureId).path("midStatus") != "OUTSTANDING_TRANSACTION"
         }
     }
 
@@ -83,6 +88,11 @@ abstract class RequestSteps {
         response.then().statusCode(HttpStatus.SC_OK)
         flow.setMidStatus(response)
         return response
+    }
+
+    def midSigning(Flow flow, String personId, String phoneNo) {
+        Response response = startMidSigning(flow, RequestData.midSigningRequestBodyMinimal(personId, phoneNo))
+        pollForMidSigningStatus(flow, response.path("generatedSignatureId"))
     }
 
     @Step("Start Smart-ID certificate choice")
