@@ -91,7 +91,11 @@ abstract class RequestSteps {
     }
 
     def midSigning(Flow flow, String personId, String phoneNo) {
-        Response response = startMidSigning(flow, RequestData.midSigningRequestBodyMinimal(personId, phoneNo))
+        midSigning(flow, RequestData.midSigningRequestBodyMinimal(personId, phoneNo))
+    }
+
+    def midSigning(Flow flow, Map requestBody) {
+        Response response = startMidSigning(flow, requestBody)
         pollForMidSigningStatus(flow, response.path("generatedSignatureId"))
     }
 

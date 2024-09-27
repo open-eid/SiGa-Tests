@@ -49,4 +49,8 @@ class RequestData {
     static Map midSigningRequestBodyMinimal(String personIdentifier, String phoneNo) {
         return midSigningRequestBody(personIdentifier, phoneNo)
     }
+
+    static Map midSigningRequestBodyDefault() {
+        return midSigningRequestBody("60001019906", "+37200000766")
+    }
 }

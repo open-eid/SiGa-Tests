@@ -2,8 +2,10 @@ package ee.openeid.siga.test.model
 
 enum RequestError {
     INVALID_CALLING_CODE(CommonErrorCode.INVALID_REQUEST, "Invalid international calling code"),
-    INVALID_PERSON_ID(CommonErrorCode.INVALID_REQUEST,"Invalid person identifier"),
-    INVALID_PHONE(CommonErrorCode.INVALID_REQUEST,"Invalid phone No.")
+    INVALID_PERSON_ID(CommonErrorCode.INVALID_REQUEST, "Invalid person identifier"),
+    INVALID_PHONE(CommonErrorCode.INVALID_REQUEST, "Invalid phone No."),
+    INVALID_LANGUAGE(CommonErrorCode.INVALID_REQUEST, "Invalid Mobile-Id language"),
+    INVALID_PROFILE(CommonErrorCode.INVALID_REQUEST, "Invalid signature profile")
 
     final String errorCode
     final String errorMessage

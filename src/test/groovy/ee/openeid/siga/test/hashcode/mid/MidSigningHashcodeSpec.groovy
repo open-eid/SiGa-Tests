@@ -4,9 +4,7 @@ import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.ErrorCode
 import ee.openeid.siga.test.model.Flow
-import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
-import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.restassured.response.Response
@@ -18,7 +16,7 @@ import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
 @Tag("mobileId")
 @Epic("Hashcode")
 @Feature("Mobile ID signing")
-class MobileSigningHashcodeSpec extends GenericSpecification {
+class MidSigningHashcodeSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
@@ -123,26 +121,6 @@ class MobileSigningHashcodeSpec extends GenericSpecification {
         "SIM application error"                          | "60001019972" | "+37201200266" | ErrorCode.SENDING_ERROR
         "phone is not in coverage area"                  | "60001019983" | "+37213100266" | ErrorCode.PHONE_ABSENT
         "user does not react"                            | "50001018908" | "+37066000266" | ErrorCode.EXPIRED_TRANSACTION
-    }
-
-    def "MID signing fails with invalid input: #inputDescription"() {
-        given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-
-        when:
-        Response response = hashcode.tryStartMidSigning(flow,
-                RequestData.midSigningRequestBodyMinimal(personId, phoneNo))
-
-        then:
-        RequestErrorValidator.validate(response, expectedError)
-
-        where:
-        inputDescription                     | personId         | phoneNo        | expectedError
-        "Invalid international calling code" | "60001019906"    | "+37100000766" | RequestError.INVALID_CALLING_CODE
-        "Person identifier missing"          | ""               | "+37200000766" | RequestError.INVALID_PERSON_ID
-        "Invalid person identifier"          | "P!NO-23a.31,23" | "+37200000766" | RequestError.INVALID_PERSON_ID
-        "Phone number missing"               | "60001019906"    | ""             | RequestError.INVALID_PHONE
-        "Phone number invalid"               | "60001019906"    | "-/ssasa"      | RequestError.INVALID_PHONE
     }
 
     def "MID signing if #description, then one signature is present"() {

@@ -75,52 +75,6 @@ class MobileSigningHashcodeContainerT extends TestBase {
     }
 
     @Test
-    void missingLanguageInRequest() throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postMidSigningInSession(flow, midSigningRequest("60001019906", "+37200000766", "", "LT", null, null, null, null, null, null));
-
-        expectError(response, 400, INVALID_REQUEST);
-    }
-
-    @Test
-    void invalidLanguageInRequest() throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postMidSigningInSession(flow, midSigningRequest("60001019906", "+37200000766", "SOM", "LT", null, null, null, null, null, null));
-
-        expectError(response, 400, INVALID_REQUEST);
-    }
-
-    @Test
-    void invalidRoleInRequest() throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postMidSigningInSession(flow, midSigningRequest("60001019906", "+37200000766", "EST", "LT", null, null, null, null, null, ""));
-
-        expectError(response, 400, INVALID_REQUEST);
-    }
-
-    @DisplayName("Signing not allowed with invalid signature profiles")
-    @ParameterizedTest(name = "Mobile signing new hashcode container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
-    void signingNewHashcodeContainerWithMidInvalidSignatureProfileNotAllowed(String signatureProfile) throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
-
-        expectError(response, 400, INVALID_REQUEST, "Invalid signature profile");
-    }
-
-    @DisplayName("Signing not allowed with invalid signature profiles")
-    @ParameterizedTest(name = "Mobile signing uploaded hashcode container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
-    void signingUploadedHashcodeContainerWithMidInvalidSignatureProfileNotAllowed(String signatureProfile) throws Exception {
-        postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
-
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
-
-        expectError(response, 400, INVALID_REQUEST, "Invalid signature profile");
-    }
-
-    @Test
     void maximumDataInRequest() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
         Response response = postMidSigningInSession(flow, midSigningRequest("60001019906", "+37200000766", "EST", "LT", "message", "Tallinn", "Harjumaa", "75544", "Estonia", "I hava a role"));
