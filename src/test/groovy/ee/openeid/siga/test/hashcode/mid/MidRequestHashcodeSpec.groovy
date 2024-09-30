@@ -12,13 +12,14 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Link
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import org.hamcrest.Matchers
 import spock.lang.Tag
 
 import static org.hamcrest.Matchers.is
 
 @Tag("mobileId")
 @Epic("Hashcode")
-@Feature("Mobile ID signing request validation")
+@Feature("Mobile ID request validation")
 class MidRequestHashcodeSpec extends GenericSpecification {
     private Flow flow
 
@@ -83,5 +84,52 @@ class MidRequestHashcodeSpec extends GenericSpecification {
         profile << ["", " ", "123", "@!*", "UNKNOWN", "B_BES", "B_EPES", "LT_TM", "lt_TM", "lt_tm", "LT-TM", "LT TM"]
     }
 
+    def "MID signing not allowed with empty datafile in container"() {
+        given:
+        hashcode.uploadContainer(flow,
+                RequestData.hashcodeRequestBodyFromFile("hashcodeUnsignedContainerWithEmptyDatafiles.asice"))
 
+        when:
+        Response response = hashcode.tryStartMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+
+        then:
+        RequestErrorValidator.validate(response, RequestError.INVALID_DATAFILE)
+    }
+
+    def "MID signing successful with special char in messageToDisplay parameter"() {
+        given:
+        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        Map signingRequestBody = RequestData.midSigningRequestBodyDefault()
+
+        when:
+        signingRequestBody.put("messageToDisplay", "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007")
+        hashcode.midSigning(flow, signingRequestBody)
+
+        then:
+        hashcode.validateContainerInSession(flow)
+                .then()
+                .body("validationConclusion.validSignaturesCount", Matchers.is(1))
+    }
+
+    def "MID signing successful with all parameters in request"() {
+        given:
+        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+
+        when:
+        Map signingRequestBody = RequestData.midSigningRequestBody(
+                "60001019906",
+                "+37200000766",
+                "EST",
+                "LT",
+                ["Signer", "Signer 2", "Signer 3"],
+                "Message to display",
+                RequestData.signatureProductionPlace()
+        )
+        hashcode.midSigning(flow, signingRequestBody)
+
+        then:
+        hashcode.validateContainerInSession(flow)
+                .then()
+                .body("validationConclusion.validSignaturesCount", Matchers.is(1))
+    }
 }

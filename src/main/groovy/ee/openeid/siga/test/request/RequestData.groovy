@@ -1,5 +1,8 @@
 package ee.openeid.siga.test.request
 
+import ee.openeid.siga.test.util.Utils
+import org.apache.commons.codec.binary.Base64
+
 class RequestData {
 
     static Map createHashcodeRequestBody(List dataFiles) {
@@ -13,6 +16,10 @@ class RequestData {
 
     static Map uploadHashcodeRequestBody(String containerBase64) {
         [container: containerBase64]
+    }
+
+    static Map hashcodeRequestBodyFromFile(String fileName) {
+        uploadHashcodeRequestBody(Base64.encodeBase64String(Utils.readFileFromResources(fileName)))
     }
 
     static Map signatureProductionPlace() {
