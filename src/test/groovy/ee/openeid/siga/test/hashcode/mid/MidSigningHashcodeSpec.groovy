@@ -4,7 +4,9 @@ import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.ErrorCode
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
+import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.restassured.response.Response
@@ -143,5 +145,28 @@ class MidSigningHashcodeSpec extends GenericSpecification {
         description                          | personId      | phone
         "one user cancels and second signs"  | "60001019950" | "+37201100266"
         "one user timeouts and second signs" | "50001018908" | "+37066000266"
+    }
+
+    def "MID signing not allowed if datafile #datafileAction after signing started"() {
+        given:
+        hashcode.uploadContainer(flow, RequestData.hashcodeRequestBodyFromFile("hashcodeWithoutSignature.asice"))
+        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+        String signatureId = startResponse.path("generatedSignatureId")
+
+        when:
+        if (datafileAction == "added") {
+            hashcode.addDataFiles(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        } else {
+            hashcode.deleteDataFile(flow, hashcode.getDataFilesList(flow).path("dataFiles[0].fileName"))
+        }
+        hashcode.pollForMidSigningStatus(flow, signatureId)
+
+        then:
+        RequestErrorValidator.validate(flow.getMidStatus(), RequestError.INVALID_CHANGED_DATAFILE)
+
+        where:
+        datafileAction | _
+        "added"        | _
+        "deleted"      | _
     }
 }

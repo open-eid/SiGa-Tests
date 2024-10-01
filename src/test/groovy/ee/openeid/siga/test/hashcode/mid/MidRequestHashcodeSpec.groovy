@@ -93,7 +93,7 @@ class MidRequestHashcodeSpec extends GenericSpecification {
         Response response = hashcode.tryStartMidSigning(flow, RequestData.midSigningRequestBodyDefault())
 
         then:
-        RequestErrorValidator.validate(response, RequestError.INVALID_DATAFILE)
+        RequestErrorValidator.validate(response, RequestError.INVALID_EMPTY_DATAFILE)
     }
 
     def "MID signing successful with special char in messageToDisplay parameter"() {
