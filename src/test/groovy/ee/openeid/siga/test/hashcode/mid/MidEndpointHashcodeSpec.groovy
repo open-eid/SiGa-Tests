@@ -27,7 +27,7 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
         given:
         hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
         Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
-        String signatureId = startResponse.jsonPath().get("generatedSignatureId")
+        String signatureId = startResponse.path("generatedSignatureId")
 
         when:
         flow.setServiceUuid(Service.SERVICE2.uuid)
@@ -42,7 +42,7 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
         given:
         hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
         Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
-        String signatureId = startResponse.jsonPath().get("generatedSignatureId")
+        String signatureId = startResponse.path("generatedSignatureId")
 
         when:
         Response response = hashcode.getIntance().getMidSigningStatusRequest(flow, Method.HEAD, signatureId).head()
@@ -57,7 +57,7 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
         given:
         hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
         Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
-        String signatureId = startResponse.jsonPath().get("generatedSignatureId")
+        String signatureId = startResponse.path("generatedSignatureId")
 
         when:
         Response statusResponse = hashcode.tryGetSmartIdSigningStatus(flow, signatureId)
