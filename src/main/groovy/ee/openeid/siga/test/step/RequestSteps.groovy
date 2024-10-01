@@ -78,20 +78,13 @@ abstract class RequestSteps {
     pollForMidSigningStatus(Flow flow, String signatureId) {
         def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
         conditions.eventually {
-            assert getMidSigningStatus(flow, signatureId).path("midStatus") != "OUTSTANDING_TRANSACTION"
+            assert tryGetMidSigningStatus(flow, signatureId).path("midStatus") != "OUTSTANDING_TRANSACTION"
         }
     }
 
     @Step("Get MID signing status")
     Response tryGetMidSigningStatus(Flow flow, String signatureId) {
         Response response = getIntance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
-        flow.setMidStatus(response)
-        return response
-    }
-
-    Response getMidSigningStatus(Flow flow, String signatureId) {
-        Response response = tryGetMidSigningStatus(flow, signatureId)
-        response.then().statusCode(HttpStatus.SC_OK)
         flow.setMidStatus(response)
         return response
     }
@@ -134,18 +127,11 @@ abstract class RequestSteps {
         return response
     }
 
-    Response getSmartIdSigningStatus(Flow flow, String signatureId) {
-        Response response = tryGetSmartIdSigningStatus(flow, signatureId)
-        response.then().statusCode(HttpStatus.SC_OK)
-        flow.setSidStatus(response)
-        return response
-    }
-
     @Step("Poll Smart-ID signing status")
     pollForSidSigningStatus(Flow flow, String signatureId) {
         def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
         conditions.eventually {
-            assert getSmartIdSigningStatus(flow, signatureId).path("sidStatus") != "OUTSTANDING_TRANSACTION"
+            assert tryGetSmartIdSigningStatus(flow, signatureId).path("sidStatus") != "OUTSTANDING_TRANSACTION"
         }
     }
 
