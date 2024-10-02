@@ -22,6 +22,10 @@ class RequestData {
          containerName: containerName]
     }
 
+    static Map uploadDatafileRequestBodyFromFile(String containerName) {
+        uploadDatafileRequestBody(Base64.encodeBase64String(Utils.readFileFromResources(containerName)), containerName)
+    }
+
     static Map createDatafileRequestDefaultBody() {
         [container: "datafileContainer",
          dataFiles: ["filename"   : "testing.txt",

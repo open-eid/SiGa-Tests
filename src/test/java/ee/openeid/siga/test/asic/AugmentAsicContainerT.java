@@ -66,39 +66,6 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    @Feature("Verify allowed HTTP methods")
-    void postNotAllowedToAugmentAsicContainer() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + "/augmentation", flow, "request");
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    @Feature("Verify allowed HTTP methods")
-    void getNotAllowedToAugmentAsicContainer() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + "/augmentation", flow);
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    @Feature("Verify allowed HTTP methods")
-    void deleteNotAllowedToAugmentAsicContainer() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-        putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + "/augmentation", flow);
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
     void createRemotelySignedAsicContainerAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         CreateContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);

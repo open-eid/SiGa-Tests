@@ -155,4 +155,9 @@ abstract class SigaRequests {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}"
         return sigaRequestBase(flow, method, endpoint)
     }
+
+    RequestSpecification augmentationContainerRequest(Flow flow, Method method) {
+        String endpoint = "${getBasePath()}/${flow.getContainerId()}/augmentation"
+        return sigaRequestBase(flow, method, endpoint)
+    }
 }
