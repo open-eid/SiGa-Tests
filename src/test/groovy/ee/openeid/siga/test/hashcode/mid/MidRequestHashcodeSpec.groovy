@@ -1,7 +1,6 @@
 package ee.openeid.siga.test.hashcode.mid
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.CommonErrorCode
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
@@ -29,11 +28,11 @@ class MidRequestHashcodeSpec extends GenericSpecification {
 
     def "MID signing request not allowed with invalid input: #description"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Map signingRequestBody = RequestData.midSigningRequestBodyDefault()
+        hashcode.createDefaultContainer(flow)
+        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
 
         when:
-        signingRequestBody.put(property, value)
+        signingRequestBody[property] = value
         Response response = hashcode.tryStartMidSigning(flow, signingRequestBody)
 
         then:
@@ -55,11 +54,11 @@ class MidRequestHashcodeSpec extends GenericSpecification {
     @Link("https://jira.ria.ee/browse/SIGA-915")
     def "MID signing request not allowed with invalid role"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Map signingRequestBody = RequestData.midSigningRequestBodyDefault()
+        hashcode.createDefaultContainer(flow)
+        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
 
         when:
-        signingRequestBody.put("roles", "")
+        signingRequestBody["roles"] = ""
         Response response = hashcode.tryStartMidSigning(flow, signingRequestBody)
 
         then:
@@ -70,11 +69,11 @@ class MidRequestHashcodeSpec extends GenericSpecification {
 
     def "MID signing request not allowed with invalid profile: #profile"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Map signingRequestBody = RequestData.midSigningRequestBodyDefault()
+        hashcode.createDefaultContainer(flow)
+        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
 
         when:
-        signingRequestBody.put("signatureProfile", profile)
+        signingRequestBody["signatureProfile"] = profile
         Response response = hashcode.tryStartMidSigning(flow, signingRequestBody)
 
         then:
@@ -87,10 +86,10 @@ class MidRequestHashcodeSpec extends GenericSpecification {
     def "MID signing not allowed with empty datafile in container"() {
         given:
         hashcode.uploadContainer(flow,
-                RequestData.hashcodeRequestBodyFromFile("hashcodeUnsignedContainerWithEmptyDatafiles.asice"))
+                RequestData.uploadHashcodeRequestBodyFromFile("hashcodeUnsignedContainerWithEmptyDatafiles.asice"))
 
         when:
-        Response response = hashcode.tryStartMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+        Response response = hashcode.tryStartMidSigning(flow, RequestData.midSigningRequestDefaultBody())
 
         then:
         RequestErrorValidator.validate(response, RequestError.INVALID_EMPTY_DATAFILE)
@@ -98,11 +97,11 @@ class MidRequestHashcodeSpec extends GenericSpecification {
 
     def "MID signing successful with special char in messageToDisplay parameter"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Map signingRequestBody = RequestData.midSigningRequestBodyDefault()
+        hashcode.createDefaultContainer(flow)
+        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
 
         when:
-        signingRequestBody.put("messageToDisplay", "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007")
+        signingRequestBody["messageToDisplay"] = "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007"
         hashcode.midSigning(flow, signingRequestBody)
 
         then:
@@ -113,7 +112,7 @@ class MidRequestHashcodeSpec extends GenericSpecification {
 
     def "MID signing successful with all parameters in request"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        hashcode.createDefaultContainer(flow)
 
         when:
         Map signingRequestBody = RequestData.midSigningRequestBody(

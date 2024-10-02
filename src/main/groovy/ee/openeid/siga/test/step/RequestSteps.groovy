@@ -1,5 +1,6 @@
 package ee.openeid.siga.test.step
 
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.request.SigaRequests

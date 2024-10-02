@@ -9,17 +9,24 @@ class RequestData {
         [dataFiles: dataFiles]
     }
 
+    static Map uploadHashcodeRequestBody(String containerBase64) {
+        [container: containerBase64]
+    }
+
+    static Map uploadHashcodeRequestBodyFromFile(String fileName) {
+        uploadHashcodeRequestBody(Base64.encodeBase64String(Utils.readFileFromResources(fileName)))
+    }
+
     static Map uploadDatafileRequestBody(String containerBase64, String containerName) {
         [container    : containerBase64,
          containerName: containerName]
     }
 
-    static Map uploadHashcodeRequestBody(String containerBase64) {
-        [container: containerBase64]
-    }
-
-    static Map hashcodeRequestBodyFromFile(String fileName) {
-        uploadHashcodeRequestBody(Base64.encodeBase64String(Utils.readFileFromResources(fileName)))
+    static Map createDatafileRequestDefaultBody() {
+        [container: "datafileContainer",
+         dataFiles: ["filename"   : "testing.txt",
+                     "fileContent": "cmFuZG9tdGV4dA=="]
+        ]
     }
 
     static Map signatureProductionPlace() {
@@ -57,7 +64,7 @@ class RequestData {
         return midSigningRequestBody(personIdentifier, phoneNo)
     }
 
-    static Map midSigningRequestBodyDefault() {
+    static Map midSigningRequestDefaultBody() {
         return midSigningRequestBody("60001019906", "+37200000766")
     }
 }

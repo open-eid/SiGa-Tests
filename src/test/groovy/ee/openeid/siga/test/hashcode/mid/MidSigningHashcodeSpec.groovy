@@ -27,7 +27,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
 
     def "MID sign new container successful"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        hashcode.createDefaultContainer(flow)
 
         when:
         hashcode.midSigning(flow, "60001019906", "+37200000766")
@@ -62,7 +62,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
 
     def "MID sign per container with multiple users successful"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        hashcode.createDefaultContainer(flow)
 
         when:
         hashcode.midSigning(flow, "60001019906", "+37200000766")
@@ -76,7 +76,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
 
     def "MID singing with one valid and second #description: validSignaturesCount = #validSignaturesCount"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        hashcode.createDefaultContainer(flow)
 
         when:
         //Valid signature
@@ -106,7 +106,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
 
     def "MID signing fails if #userDescription"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        hashcode.createDefaultContainer(flow)
 
         when:
         hashcode.midSigning(flow, personId, phoneNo)
@@ -127,7 +127,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
 
     def "MID signing if #description, then one signature is present"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        hashcode.createDefaultContainer(flow)
 
         when:
         // User fails to sign
@@ -149,15 +149,14 @@ class MidSigningHashcodeSpec extends GenericSpecification {
 
     def "MID signing not allowed if datafile #datafileAction after signing started"() {
         given:
-        hashcode.uploadContainer(flow, RequestData.hashcodeRequestBodyFromFile("hashcodeWithoutSignature.asice"))
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+        hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBodyFromFile("hashcodeWithoutSignature.asice"))
+        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
         when:
-        if (datafileAction == "added") {
-            hashcode.addDataFiles(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        } else {
-            hashcode.deleteDataFile(flow, hashcode.getDataFilesList(flow).path("dataFiles[0].fileName"))
+        switch (datafileAction) {
+            case "added" -> hashcode.addDataFiles(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+            case "deleted" -> hashcode.deleteDataFile(flow, hashcode.getDataFilesList(flow).path("dataFiles[0].fileName"))
         }
         hashcode.pollForMidSigningStatus(flow, signatureId)
 

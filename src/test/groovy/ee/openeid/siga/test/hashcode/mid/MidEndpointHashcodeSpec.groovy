@@ -1,7 +1,6 @@
 package ee.openeid.siga.test.hashcode.mid
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.model.Service
@@ -25,8 +24,8 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
 
     def "MID status request for other user container not allowed"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+        hashcode.createDefaultContainer(flow)
+        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
         when:
@@ -40,13 +39,12 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
 
     def "MID status endpoint allows HTTP HEAD method"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+        hashcode.createDefaultContainer(flow)
+        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
         when:
         Response response = hashcode.getIntance().getMidSigningStatusRequest(flow, Method.HEAD, signatureId).head()
-        Response response2 = hashcode.getIntance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
 
         then:
         response.then().statusCode(200)
@@ -55,8 +53,8 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
     @Tag("SIGA-708")
     def "MID status polling with SID status polling endpoint not allowed"() {
         given:
-        hashcode.createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestBodyDefault())
+        hashcode.createDefaultContainer(flow)
+        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
         when:
