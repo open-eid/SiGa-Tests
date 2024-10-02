@@ -37,6 +37,7 @@ import static ee.openeid.siga.test.helper.TestData.REPORT_TIMESTAMP_TOKENS;
 import static ee.openeid.siga.test.helper.TestData.REPORT_VALID_SIGNATURES_COUNT;
 import static ee.openeid.siga.test.helper.TestData.SID_EE_DEFAULT_DOCUMENT_NUMBER;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
+import static ee.openeid.siga.test.matcher.IsoZonedTimestampMatcher.withinOneHourOfCurrentTime;
 import static ee.openeid.siga.test.utils.ContainerUtil.assertZipFilesEqual_entriesInExactOrder;
 import static ee.openeid.siga.test.utils.ContainerUtil.extractEntryFromContainer;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
@@ -130,16 +131,20 @@ class AugmentAsicContainerT extends TestBase {
         Response validationResponse = getValidationReportForContainerInSession(flow);
         assertThat(validationResponse.statusCode(), equalTo(200));
         assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(0));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
-        // TODO SIGA-903: There are actually 2 timestamps in this container after augmenting, but the validation report
-        //  from SiVa does not currently take into account augmented timestamps. When this has been fixed, update the
-        //  number of timestamp tokens and add validation for each timestamp.
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("DIGIDOC_XML_1.3"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2019-12-12T09:00:52Z"));
+
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(2));
         assertThat(validationResponse.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-09-09T12:13:34Z"));
-        // TODO SIGA-903: Current SHA-512 timestamp fails probably because SiVa only accepts SHA-256 hash - in that case, the validation should pass.
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-FAILED"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-PASSED"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedTime"), withinOneHourOfCurrentTime());
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
     }
 
     @Test
@@ -373,8 +378,13 @@ class AugmentAsicContainerT extends TestBase {
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
         assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LT_TM"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("60001016970"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2023-07-07T11:48:32Z"));
+
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
 
@@ -403,8 +413,13 @@ class AugmentAsicContainerT extends TestBase {
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
         assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LT"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2021-02-15T14:59:07Z"));
+
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
 
@@ -433,8 +448,18 @@ class AugmentAsicContainerT extends TestBase {
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
         assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(2));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
+
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_T"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2024-05-16T05:35:08Z"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].signatureFormat"), equalTo("XAdES_BASELINE_LT"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].info.bestSignatureTime"), equalTo("2024-08-29T20:39:33Z"));
+
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
 
