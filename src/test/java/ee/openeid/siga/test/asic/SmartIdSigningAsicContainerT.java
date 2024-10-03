@@ -26,7 +26,6 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.EXPIRED_TRANSACTION;
-import static ee.openeid.siga.test.helper.TestData.INVALID_DATA;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.NOT_FOUND;
@@ -193,7 +192,7 @@ class SmartIdSigningAsicContainerT extends TestBase {
 
         Response signAfterFinalizationResponse = getSmartIdSigningInSession(flow, generatedSignatureId);
 
-        expectError(signAfterFinalizationResponse, 400, INVALID_DATA);
+        expectError(signAfterFinalizationResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test

@@ -29,7 +29,6 @@ import static ee.openeid.siga.test.helper.TestData.DEFAULT_SHA256_DATAFILE;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_SHA512_DATAFILE;
 import static ee.openeid.siga.test.helper.TestData.EXPIRED_TRANSACTION;
 import static ee.openeid.siga.test.helper.TestData.HASHCODE_CONTAINERS;
-import static ee.openeid.siga.test.helper.TestData.INVALID_DATA;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.NOT_FOUND;
@@ -197,7 +196,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
 
         Response signAfterFinalizationResponse = getSmartIdSigningInSession(flow, generatedSignatureId);
 
-        expectError(signAfterFinalizationResponse, 400, INVALID_DATA);
+        expectError(signAfterFinalizationResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test

@@ -25,8 +25,8 @@ import static ee.openeid.siga.test.helper.TestData.DEFAULT_SHA256_DATAFILE;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_SHA512_DATAFILE;
 import static ee.openeid.siga.test.helper.TestData.DUPLICATE_DATA_FILE;
 import static ee.openeid.siga.test.helper.TestData.HASHCODE_CONTAINERS;
-import static ee.openeid.siga.test.helper.TestData.INVALID_DATA;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
+import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.TEST_FILE_EXTENSIONS;
@@ -169,7 +169,7 @@ class ManipulateDataFilesHashcodeContainerT extends TestBase {
 
         Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[1].fileName"));
 
-        expectError(response, 400, INVALID_DATA);
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test
@@ -321,7 +321,7 @@ class ManipulateDataFilesHashcodeContainerT extends TestBase {
 
         Response response = addDataFile(flow, addDataFileToHashcodeRequest(DEFAULT_FILENAME, DEFAULT_SHA256_DATAFILE, DEFAULT_SHA512_DATAFILE, DEFAULT_FILESIZE));
 
-        expectError(response, 400, INVALID_DATA);
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test

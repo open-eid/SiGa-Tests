@@ -27,7 +27,6 @@ import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_DATAFILE_CONTENT;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.DUPLICATE_DATA_FILE;
-import static ee.openeid.siga.test.helper.TestData.INVALID_DATA;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
@@ -177,7 +176,7 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
 
         Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[1].fileName"));
 
-        expectError(response, 400, INVALID_DATA);
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test
@@ -229,13 +228,12 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
-    @Disabled("TODO DD4J-1101: Enable this test when fixed")
     void uploadAsicsContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithTxtFileWithoutTimestampAndSignature.asics"));
 
         Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
 
-        expectError(response, 400, INVALID_REQUEST, "ASiC-S container can not contain more than one datafile");
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Cannot add datafile to specified container.");
     }
 
     @Test
@@ -345,7 +343,7 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
 
         Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
 
-        expectError(response, 400, INVALID_DATA);
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test
