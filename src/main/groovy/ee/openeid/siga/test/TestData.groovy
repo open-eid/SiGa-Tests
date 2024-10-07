@@ -11,4 +11,7 @@ class TestData {
          fileHashSha512: "hQVz9wirVZNvP/q3HoaW8nu0FfvrGkZinhADKE4Y4j/dUuGfgONfR4VYdu0p/dj/yGH0qlE0FGsmUB2N3oLuhA==",
          fileSize      : 189]
     }
+
+    // Default validation report elements
+    static final String TEST_ENV_VALIDATION_WARNING = "This is validation service demo. Use it for testing purposes only"
 }

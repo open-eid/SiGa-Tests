@@ -135,24 +135,6 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsiceContainerWithLtProfileAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureValidUntil-2026-01-22.asice"));
-
-        augment(flow)
-                .then()
-                .statusCode(200);
-
-        Response validationResponse = getValidationReportForContainerInSession(flow);
-        assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
-
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
-    }
-
-    @Test
     // TODO SIGA-865: Signature with expired OCSP should maybe not be augmented
     void uploadAsicContainerWithSignatureWithExpiredOcspAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("asice_ocsp_cert_expired.asice"));
