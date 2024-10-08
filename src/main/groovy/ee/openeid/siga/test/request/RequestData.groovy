@@ -1,5 +1,6 @@
 package ee.openeid.siga.test.request
 
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.util.Utils
 import org.apache.commons.codec.binary.Base64
 
@@ -27,9 +28,9 @@ class RequestData {
     }
 
     static Map createDatafileRequestDefaultBody() {
-        [container: "datafileContainer",
-         dataFiles: ["filename"   : "testing.txt",
-                     "fileContent": "cmFuZG9tdGV4dA=="]
+        [containerName: "datafileContainer",
+         dataFiles    : [["fileName"   : "testing.txt",
+                          "fileContent": "cmFuZG9tdGV4dA=="]]
         ]
     }
 
@@ -70,5 +71,14 @@ class RequestData {
 
     static Map midSigningRequestDefaultBody() {
         return midSigningRequestBody("60001019906", "+37200000766")
+    }
+
+    static Map remoteSigningStartDefaultRequest() {
+        ["signingCertificate": TestData.SIGNER_CERT_ESTEID2018_PEM,
+         "signatureProfile"  : "LT"]
+    }
+
+    static Map remoteSigningFinalizeRequest(String signatureValue) {
+        ["signatureValue": signatureValue]
     }
 }

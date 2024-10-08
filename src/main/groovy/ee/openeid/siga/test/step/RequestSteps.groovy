@@ -1,9 +1,10 @@
 package ee.openeid.siga.test.step
 
-import ee.openeid.siga.test.TestData
+
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.request.SigaRequests
+import ee.openeid.siga.test.util.DigestSigner
 import io.qameta.allure.Step
 import io.restassured.http.Method
 import io.restassured.response.Response
@@ -62,6 +63,15 @@ abstract class RequestSteps {
         Response response = getIntance().finalizeRemoteSigningRequest(flow, Method.PUT, request, signatureId).put()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
+    }
+
+    Response remoteSigning(Flow flow, Map requestBody) {
+        Response response = startRemoteSigning(flow, requestBody)
+        return finalizeRemoteSigning(
+                flow,
+                RequestData.remoteSigningFinalizeRequest(DigestSigner.signDigest(response)),
+                response.path("generatedSignatureId")
+        )
     }
 
     @Step("Start MID signing")
