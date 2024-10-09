@@ -185,7 +185,7 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
 
         Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
 
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Removing datafile not supported for container type: ASICS");
+        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to add/remove data file. Container contains timestamp token(s)");
     }
 
     @Test
