@@ -28,7 +28,7 @@ class RequestData {
     }
 
     static Map createDatafileRequestDefaultBody() {
-        [containerName: "datafileContainer",
+        [containerName: "datafileContainerSingleSignature.asice",
          dataFiles    : [["fileName"   : "testing.txt",
                           "fileContent": "cmFuZG9tdGV4dA=="]]
         ]
