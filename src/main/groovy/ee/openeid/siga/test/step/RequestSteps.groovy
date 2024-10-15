@@ -153,6 +153,13 @@ abstract class RequestSteps {
         return response
     }
 
+    @Step("Get timestamp list")
+    Response getTimestampList(Flow flow) {
+        Response response = getIntance().getTimestampListRequest(flow, Method.GET).get()
+        response.then().statusCode(HttpStatus.SC_OK)
+        return response
+    }
+
     @Step("Get signature info")
     Response getSignatureInfo(Flow flow, String signatureId) {
         Response response = getIntance().getSignatureInfoRequest(flow, Method.GET, signatureId).get()

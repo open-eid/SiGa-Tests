@@ -136,6 +136,11 @@ abstract class SigaRequests {
         return sigaRequestBase(flow, method, endpoint)
     }
 
+    RequestSpecification getTimestampListRequest(Flow flow, Method method) {
+        String endpoint = "${getBasePath()}/${flow.getContainerId()}/timestamps"
+        return sigaRequestBase(flow, method, endpoint)
+    }
+
     RequestSpecification getValidationReportInSessionRequest(Flow flow, Method method) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/validationreport"
         return sigaRequestBase(flow, method, endpoint)
