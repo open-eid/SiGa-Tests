@@ -369,7 +369,15 @@ public abstract class TestBase {
                 .body(SMARTID_STATUS, equalTo(message));
     }
 
-    protected static Stream<String> provideInvalidSignatureProfiles() {
+    protected static Stream<String> provideInvalidSignatureProfilesForDatafileEndpoints() {
         return INVALID_SIGNATURE_PROFILES.stream();
+    }
+
+    protected static Stream<String> provideInvalidSignatureProfilesForHashcodeEndpoints() {
+        return Stream.concat(INVALID_SIGNATURE_PROFILES.stream(), Stream.of("LTA"));
+    }
+
+    protected static Stream<String> provideValidSignatureProfilesForDatafileEndpoints() {
+        return VALID_SIGNATURE_PROFILES.stream();
     }
 }

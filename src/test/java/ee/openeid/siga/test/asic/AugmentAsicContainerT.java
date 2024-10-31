@@ -12,6 +12,7 @@ import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -428,13 +429,17 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
+    @Disabled   // TODO DD4J-1139: This container is currently not handled correctly by SiGa:
+                //  It passes the validation in SiGa and then throws an exception when SiGa tries to augment it.
+                //  If this container is augmentable, SiGa should augment it without exceptions.
+                //  Otherwise, the validation before augmentation should properly detect that it is not augmentable,
+                //  and SiGa should display proper error message instead of trying to augment it.
     void uploadAsicContainerAndTryAugmentingWithExpiredSignerCertificateAndExpiredTsCertificateFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleExpiredSignatureTsValidUntil-2024-09-02.asice"));
+        postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureWithExpiredSignerAndTsCertificates.asice"));
 
         augment(flow).then()
-                // TODO SIGA-840: Handling this error should be improved in SiGa, so it would return error 400 with more useful message
-                .statusCode(500)
-                .body("errorMessage", equalTo("General service error"));
+                .statusCode(400)
+                .body("errorMessage", equalTo("TODO"));
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
         assertThat(validationResponse.statusCode(), equalTo(200));

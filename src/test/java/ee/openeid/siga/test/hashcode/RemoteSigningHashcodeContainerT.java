@@ -249,7 +249,7 @@ class RemoteSigningHashcodeContainerT extends TestBase {
 
     @DisplayName("Signing not allowed with invalid signature profiles")
     @ParameterizedTest(name = "Remotely signing new hashcode container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
+    @MethodSource("provideInvalidSignatureProfilesForHashcodeEndpoints")
     void signNewHashcodeContainerRemotelyWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
 
@@ -260,7 +260,7 @@ class RemoteSigningHashcodeContainerT extends TestBase {
 
     @DisplayName("Signing not allowed with invalid signature profiles")
     @ParameterizedTest(name = "Remotely signing uploaded hashcode container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
+    @MethodSource("provideInvalidSignatureProfilesForHashcodeEndpoints")
     void uploadHashcodeRemoteSigningContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
 

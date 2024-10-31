@@ -152,7 +152,7 @@ public class TestData {
     public static final String SID_EE_DEFAULT_DOCUMENT_NUMBER = "PNOEE-30303039914-MOCK-Q";
     public static final String SID_EE_MULT_ACCOUNTS_DOCUMENT_NUMBER = "PNOEE-30303039816-MOCK-Q";
 
-    // Invalid signature profiles
+    // Invalid signature profiles for datafile endpoints
     public static final Set<String> INVALID_SIGNATURE_PROFILES = Set.of(
             "",
             " ",
@@ -165,6 +165,13 @@ public class TestData {
             "lt_TM",
             "lt_tm",
             "LT-TM",
-            "LT TM"
+            "LT TM",
+            "T"
+    );
+
+    // Valid signature profiles for datafile endpoints
+    public static final Set<String> VALID_SIGNATURE_PROFILES = Set.of(
+            "LT",
+            "LTA"
     );
 }

@@ -80,7 +80,7 @@ class MidRequestHashcodeSpec extends GenericSpecification {
         RequestErrorValidator.validate(response, RequestError.INVALID_PROFILE)
 
         where:
-        profile << ["", " ", "123", "@!*", "UNKNOWN", "B_BES", "B_EPES", "LT_TM", "lt_TM", "lt_tm", "LT-TM", "LT TM"]
+        profile << ["", " ", "123", "@!*", "UNKNOWN", "B_BES", "B_EPES", "LT_TM", "lt_TM", "lt_tm", "LT-TM", "LT TM", "T", "LTA"]
     }
 
     def "MID signing not allowed with empty datafile in container"() {

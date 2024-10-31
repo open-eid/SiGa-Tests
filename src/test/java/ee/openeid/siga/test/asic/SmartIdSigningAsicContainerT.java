@@ -57,8 +57,10 @@ class SmartIdSigningAsicContainerT extends TestBase {
         flow = SigaApiFlow.buildForTestClient1Service1();
     }
 
-    @Test
-    void signWithSmartIdWithCertificateChoiceSuccessfullyEstonia() throws Exception {
+    @DisplayName("Signing allowed with valid signature profiles")
+    @ParameterizedTest(name = "Smart-ID signing new ASiC-E container allowed with signatureProfile = ''{0}''")
+    @MethodSource("provideValidSignatureProfilesForDatafileEndpoints")
+    void signWithSmartIdWithCertificateChoiceSuccessfullyEstonia(String signatureProfile) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
         String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
@@ -66,7 +68,7 @@ class SmartIdSigningAsicContainerT extends TestBase {
         pollForSidCertificateStatus(flow, generatedCertificateId);
 
         String documentNumber = flow.getSidCertificateStatus().as(GetContainerSmartIdCertificateChoiceStatusResponse.class).getDocumentNumber();
-        Response signingResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", documentNumber));
+        Response signingResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault(signatureProfile, documentNumber));
         String generatedSignatureId = signingResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         pollForSidSigning(flow, generatedSignatureId);
 
@@ -284,7 +286,7 @@ class SmartIdSigningAsicContainerT extends TestBase {
 
     @DisplayName("Signing not allowed with invalid signature profiles")
     @ParameterizedTest(name = "Smart-ID signing new ASIC container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
+    @MethodSource("provideInvalidSignatureProfilesForDatafileEndpoints")
     void createNewAsicSidContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
@@ -295,7 +297,7 @@ class SmartIdSigningAsicContainerT extends TestBase {
 
     @DisplayName("Signing not allowed with invalid signature profiles")
     @ParameterizedTest(name = "Smart-ID signing uploaded ASIC container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
+    @MethodSource("provideInvalidSignatureProfilesForDatafileEndpoints")
     void uploadAsicSidSigningContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
 

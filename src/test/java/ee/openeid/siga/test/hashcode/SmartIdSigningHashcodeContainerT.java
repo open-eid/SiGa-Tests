@@ -447,7 +447,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
 
     @DisplayName("Signing not allowed with invalid signature profiles")
     @ParameterizedTest(name = "Smart-ID signing new hashcode container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
+    @MethodSource("provideInvalidSignatureProfilesForHashcodeEndpoints")
     void createNewHashcodeSidContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
 
@@ -458,7 +458,7 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
 
     @DisplayName("Signing not allowed with invalid signature profiles")
     @ParameterizedTest(name = "Smart-ID signing uploaded hashcode container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
+    @MethodSource("provideInvalidSignatureProfilesForHashcodeEndpoints")
     void uploadHashcodeSidSigningContainerWithInvalidSignatureProfile(String signatureProfile) throws Exception {
         postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
 

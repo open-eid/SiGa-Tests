@@ -51,10 +51,12 @@ class MobileSigningAsicContainerT extends TestBase {
         flow = SigaApiFlow.buildForTestClient1Service1();
     }
 
-    @Test
-    void addSignatureToAsicContainerWithMidSuccessfully() throws Exception {
+    @DisplayName("Signing allowed with valid signature profiles")
+    @ParameterizedTest(name = "Mobile ID signing uploaded ASiC-E container allowed with signatureProfile = ''{0}''")
+    @MethodSource("provideValidSignatureProfilesForDatafileEndpoints")
+    void addSignatureToAsiceContainerWithMidSuccessfully(String signatureProfile) throws Exception {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
+        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
         pollForMidSigning(flow, signatureId);
 
@@ -65,10 +67,12 @@ class MobileSigningAsicContainerT extends TestBase {
                 .body("validationConclusion.validSignaturesCount", equalTo(2));
     }
 
-    @Test
-    void signAsicContainerWithMidSuccessfully() throws Exception {
+    @DisplayName("Signing allowed with valid signature profiles")
+    @ParameterizedTest(name = "Mobile ID signing new ASiC-E container allowed with signatureProfile = ''{0}''")
+    @MethodSource("provideValidSignatureProfilesForDatafileEndpoints")
+    void signAsiceContainerWithMidSuccessfully(String signatureProfile) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
+        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
         pollForMidSigning(flow, signatureId);
 
@@ -80,7 +84,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void signAsicContainerWithMidUser1PairOfRsaCertificatesSuccessfully() throws Exception {
+    void signAsiceContainerWithMidUser1PairOfRsaCertificatesSuccessfully() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("39901019992", "+37200001566", "LT"));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -94,7 +98,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void signAsicContainerWithMidUserOver21Successfully() throws Exception {
+    void signAsiceContainerWithMidUserOver21Successfully() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("45001019980", "+37200001466", "LT"));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -108,7 +112,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void signAsicContainerWithMidUserUnder18Successfully() throws Exception {
+    void signAsiceContainerWithMidUserUnder18Successfully() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("61001019985", "+37200001366", "LT"));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -277,7 +281,7 @@ class MobileSigningAsicContainerT extends TestBase {
 
     @ParameterizedTest(name = "Starting MID signing ASIC container successful if messageToDisplay field contains char''{0}''")
     @ValueSource(strings = {"/", "`", "?", "*", "\\", "<", ">", "|", "\"", ":", "\u0017", "\u0000", "\u0007"})
-    void signAsicContainerWithSpecialCharsInMessageToDisplaySuccessful(String specialChar) throws Exception {
+    void signAsiceContainerWithSpecialCharsInMessageToDisplaySuccessful(String specialChar) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         String messageToDisplay = "Special char = " + specialChar;
@@ -391,9 +395,9 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @DisplayName("Signing not allowed with invalid signature profiles")
-    @ParameterizedTest(name = "Mobile signing new ASIC container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
-    void signingNewAsicContainerWithMidInvalidSignatureProfileNotAllowed(String signatureProfile) throws Exception {
+    @ParameterizedTest(name = "Mobile signing new ASiC-E container not allowed with signatureProfile = ''{0}''")
+    @MethodSource("provideInvalidSignatureProfilesForDatafileEndpoints")
+    void signingNewAsiceContainerWithMidInvalidSignatureProfileNotAllowed(String signatureProfile) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
@@ -402,9 +406,9 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @DisplayName("Signing not allowed with invalid signature profiles")
-    @ParameterizedTest(name = "Mobile signing uploaded ASIC container not allowed with signatureProfile = ''{0}''")
-    @MethodSource("provideInvalidSignatureProfiles")
-    void signingUploadedAsicContainerWithMidInvalidSignatureProfileNotAllowed(String signatureProfile) throws Exception {
+    @ParameterizedTest(name = "Mobile signing uploaded ASiC-E container not allowed with signatureProfile = ''{0}''")
+    @MethodSource("provideInvalidSignatureProfilesForDatafileEndpoints")
+    void signingUploadedAsiceContainerWithMidInvalidSignatureProfileNotAllowed(String signatureProfile) throws Exception {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
 
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
@@ -413,7 +417,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void deleteToStartAsicMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void deleteToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
@@ -422,7 +426,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void putToStartAsicMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void putToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow, "request");
@@ -431,7 +435,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void getToStartAsicMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void getToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
@@ -440,7 +444,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void headToStartAsicMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void headToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
@@ -449,7 +453,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void optionsToStartAsicMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void optionsToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
@@ -458,7 +462,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void patchToStartAsicMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void patchToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
         Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
@@ -467,7 +471,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void deleteToAsicMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void deleteToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -478,7 +482,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void putToAsicMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void putToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -489,7 +493,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void postToAsicMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void postToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -500,7 +504,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void headToAsicMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void headToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -511,7 +515,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void optionsToAsicMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void optionsToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
@@ -522,7 +526,7 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void patchToAsicMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
+    void patchToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
         String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
