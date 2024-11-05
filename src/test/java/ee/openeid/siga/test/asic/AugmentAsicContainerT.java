@@ -8,11 +8,9 @@ import ee.openeid.siga.webapp.json.CreateContainerRemoteSigningResponse;
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse;
 import eu.europa.esig.dss.enumerations.MimeTypeEnum;
 import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -28,7 +26,6 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.ERROR_MESSAGE;
 import static ee.openeid.siga.test.helper.TestData.INVALID_CONTAINER;
-import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
@@ -429,26 +426,38 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    @Disabled   // TODO DD4J-1139: This container is currently not handled correctly by SiGa:
-                //  It passes the validation in SiGa and then throws an exception when SiGa tries to augment it.
-                //  If this container is augmentable, SiGa should augment it without exceptions.
-                //  Otherwise, the validation before augmentation should properly detect that it is not augmentable,
-                //  and SiGa should display proper error message instead of trying to augment it.
     void uploadAsicContainerAndTryAugmentingWithExpiredSignerCertificateAndExpiredTsCertificateFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureWithExpiredSignerAndTsCertificates.asice"));
 
         augment(flow).then()
-                .statusCode(400)
-                .body("errorMessage", equalTo("TODO"));
+                .statusCode(200);
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
         assertThat(validationResponse.statusCode(), equalTo(200));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
         assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURE_FORM), equalTo("ASiC-S"));
 
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LT"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2020-09-23T14:13:52Z"));
+        assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+
+        Response containerResponse = getContainer(flow);
+        assertThat(containerResponse.statusCode(), equalTo(200));
+        assertThat(containerResponse.getBody().path(CONTAINER_NAME), equalTo("containerSingleSignatureWithExpiredSignerAndTsCertificates.asics"));
+        String augmentedContainerBase64 = containerResponse.getBody().path(CONTAINER);
+        String mimeType = new String(extractEntryFromContainer(MIMETYPE, augmentedContainerBase64));
+        assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
+
+        byte[] innerContainer = extractEntryFromContainer("containerSingleSignatureWithExpiredSignerAndTsCertificates.asice", augmentedContainerBase64);
+        byte[] originalContainer = readFile("asic/containerSingleSignatureWithExpiredSignerAndTsCertificates.asice");
+        // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
+        //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
+        //       In that case, the zip archive contents comparison is not needed.
+        assertZipFilesEqual_entriesInExactOrder(originalContainer, innerContainer);
     }
 
     @Test
