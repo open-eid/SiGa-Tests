@@ -426,7 +426,7 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerAndTryAugmentingWithExpiredSignerCertificateAndExpiredTsCertificateFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    void uploadAsicContainerWithExpiredSignerAndTsCertificateAndAugmentReturnsAsics() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("containerSingleSignatureWithExpiredSignerAndTsCertificates.asice"));
 
         augment(flow).then()
