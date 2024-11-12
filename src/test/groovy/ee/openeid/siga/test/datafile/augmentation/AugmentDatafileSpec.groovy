@@ -9,10 +9,10 @@ import ee.openeid.siga.test.request.RequestData
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
-import org.hamcrest.Matchers
 import spock.lang.Tag
 
 import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
+import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
 @Epic("Datafile")
@@ -34,21 +34,21 @@ class AugmentDatafileSpec extends GenericSpecification {
 
         then: "augmentation is successful and signature is LTA"
         datafile.validateContainerInSession(flow).then().rootPath("validationConclusion.")
-                .body("signaturesCount", Matchers.is(1))
-                .body("validSignaturesCount", Matchers.is(1))
-                .body("signatureForm", Matchers.is("ASiC-E"))
-                .body("validationWarnings", Matchers.hasSize(1))
-                .body("validationWarnings.content", Matchers.hasItem(TestData.TEST_ENV_VALIDATION_WARNING))
+                .body("signaturesCount", is(1))
+                .body("validSignaturesCount", is(1))
+                .body("signatureForm", is("ASiC-E"))
+                .body("validationWarnings", hasSize(1))
+                .body("validationWarnings.content", hasItem(TestData.TEST_ENV_VALIDATION_WARNING))
 
-                .body("signatures[0].subjectDistinguishedName.commonName", Matchers.is("JÕEORG,JAAK-KRISTJAN,38001085718"))
-                .body("signatures[0].subjectDistinguishedName.serialNumber", Matchers.is("PNOEE-38001085718"))
+                .body("signatures[0].subjectDistinguishedName.commonName", is("JÕEORG,JAAK-KRISTJAN,38001085718"))
+                .body("signatures[0].subjectDistinguishedName.serialNumber", is("PNOEE-38001085718"))
                 .body("signatures[0].signatureFormat", matchesEnumName(SignatureFormat.XAdES_BASELINE_LTA))
                 .body("signatures[0].signatureLevel", matchesEnumName(SignatureLevel.QESIG))
-                .body("signatures[0].indication", Matchers.is("TOTAL-PASSED"))
-                .body("signatures[0].warnings", Matchers.hasSize(0))
-                .body("signatures[0].errors", Matchers.hasSize(0))
-                .body("signatures[0].claimedSigningTime", Matchers.is("2024-05-28T07:23:00Z"))
-                .body("signatures[0].info.bestSignatureTime", Matchers.is("2024-05-28T07:23:04Z"))
+                .body("signatures[0].indication", is("TOTAL-PASSED"))
+                .body("signatures[0].warnings", hasSize(0))
+                .body("signatures[0].errors", hasSize(0))
+                .body("signatures[0].claimedSigningTime", is("2024-05-28T07:23:00Z"))
+                .body("signatures[0].info.bestSignatureTime", is("2024-05-28T07:23:04Z"))
     }
 
     @Story("Augmentation of ASIC-E container")
@@ -62,29 +62,29 @@ class AugmentDatafileSpec extends GenericSpecification {
 
         then: "augmentation is successful and signature is LTA"
         datafile.validateContainerInSession(flow).then().rootPath("validationConclusion.")
-                .body("signaturesCount", Matchers.is(1))
+                .body("signaturesCount", is(1))
                 .body("signatures[0].signatureFormat", matchesEnumName(SignatureFormat.XAdES_BASELINE_LTA))
-                .body("signatures[0].indication", Matchers.is("TOTAL-PASSED"))
-                .body("signatures[0].warnings", Matchers.hasSize(0))
+                .body("signatures[0].indication", is("TOTAL-PASSED"))
+                .body("signatures[0].warnings", hasSize(0))
     }
 
     @Story("Augmentation of ASIC-E container")
     def "Augmenting uploaded container with #description is #result"() {
-        given: "upload container with single LT signature for augmentation"
+        given: "upload container with signatures"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(dataFile))
 
         when: "augment container in session"
         datafile.augmentContainer(flow)
 
-        then: "augmentation is successful and signature is LTA"
+        then: "augmentation is successful and containing signatures have LTA profile"
         datafile.validateContainerInSession(flow).then().rootPath("validationConclusion.")
-                .body("signatures.signatureFormat", Matchers.everyItem(matchesEnumName(SignatureFormat.XAdES_BASELINE_LTA)))
-                .body("signaturesCount", Matchers.is(validSignatures))
-                .body("signatures.indication", Matchers.everyItem(Matchers.is("TOTAL-PASSED")))
-                .body("signatures.warnings", Matchers.everyItem(Matchers.hasSize(0)))
+                .body("signatures.signatureFormat", everyItem(matchesEnumName(SignatureFormat.XAdES_BASELINE_LTA)))
+                .body("signaturesCount", is(validSignatures))
+                .body("signatures.indication", everyItem(is("TOTAL-PASSED")))
+                .body("signatures.warnings", everyItem(hasSize(0)))
 
         where:
-        description              | dataFile                                 | validSignatures || result
-        "multiple LT signatures" | "TEST_ESTEID2018_ASiC-E_XAdES_LT+LT.sce" | 2               || "allowed"
+        description              | dataFile                                 || validSignatures | result
+        "multiple LT signatures" | "TEST_ESTEID2018_ASiC-E_XAdES_LT+LT.sce" || 2               | "allowed"
     }
 }

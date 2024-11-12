@@ -11,7 +11,6 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Link
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
-import org.hamcrest.Matchers
 import spock.lang.Tag
 
 import static org.hamcrest.Matchers.is
@@ -107,7 +106,7 @@ class MidRequestHashcodeSpec extends GenericSpecification {
         then:
         hashcode.validateContainerInSession(flow)
                 .then()
-                .body("validationConclusion.validSignaturesCount", Matchers.is(1))
+                .body("validationConclusion.validSignaturesCount", is(1))
     }
 
     def "MID signing successful with all parameters in request"() {
@@ -129,6 +128,6 @@ class MidRequestHashcodeSpec extends GenericSpecification {
         then:
         hashcode.validateContainerInSession(flow)
                 .then()
-                .body("validationConclusion.validSignaturesCount", Matchers.is(1))
+                .body("validationConclusion.validSignaturesCount", is(1))
     }
 }

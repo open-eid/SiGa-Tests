@@ -10,10 +10,10 @@ import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.restassured.response.Response
-import org.hamcrest.Matchers
 import spock.lang.Tag
 
 import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
+import static org.hamcrest.Matchers.is
 
 @Tag("mobileId")
 @Epic("Hashcode")
@@ -35,7 +35,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
         then:
         hashcode.validateContainerInSession(flow)
                 .then()
-                .body("validationConclusion.validSignaturesCount", Matchers.is(1))
+                .body("validationConclusion.validSignaturesCount", is(1))
     }
 
     def "MID sign successful with following user: #userDescription"() {
@@ -48,7 +48,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
         then:
         hashcode.validateContainerInSession(flow)
                 .then()
-                .body("validationConclusion.validSignaturesCount", Matchers.is(2))
+                .body("validationConclusion.validSignaturesCount", is(2))
 
         where:
         userDescription                                                | personId      | phoneNo
@@ -71,7 +71,7 @@ class MidSigningHashcodeSpec extends GenericSpecification {
         then:
         hashcode.validateContainerInSession(flow)
                 .then()
-                .body("validationConclusion.validSignaturesCount", Matchers.is(2))
+                .body("validationConclusion.validSignaturesCount", is(2))
     }
 
     def "MID singing with one valid and second #description: validSignaturesCount = #validSignaturesCount"() {
@@ -92,10 +92,10 @@ class MidSigningHashcodeSpec extends GenericSpecification {
         then:
         Response validationResponse = hashcode.validateContainerInSession(flow)
 
-        validationResponse.then().body("validationConclusion.validSignaturesCount", Matchers.is(validSignaturesCount))
+        validationResponse.then().body("validationConclusion.validSignaturesCount", is(validSignaturesCount))
         if (validSignaturesCount == 1) {
             validationResponse.then().body("validationConclusion.signatures[0].subjectDistinguishedName.serialNumber",
-                    Matchers.is("60001019906"))
+                    is("60001019906"))
         }
 
         where:
@@ -138,8 +138,8 @@ class MidSigningHashcodeSpec extends GenericSpecification {
         then:
         hashcode.validateContainerInSession(flow)
                 .then()
-                .body("validationConclusion.signaturesCount", Matchers.is(1))
-                .body("validationConclusion.validSignaturesCount", Matchers.is(1))
+                .body("validationConclusion.signaturesCount", is(1))
+                .body("validationConclusion.validSignaturesCount", is(1))
 
         where:
         description                          | personId      | phone

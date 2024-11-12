@@ -44,7 +44,7 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
         String signatureId = startResponse.path("generatedSignatureId")
 
         when:
-        Response response = hashcode.getIntance().getMidSigningStatusRequest(flow, Method.HEAD, signatureId).head()
+        Response response = hashcodeRequests.getMidSigningStatusRequest(flow, Method.HEAD, signatureId).head()
 
         then:
         response.then().statusCode(200)

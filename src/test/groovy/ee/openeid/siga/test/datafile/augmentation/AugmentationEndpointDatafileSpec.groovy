@@ -24,13 +24,13 @@ class AugmentationEndpointDatafileSpec extends GenericSpecification {
 
     @Story("Augmentation endpoint checks")
     def "Augmentation with method #method is #result"() {
-        given: "upload container for augmentation"
+        given:
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerSingleSignatureValidUntil-2026-01-22.asice"))
 
-        when: "#method request"
-        Response response = datafile.getIntance().augmentationContainerRequest(flow, method).request(method)
+        when:
+        Response response = datafileRequests.augmentationContainerRequest(flow, method).request(method)
 
-        then: "status code is #httpStatus"
+        then:
         response.then().statusCode(httpStatus)
 
         where:
@@ -51,9 +51,9 @@ class AugmentationEndpointDatafileSpec extends GenericSpecification {
         hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(TestData.DEFAULT_HASHCODE_CONTAINER))
 
         when: "try augment request through hashcode endpoint"
-        Response response = hashcode.getIntance().augmentationContainerRequest(flow, Method.PUT).put()
+        Response response = hashcodeRequests.augmentationContainerRequest(flow, Method.PUT).put()
 
-        then: "status code is #httpStatus and body is present only with PUT method"
+        then: "status code is 404"
         response.then().statusCode(HttpStatus.SC_NOT_FOUND)
     }
 }

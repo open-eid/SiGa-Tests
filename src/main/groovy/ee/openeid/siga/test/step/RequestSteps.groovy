@@ -12,11 +12,11 @@ import org.apache.http.HttpStatus
 import spock.util.concurrent.PollingConditions
 
 abstract class RequestSteps {
-    abstract SigaRequests getIntance()
+    abstract SigaRequests getInstance()
 
     @Step("Create container")
     Response createContainer(Flow flow, Map request) {
-        Response response = getIntance().createContainerRequest(flow, Method.POST, request).post()
+        Response response = getInstance().createContainerRequest(flow, Method.POST, request).post()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
         return response
@@ -24,7 +24,7 @@ abstract class RequestSteps {
 
     @Step("Upload container")
     Response uploadContainer(Flow flow, Map request) {
-        Response response = getIntance().uploadContainerRequest(flow, Method.POST, request).post()
+        Response response = getInstance().uploadContainerRequest(flow, Method.POST, request).post()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
         return response
@@ -32,35 +32,35 @@ abstract class RequestSteps {
 
     @Step("Add data file")
     Response addDataFiles(Flow flow, Map request) {
-        Response response = getIntance().addDataFilesRequest(flow, Method.POST, request).post()
+        Response response = getInstance().addDataFilesRequest(flow, Method.POST, request).post()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get data files list")
     Response getDataFilesList(Flow flow) {
-        Response response = getIntance().getDataFilesRequest(flow, Method.GET).get()
+        Response response = getInstance().getDataFilesRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Delete data file")
     Response deleteDataFile(Flow flow, String datafileName) {
-        Response response = getIntance().deleteDataFileRequest(flow, Method.DELETE, datafileName).delete()
+        Response response = getInstance().deleteDataFileRequest(flow, Method.DELETE, datafileName).delete()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Start remote signing")
     Response startRemoteSigning(Flow flow, Map request) {
-        Response response = getIntance().startRemoteSigningRequest(flow, Method.POST, request).post()
+        Response response = getInstance().startRemoteSigningRequest(flow, Method.POST, request).post()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Finalize remote signing")
     Response finalizeRemoteSigning(Flow flow, Map request, String signatureId) {
-        Response response = getIntance().finalizeRemoteSigningRequest(flow, Method.PUT, request, signatureId).put()
+        Response response = getInstance().finalizeRemoteSigningRequest(flow, Method.PUT, request, signatureId).put()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
@@ -82,7 +82,7 @@ abstract class RequestSteps {
     }
 
     Response tryStartMidSigning(Flow flow, Map request) {
-        return getIntance().startMidSigningRequest(flow, Method.POST, request).post()
+        return getInstance().startMidSigningRequest(flow, Method.POST, request).post()
     }
 
     @Step("Poll MID signing status")
@@ -95,7 +95,7 @@ abstract class RequestSteps {
 
     @Step("Get MID signing status")
     Response tryGetMidSigningStatus(Flow flow, String signatureId) {
-        Response response = getIntance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
+        Response response = getInstance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
         flow.setMidStatus(response)
         return response
     }
@@ -111,14 +111,14 @@ abstract class RequestSteps {
 
     @Step("Start Smart-ID certificate choice")
     Response startSidCertificateChoice(Flow flow, Map request) {
-        Response response = getIntance().startSidCertificateChoiceRequest(flow, Method.POST, request).get()
+        Response response = getInstance().startSidCertificateChoiceRequest(flow, Method.POST, request).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get Smart-ID certificate selection status")
     Response getSidCertificateStatus(Flow flow, String certificateId) {
-        Response response = getIntance().getSidCertificateStatusRequest(flow, Method.GET, certificateId).get()
+        Response response = getInstance().getSidCertificateStatusRequest(flow, Method.GET, certificateId).get()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.setSidCertificateStatus(response)
         return response
@@ -126,14 +126,14 @@ abstract class RequestSteps {
 
     @Step("Start Smart-ID signing")
     Response startSidSigning(Flow flow, Map request) {
-        Response response = getIntance().startSidSigningRequest(flow, Method.POST, request).get()
+        Response response = getInstance().startSidSigningRequest(flow, Method.POST, request).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get Smart-ID signing status")
     Response tryGetSmartIdSigningStatus(Flow flow, String signatureId) {
-        Response response = getIntance().getSidSigningStatusRequest(flow, Method.GET, signatureId).get()
+        Response response = getInstance().getSidSigningStatusRequest(flow, Method.GET, signatureId).get()
         flow.setSidStatus(response)
         return response
     }
@@ -148,56 +148,56 @@ abstract class RequestSteps {
 
     @Step("Get signature list")
     Response getSignatureList(Flow flow) {
-        Response response = getIntance().getSignatureListRequest(flow, Method.GET).get()
+        Response response = getInstance().getSignatureListRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get timestamp list")
     Response getTimestampList(Flow flow) {
-        Response response = getIntance().getTimestampListRequest(flow, Method.GET).get()
+        Response response = getInstance().getTimestampListRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get signature info")
     Response getSignatureInfo(Flow flow, String signatureId) {
-        Response response = getIntance().getSignatureInfoRequest(flow, Method.GET, signatureId).get()
+        Response response = getInstance().getSignatureInfoRequest(flow, Method.GET, signatureId).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Validate container in session")
     Response validateContainerInSession(Flow flow) {
-        Response response = getIntance().getValidationReportInSessionRequest(flow, Method.GET).get()
+        Response response = getInstance().getValidationReportInSessionRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Validate container")
     Response validateContainer(Flow flow, Map request) {
-        Response response = getIntance().getValidationReportWithoutSessionRequest(flow, Method.GET, request).get()
+        Response response = getInstance().getValidationReportWithoutSessionRequest(flow, Method.GET, request).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Get container")
     Response getContainer(Flow flow) {
-        Response response = getIntance().getContainerRequest(flow, Method.GET).get()
+        Response response = getInstance().getContainerRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Delete container")
     Response deleteContainer(Flow flow) {
-        Response response = getIntance().deleteContainerRequest(flow, Method.GET).get()
+        Response response = getInstance().deleteContainerRequest(flow, Method.GET).get()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Augment container")
     Response augmentContainer(Flow flow) {
-        Response response = getIntance().augmentationContainerRequest(flow, Method.PUT).put()
+        Response response = getInstance().augmentationContainerRequest(flow, Method.PUT).put()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }

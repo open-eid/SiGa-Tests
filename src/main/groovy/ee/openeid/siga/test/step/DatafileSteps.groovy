@@ -7,7 +7,7 @@ import ee.openeid.siga.test.request.SigaRequests
 class DatafileSteps extends RequestSteps {
 
     @Override
-    SigaRequests getIntance() {
+    SigaRequests getInstance() {
         return DatafileRequests.instance
     }
 }

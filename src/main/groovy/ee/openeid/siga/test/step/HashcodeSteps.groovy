@@ -11,7 +11,7 @@ import io.restassured.response.Response
 class HashcodeSteps extends RequestSteps {
 
     @Override
-    SigaRequests getIntance() {
+    SigaRequests getInstance() {
         return HashcodeRequests.instance
     }
 
