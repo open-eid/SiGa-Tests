@@ -2,10 +2,12 @@ package ee.openeid.siga.test.util
 
 import ee.openeid.siga.test.ConfigHolder
 import ee.openeid.siga.test.TestConfig
+import io.restassured.response.Response
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.text.SimpleDateFormat
 import java.util.stream.Stream
 
 class Utils {
@@ -51,6 +53,34 @@ class Utils {
             return Files.readAllBytes(foundFile)
         } catch (IOException e) {
             throw new RuntimeException("Failed to read file '$filename' from path '$basePath'", e)
+        }
+    }
+
+    // Helper for testing, if there is a need to examine container
+    static void saveContainerFromResponse(Response response) {
+        String outputPath = "testsSavedFiles"
+        String base64Content = response.path("container").toString()
+        // If hashcode container, use default container name (hashcode response don't have container name)
+        String containerName = response.path("containerName") ? response.path("containerName").toString() : "hashcodeContainer.asice"
+
+        try {
+            // Ensure the output folder exists
+            File folder = new File(outputPath)
+            folder.mkdirs()
+
+            // Generate a timestamped file name
+            Date time = new Date()
+            String timestamp = new SimpleDateFormat('ddMMYYYY_HHmmssSSS').format(time)
+            String newContainerName = containerName.replaceFirst(/\.(?=[^\.]+$)/, "_${timestamp}.") // Find the last dot and replace it with timestamp
+
+            // Write the decoded content to the file
+            File file = new File(folder, newContainerName)
+            file.bytes = base64Content.decodeBase64() // Write decoded bytes in Groovy style
+            println "File saved successfully: ${file.absolutePath}"
+
+        } catch (e) {
+            println "Error saving file: ${e.message}"
+            e.printStackTrace()
         }
     }
 }
