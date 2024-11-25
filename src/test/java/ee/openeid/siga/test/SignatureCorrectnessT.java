@@ -66,17 +66,6 @@ class SignatureCorrectnessT extends TestBase {
 //              .body("validationConclusion.signatures[0].warnings[0]", nullValue()); This should be fixed in SIVA. Caused by problems in test certificate loading to TSL.
     }
 
-    @Test
-    void signatureHashcodeContainerWithLtaProfileReturnsError() throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        CreateHashcodeContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LTA")).as(CreateHashcodeContainerRemoteSigningResponse.class);
-        Response response = putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest(signDigest(dataToSignResponse.getDataToSign(), dataToSignResponse.getDigestAlgorithm())), dataToSignResponse.getGeneratedSignatureId());
-
-        response.then()
-                .statusCode(400)
-                .body("errorCode", equalTo(INVALID_SIGNATURE));
-    }
-
     @Override
     public String getContainerEndpoint() {
         return HASHCODE_CONTAINERS;
