@@ -52,8 +52,12 @@ abstract class RequestSteps {
     }
 
     @Step("Start remote signing")
+    Response tryStartRemoteSigning(Flow flow, Map requestBody) {
+        return getInstance().startRemoteSigningRequest(flow, Method.POST, requestBody).post()
+    }
+
     Response startRemoteSigning(Flow flow, Map request) {
-        Response response = getInstance().startRemoteSigningRequest(flow, Method.POST, request).post()
+        Response response = tryStartRemoteSigning(flow, request)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }

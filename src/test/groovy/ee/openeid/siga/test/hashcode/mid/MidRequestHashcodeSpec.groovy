@@ -66,22 +66,6 @@ class MidRequestHashcodeSpec extends GenericSpecification {
                 .body("errorCode", is(CommonErrorCode.INVALID_REQUEST))
     }
 
-    def "MID signing request not allowed with invalid profile: #profile"() {
-        given:
-        hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
-
-        when:
-        signingRequestBody["signatureProfile"] = profile
-        Response response = hashcode.tryStartMidSigning(flow, signingRequestBody)
-
-        then:
-        RequestErrorValidator.validate(response, RequestError.INVALID_PROFILE)
-
-        where:
-        profile << ["", " ", "123", "@!*", "UNKNOWN", "B_BES", "B_EPES", "LT_TM", "lt_TM", "lt_tm", "LT-TM", "LT TM", "T", "LTA"]
-    }
-
     def "MID signing not allowed with empty datafile in container"() {
         given:
         hashcode.uploadContainer(flow,
