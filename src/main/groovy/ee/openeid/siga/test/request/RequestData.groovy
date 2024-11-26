@@ -81,4 +81,14 @@ class RequestData {
     static Map remoteSigningFinalizeRequest(String signatureValue) {
         ["signatureValue": signatureValue]
     }
+
+    static Map sidCertificateChoiceRequestDefaultBody() {
+        ["personIdentifier": "30303039914",
+         "country"         : "EE"]
+    }
+
+    static Map sidSigningRequestDefaultBody(String documentNumber) {
+        ["documentNumber"  : documentNumber,
+         "signatureProfile": "LT"]
+    }
 }

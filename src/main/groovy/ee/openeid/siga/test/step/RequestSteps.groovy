@@ -14,6 +14,7 @@ import spock.util.concurrent.PollingConditions
 abstract class RequestSteps {
     abstract SigaRequests getInstance()
 
+    // CONTAINER ACTIONS
     @Step("Create container")
     Response createContainer(Flow flow, Map requestBody) {
         Response response = getInstance().createContainerRequest(flow, Method.POST, requestBody).post()
@@ -27,6 +28,20 @@ abstract class RequestSteps {
         Response response = getInstance().uploadContainerRequest(flow, Method.POST, requestBody).post()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
+        return response
+    }
+
+    @Step("Get container")
+    Response getContainer(Flow flow) {
+        Response response = getInstance().getContainerRequest(flow, Method.GET).get()
+        response.then().statusCode(HttpStatus.SC_OK)
+        return response
+    }
+
+    @Step("Delete container")
+    Response deleteContainer(Flow flow) {
+        Response response = getInstance().deleteContainerRequest(flow, Method.GET).delete()
+        response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
@@ -51,6 +66,7 @@ abstract class RequestSteps {
         return response
     }
 
+    // REMOTE SIGNING
     @Step("Start remote signing")
     Response tryStartRemoteSigning(Flow flow, Map requestBody) {
         return getInstance().startRemoteSigningRequest(flow, Method.POST, requestBody).post()
@@ -78,15 +94,23 @@ abstract class RequestSteps {
         )
     }
 
+    // MID SIGNING
     @Step("Start MID signing")
-    Response startMidSigning(Flow flow, Map request) {
-        Response response = tryStartMidSigning(flow, request)
+    Response tryStartMidSigning(Flow flow, Map requestBody) {
+        return getInstance().startMidSigningRequest(flow, Method.POST, requestBody).post()
+    }
+
+    Response startMidSigning(Flow flow, Map requestBody) {
+        Response response = tryStartMidSigning(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
-    Response tryStartMidSigning(Flow flow, Map request) {
-        return getInstance().startMidSigningRequest(flow, Method.POST, request).post()
+    @Step("Get MID signing status")
+    Response tryGetMidSigningStatus(Flow flow, String signatureId) {
+        Response response = getInstance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
+        flow.setMidStatus(response)
+        return response
     }
 
     @Step("Poll MID signing status")
@@ -95,13 +119,6 @@ abstract class RequestSteps {
         conditions.eventually {
             assert tryGetMidSigningStatus(flow, signatureId).path("midStatus") != "OUTSTANDING_TRANSACTION"
         }
-    }
-
-    @Step("Get MID signing status")
-    Response tryGetMidSigningStatus(Flow flow, String signatureId) {
-        Response response = getInstance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
-        flow.setMidStatus(response)
-        return response
     }
 
     def midSigning(Flow flow, String personId, String phoneNo) {
@@ -113,24 +130,48 @@ abstract class RequestSteps {
         pollForMidSigningStatus(flow, response.path("generatedSignatureId"))
     }
 
-    @Step("Start Smart-ID certificate choice")
-    Response startSidCertificateChoice(Flow flow, Map request) {
-        Response response = getInstance().startSidCertificateChoiceRequest(flow, Method.POST, request).get()
+    // SID SIGNING
+    @Step("Start Smart-ID Certificate Choice")
+    Response tryStartSidCertificateChoice(Flow flow, Map requestBody) {
+        return getInstance().startSidCertificateChoiceRequest(flow, Method.POST, requestBody).post()
+    }
+
+    Response startSidCertificateChoice(Flow flow, Map requestBody) {
+        Response response = tryStartSidCertificateChoice(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
-    @Step("Get Smart-ID certificate selection status")
-    Response getSidCertificateStatus(Flow flow, String certificateId) {
+    @Step("Get Smart-ID Certificate Choice status")
+    Response tryGetSidCertificateChoiceStatus(Flow flow, String certificateId) {
         Response response = getInstance().getSidCertificateStatusRequest(flow, Method.GET, certificateId).get()
-        response.then().statusCode(HttpStatus.SC_OK)
         flow.setSidCertificateStatus(response)
         return response
     }
 
+    @Step("Poll Smart-ID Certificate Choice status")
+    pollForSidCertificateChoiceStatus(Flow flow, String certificateId) {
+        def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
+        conditions.eventually {
+            assert tryGetSidCertificateChoiceStatus(flow, certificateId).path("sidStatus") != "OUTSTANDING_TRANSACTION"
+        }
+    }
+
+    @Step("Get Smart-ID document number")
+    String getSidDocumentNumber(Flow flow, Map certificateChoiceRequestBody) {
+        Response sidCertificateChoiceResponse = startSidCertificateChoice(flow, certificateChoiceRequestBody)
+        String generatedCertificateId = sidCertificateChoiceResponse.path("generatedCertificateId")
+        pollForSidCertificateChoiceStatus(flow, generatedCertificateId)
+        return flow.getSidCertificateStatus().path("documentNumber")
+    }
+
     @Step("Start Smart-ID signing")
-    Response startSidSigning(Flow flow, Map request) {
-        Response response = getInstance().startSidSigningRequest(flow, Method.POST, request).get()
+    Response tryStartSidSigning(Flow flow, Map requestBody) {
+        return getInstance().startSidSigningRequest(flow, Method.POST, requestBody).post()
+    }
+
+    Response startSidSigning(Flow flow, Map requestBody) {
+        Response response = tryStartSidSigning(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
@@ -150,6 +191,15 @@ abstract class RequestSteps {
         }
     }
 
+    @Step("Sign with Smart-ID successfully")
+    Response sidSigningSuccessful(Flow flow, Map certificateChoiceRequestBody) {
+        String documentNumber = getSidDocumentNumber(flow, certificateChoiceRequestBody)
+        Response startSigning = startSidSigning(flow, RequestData.sidSigningRequestDefaultBody(documentNumber))
+        pollForSidSigningStatus(flow, startSigning.path("generatedSignatureId"))
+        return flow.getSidStatus()
+    }
+
+    // SIG/TS LIST & INFO
     @Step("Get signature list")
     Response getSignatureList(Flow flow) {
         Response response = getInstance().getSignatureListRequest(flow, Method.GET).get()
@@ -171,6 +221,7 @@ abstract class RequestSteps {
         return response
     }
 
+    // VALIDATE
     @Step("Validate container in session")
     Response validateContainerInSession(Flow flow) {
         Response response = getInstance().getValidationReportInSessionRequest(flow, Method.GET).get()
@@ -185,20 +236,7 @@ abstract class RequestSteps {
         return response
     }
 
-    @Step("Get container")
-    Response getContainer(Flow flow) {
-        Response response = getInstance().getContainerRequest(flow, Method.GET).get()
-        response.then().statusCode(HttpStatus.SC_OK)
-        return response
-    }
-
-    @Step("Delete container")
-    Response deleteContainer(Flow flow) {
-        Response response = getInstance().deleteContainerRequest(flow, Method.GET).get()
-        response.then().statusCode(HttpStatus.SC_OK)
-        return response
-    }
-
+    // AUGMENTING
     @Step("Augment container")
     Response augmentContainer(Flow flow) {
         Response response = getInstance().augmentationContainerRequest(flow, Method.PUT).put()
