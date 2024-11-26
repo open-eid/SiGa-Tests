@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.remote
+package ee.openeid.siga.test.hashcode.sid
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
@@ -8,24 +8,28 @@ import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.restassured.response.Response
+import spock.lang.Tag
 
+import static ee.openeid.siga.test.TestData.DEFAULT_SID_DEMO_ACCOUNT
+
+@Tag("smartId")
 @Epic("Hashcode")
-@Feature("Remote signing endpoints validation")
-class RemoteHashcodeEndpointSpec extends GenericSpecification {
+@Feature("SID signing endpoints validation")
+class SidHashcodeEndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    def "Remote signing request not allowed with invalid profile: #profile"() {
-        given: "Upload container"
+    def "SID signing request not allowed with invalid profile: #profile"() {
+        given: "Upload container and use default SID Demo account"
         hashcode.createDefaultContainer(flow)
-        Map requestBody = RequestData.remoteSigningStartDefaultRequest()
+        Map signingRequestBody = RequestData.sidSigningRequestDefaultBody(DEFAULT_SID_DEMO_ACCOUNT)
 
         when: "Try signing with invalid profile"
-        requestBody["signatureProfile"] = profile
-        Response response = hashcode.tryStartRemoteSigning(flow, requestBody)
+        signingRequestBody["signatureProfile"] = profile
+        Response response = hashcode.tryStartSidSigning(flow, signingRequestBody)
 
         then: "Request validation error is returned"
         RequestErrorValidator.validate(response, RequestError.INVALID_PROFILE)

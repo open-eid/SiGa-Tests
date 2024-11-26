@@ -14,7 +14,7 @@ import spock.lang.Tag
 
 @Tag("mobileId")
 @Epic("Hashcode")
-@Feature("Mobile ID endpoint validation")
+@Feature("MID signing endpoints validation")
 class MidEndpointHashcodeSpec extends GenericSpecification {
     private Flow flow
 
@@ -65,15 +65,15 @@ class MidEndpointHashcodeSpec extends GenericSpecification {
     }
 
     def "MID signing request not allowed with invalid profile: #profile"() {
-        given:
+        given: "Upload container"
         hashcode.createDefaultContainer(flow)
         Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
 
-        when:
+        when: "Try signing with invalid profile"
         signingRequestBody["signatureProfile"] = profile
         Response response = hashcode.tryStartMidSigning(flow, signingRequestBody)
 
-        then:
+        then: "Request validation error is returned"
         RequestErrorValidator.validate(response, RequestError.INVALID_PROFILE)
 
         where:
