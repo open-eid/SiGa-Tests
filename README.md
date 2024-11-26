@@ -61,4 +61,4 @@ required ([instructions for download](https://allurereport.org/docs/gettingstart
 
 After running the tests, you can serve locally Allure report:
 
-`allure serve ./allure-results/`
+`allure serve ./target/allure-results/`
