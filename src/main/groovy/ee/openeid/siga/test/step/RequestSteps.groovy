@@ -15,24 +15,24 @@ abstract class RequestSteps {
     abstract SigaRequests getInstance()
 
     @Step("Create container")
-    Response createContainer(Flow flow, Map request) {
-        Response response = getInstance().createContainerRequest(flow, Method.POST, request).post()
+    Response createContainer(Flow flow, Map requestBody) {
+        Response response = getInstance().createContainerRequest(flow, Method.POST, requestBody).post()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
         return response
     }
 
     @Step("Upload container")
-    Response uploadContainer(Flow flow, Map request) {
-        Response response = getInstance().uploadContainerRequest(flow, Method.POST, request).post()
+    Response uploadContainer(Flow flow, Map requestBody) {
+        Response response = getInstance().uploadContainerRequest(flow, Method.POST, requestBody).post()
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
         return response
     }
 
     @Step("Add data file")
-    Response addDataFiles(Flow flow, Map request) {
-        Response response = getInstance().addDataFilesRequest(flow, Method.POST, request).post()
+    Response addDataFiles(Flow flow, Map requestBody) {
+        Response response = getInstance().addDataFilesRequest(flow, Method.POST, requestBody).post()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
@@ -56,8 +56,8 @@ abstract class RequestSteps {
         return getInstance().startRemoteSigningRequest(flow, Method.POST, requestBody).post()
     }
 
-    Response startRemoteSigning(Flow flow, Map request) {
-        Response response = tryStartRemoteSigning(flow, request)
+    Response startRemoteSigning(Flow flow, Map requestBody) {
+        Response response = tryStartRemoteSigning(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
@@ -178,9 +178,9 @@ abstract class RequestSteps {
         return response
     }
 
-    @Step("Validate container")
-    Response validateContainer(Flow flow, Map request) {
-        Response response = getInstance().getValidationReportWithoutSessionRequest(flow, Method.GET, request).get()
+    @Step("Validate container without session")
+    Response validateContainer(Flow flow, Map requestBody) {
+        Response response = getInstance().getValidationReportWithoutSessionRequest(flow, Method.GET, requestBody).post()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
