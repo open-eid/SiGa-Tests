@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is
 @Tag("mobileId")
 @Epic("Hashcode")
 @Feature("Mobile ID request validation")
-class MidRequestHashcodeSpec extends GenericSpecification {
+class RequestSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

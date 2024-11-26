@@ -15,7 +15,7 @@ import spock.lang.Tag
 @Tag("datafileContainer")
 @Epic("Datafile")
 @Feature("Augmentation")
-class AugmentationEndpointDatafileSpec extends GenericSpecification {
+class EndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

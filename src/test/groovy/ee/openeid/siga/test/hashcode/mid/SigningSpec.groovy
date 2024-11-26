@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is
 @Tag("mobileId")
 @Epic("Hashcode")
 @Feature("Mobile ID signing")
-class MidSigningHashcodeSpec extends GenericSpecification {
+class SigningSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

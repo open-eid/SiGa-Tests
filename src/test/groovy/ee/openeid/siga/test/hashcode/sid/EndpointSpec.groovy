@@ -15,7 +15,7 @@ import static ee.openeid.siga.test.TestData.DEFAULT_SID_DEMO_ACCOUNT
 @Tag("smartId")
 @Epic("Hashcode")
 @Feature("SID signing endpoints validation")
-class SidHashcodeEndpointSpec extends GenericSpecification {
+class EndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

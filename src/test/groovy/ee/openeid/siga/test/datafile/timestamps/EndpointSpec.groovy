@@ -14,7 +14,7 @@ import spock.lang.Tag
 @Tag("datafileContainer")
 @Epic("Datafile")
 @Feature("Timestamps")
-class TimestampsEndpointDatafileSpec extends GenericSpecification {
+class EndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

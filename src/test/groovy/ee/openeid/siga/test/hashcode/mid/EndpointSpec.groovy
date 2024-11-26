@@ -15,7 +15,7 @@ import spock.lang.Tag
 @Tag("mobileId")
 @Epic("Hashcode")
 @Feature("MID signing endpoints validation")
-class MidEndpointHashcodeSpec extends GenericSpecification {
+class EndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

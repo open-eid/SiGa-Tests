@@ -11,7 +11,7 @@ import io.restassured.response.Response
 
 @Epic("Hashcode")
 @Feature("Remote signing endpoints validation")
-class RemoteHashcodeEndpointSpec extends GenericSpecification {
+class EndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
