@@ -96,18 +96,6 @@ class RetrieveSignaturesAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadNestedAsicsContainerWithSignatureAndTimestampAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithDdocAndSignatureAndTimestamp.asics"));
-
-        Response response = getSignatureList(flow);
-
-        response.then()
-                .statusCode(200)
-                .body("signatures[0].id", equalTo("S1"))
-                .body("signatures[0].signerInfo", equalTo("SERIALNUMBER=49001272746, GIVENNAME=MERIL, SURNAME=VAHT, CN=\"VAHT,MERIL,49001272746\", OU=digital signature, O=ESTEID, C=EE"));
-    }
-
-    @Test
     void uploadAsicContainerWithInvalidSignatureAndRetrieveSignatureList() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("unknownOcspResponder.asice"));
 

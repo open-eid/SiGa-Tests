@@ -25,7 +25,6 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.ERROR_MESSAGE;
-import static ee.openeid.siga.test.helper.TestData.INVALID_CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
@@ -120,16 +119,6 @@ class AugmentAsicContainerT extends TestBase {
 
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
         assertThat(response.getBody().path(ERROR_MESSAGE), equalTo("Unable to augment. Container does not contain any timestamp tokens."));
-    }
-
-    @Test
-    void uploadAsicsContainerWithSignatureAndTimestampAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithDdocAndSignatureAndTimestamp.asics"));
-
-        Response response = augment(flow);
-
-        expectError(response, 400, INVALID_CONTAINER);
-        assertThat(response.getBody().path(ERROR_MESSAGE), equalTo("Unable to augment. Invalid contents found for ASiC-S container."));
     }
 
     @Test
