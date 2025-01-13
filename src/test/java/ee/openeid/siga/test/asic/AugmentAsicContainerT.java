@@ -155,7 +155,7 @@ class AugmentAsicContainerT extends TestBase {
 
         Response response = augment(flow);
 
-        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. Container contains only e-seals, but no Estonian personal signatures");
+        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. Container does not contain any trusted Estonian personal signatures");
     }
 
     @Test
