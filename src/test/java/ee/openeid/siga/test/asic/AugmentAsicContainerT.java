@@ -106,7 +106,7 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-09-09T12:13:34Z"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-PASSED"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedTime"), withinOneHourOfCurrentTime());
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
     }
@@ -322,7 +322,7 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2023-07-07T11:48:32Z"));
 
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
 
         Response containerResponse = getContainer(flow);
         assertThat(containerResponse.statusCode(), equalTo(200));
@@ -357,7 +357,7 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2021-02-15T14:59:07Z"));
 
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
 
         Response containerResponse = getContainer(flow);
         assertThat(containerResponse.statusCode(), equalTo(200));
@@ -397,7 +397,7 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].info.bestSignatureTime"), equalTo("2024-08-29T20:39:33Z"));
 
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
 
         Response containerResponse = getContainer(flow);
         assertThat(containerResponse.statusCode(), equalTo(200));
@@ -432,7 +432,7 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2020-09-23T14:13:52Z"));
         assertThat(((List<?>)validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS)).size(), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
 
         Response containerResponse = getContainer(flow);
         assertThat(containerResponse.statusCode(), equalTo(200));
