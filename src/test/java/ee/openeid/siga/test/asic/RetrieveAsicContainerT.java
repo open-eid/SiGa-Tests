@@ -64,12 +64,12 @@ class RetrieveAsicContainerT extends TestBase {
         Response response = getContainer(flow);
         response.then()
                 .statusCode(200)
-                .body(CONTAINER + ".length()", equalTo(9024))
+                .body(CONTAINER + ".length()", equalTo(2332))
                 .body(CONTAINER_NAME, equalTo(DEFAULT_ASICS_CONTAINER_NAME));
 
         XmlPath manifest = manifestAsXmlPath(extractEntryFromContainer(MANIFEST, response.path(CONTAINER).toString()));
 
-        assertEquals("application/x-ddoc", manifest.getString("manifest:manifest.manifest:file-entry[" + (1) + "].@manifest:media-type"));
+        assertEquals("text/plain", manifest.getString("manifest:manifest.manifest:file-entry[" + (1) + "].@manifest:media-type"));
     }
 
     @Test

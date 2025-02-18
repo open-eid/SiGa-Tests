@@ -8,6 +8,7 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import spock.lang.Tag
 
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME
 import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.is
 
@@ -24,7 +25,7 @@ class GetTimestampsSpec extends GenericSpecification {
     @Story("Get timestamps of ASiC container")
     def "Get timestamps from uploaded timestamped composite ASiC-S container is successful"() {
         given: "upload composite ASiC-S container with single timestamp"
-        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("asicsContainerWithDdocAndTimestamp.asics"))
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(DEFAULT_ASICS_CONTAINER_NAME))
 
         when: "get timestamps from container in session"
         def timestampsResponse = datafile.getTimestampList(flow)
@@ -32,8 +33,8 @@ class GetTimestampsSpec extends GenericSpecification {
         then: "List of retrieved timestamps contains a single timestamp"
         timestampsResponse.then()
                 .body("timestamps", hasSize(1))
-                .body("timestamps[0].id", is("T-519156403B8A19A11569455AA86FD01165C0209F55D6DB244333C001313AA5C9"))
-                .body("timestamps[0].creationTime", is("2024-09-09T12:13:34Z"))
+                .body("timestamps[0].id", is("T-E55313866A885F31E979704B0771C4DE7A119441D4414B1BD827FDD8256913DD"))
+                .body("timestamps[0].creationTime", is("2024-05-28T12:24:09Z"))
     }
 
     @Story("Get timestamps of ASiC container")

@@ -84,8 +84,8 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicsContainerWithTimestampAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
+    void uploadAsicsContainerWithInvalidInnerContainerAndTimestampAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithDdocAndTimestamp.asics"));
 
         augment(flow)
                 .then()
@@ -109,6 +109,31 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedTime"), withinOneHourOfCurrentTime());
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
+    }
+
+    @Test
+    void uploadAsicsContainerWithValidInnerContainerAndTimestampAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithBdocAndTimestamp.asics"));
+
+        augment(flow)
+                .then()
+                .statusCode(200)
+                .body("result", equalTo("OK"));
+
+        Response validationResponse = getValidationReportForContainerInSession(flow);
+        assertThat(validationResponse.statusCode(), equalTo(200));
+        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LT_TM"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("60001016970"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2023-07-07T11:48:32Z"));
+
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
+        assertThat(validationResponse.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-03-27T12:42:57Z"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-PASSED"));
     }
 
     @Test
