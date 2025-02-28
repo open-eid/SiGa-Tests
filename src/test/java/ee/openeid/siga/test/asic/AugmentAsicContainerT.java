@@ -23,7 +23,6 @@ import java.util.List;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
-import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.ERROR_MESSAGE;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
@@ -129,11 +128,13 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("60001016970"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2023-07-07T11:48:32Z"));
 
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
-        assertThat(validationResponse.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(2));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-03-27T12:42:57Z"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-PASSED"));
+
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
+        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
     }
 
     @Test
