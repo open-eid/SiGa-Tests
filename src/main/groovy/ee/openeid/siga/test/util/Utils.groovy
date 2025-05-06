@@ -3,6 +3,7 @@ package ee.openeid.siga.test.util
 import ee.openeid.siga.test.ConfigHolder
 import ee.openeid.siga.test.TestConfig
 import io.restassured.response.Response
+import org.apache.commons.lang3.StringUtils
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -15,11 +16,15 @@ class Utils {
 
 
     static boolean isRunningInDocker() {
-        def cgroupFile = new File('/proc/1/cgroup')
-        // Check if the OS is Linux and /proc/1/cgroup exists
-        if (System.getProperty('os.name').toLowerCase().contains('linux') && cgroupFile.exists()) {
-            // Check if /proc/1/cgroup contents contain the string "docker"
-            return cgroupFile.text.contains('docker')
+        if (StringUtils.containsIgnoreCase(System.getProperty('os.name'), 'linux')) {
+            def cgroupFile = new File('/proc/1/cgroup')
+            if (cgroupFile.exists() && cgroupFile.text.contains('docker')) {
+                return true
+            }
+            def cgroupV2File = new File('/proc/1/mountinfo')
+            if (cgroupV2File.exists() && cgroupV2File.text.contains('docker')) {
+                return true
+            }
         }
         return false
     }
@@ -71,7 +76,8 @@ class Utils {
             // Generate a timestamped file name
             Date time = new Date()
             String timestamp = new SimpleDateFormat('ddMMYYYY_HHmmssSSS').format(time)
-            String newContainerName = containerName.replaceFirst(/\.(?=[^\.]+$)/, "_${timestamp}.") // Find the last dot and replace it with timestamp
+            String newContainerName = containerName.replaceFirst(/\.(?=[^\.]+$)/, "_${timestamp}.")
+            // Find the last dot and replace it with timestamp
 
             // Write the decoded content to the file
             File file = new File(folder, newContainerName)

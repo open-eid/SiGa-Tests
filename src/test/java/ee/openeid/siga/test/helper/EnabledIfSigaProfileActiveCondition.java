@@ -17,10 +17,10 @@ public class EnabledIfSigaProfileActiveCondition implements ExecutionCondition {
 
     static {
         ClassLoader classLoader = EnabledIfSigaProfileActiveCondition.class.getClassLoader();
-        try (InputStream in = classLoader.getResourceAsStream("application-test.properties")) {
+        try (InputStream in = classLoader.getResourceAsStream("application.properties")) {
             PROPERTIES.load(in);
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to load application-test.properties", e);
+            throw new IllegalStateException("Failed to load application.properties", e);
         }
     }
 

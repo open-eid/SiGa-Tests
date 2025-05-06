@@ -1,11 +1,12 @@
 package ee.openeid.siga.test.helper;
 
-import ee.openeid.siga.test.LoggingFilter;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.test.util.AllureRestAssuredWithStep;
 import ee.openeid.siga.test.util.Utils;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.json.JSONObject;
@@ -36,7 +37,7 @@ public abstract class TestBase {
         properties = new Properties();
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            String path = classLoader.getResource("application-test.properties").getPath();
+            String path = classLoader.getResource("application.properties").getPath();
             properties.load(new FileInputStream(new File(path)));
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,10 +45,10 @@ public abstract class TestBase {
         }
         RestAssured.useRelaxedHTTPSValidation();
         addRestAssuredFilterSafely(new AllureRestAssuredWithStep());
-        boolean isLoggingEnabled = Boolean.parseBoolean(properties.getProperty("siga-test.logging.enabled")) || Utils.isLocal();
+        boolean isLoggingEnabled = Boolean.parseBoolean(properties.getProperty("rest-assured-console-logging")) || Utils.isLocal();
         if (isLoggingEnabled) {
-            int characterSplitLimit = Integer.parseInt(properties.getProperty("siga-test.logging.character-split-limit"));
-            addRestAssuredFilterSafely(new LoggingFilter(characterSplitLimit));
+            addRestAssuredFilterSafely(new RequestLoggingFilter());
+            addRestAssuredFilterSafely(new ResponseLoggingFilter());
         }
     }
 

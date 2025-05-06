@@ -18,13 +18,6 @@ class ConfigHolder {
                 props.load(it)
             }
         }
-        // Read properties from legacy configuration
-        URL legacyProperties = ConfigHolder.class.getResource("/application-test.properties")
-        if (legacyProperties) {
-            legacyProperties.withInputStream {
-                props.load(it)
-            }
-        }
         return ConfigFactory.create(TestConfig, props)
     }
 }

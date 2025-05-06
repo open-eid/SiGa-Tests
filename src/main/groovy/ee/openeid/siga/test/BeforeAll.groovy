@@ -4,6 +4,8 @@ import ee.openeid.siga.test.util.AllureRestAssuredWithStep
 import ee.openeid.siga.test.util.Utils
 import io.restassured.RestAssured
 import io.restassured.filter.Filter
+import io.restassured.filter.log.RequestLoggingFilter
+import io.restassured.filter.log.ResponseLoggingFilter
 
 @Singleton(strict = false)
 class BeforeAll {
@@ -20,11 +22,13 @@ class BeforeAll {
         // Relax validation
         RestAssured.useRelaxedHTTPSValidation()
         // Log requests and responses to console for debugging
-        // Enabled when not running in docker (i.e. running locally) or when toggled in configuration
-        if (Utils.isLocal() || conf.restAssuredConsoleLogging()) {
-//            RestAssured.filters(new LoggingFilter(conf.loggingCharacterSplitLimit()))
+        // Enabled when toggled in conf. If not configured, enabled when not running in docker (i.e. running locally).
+        if (conf.restAssuredConsoleLogging() != null ? conf.restAssuredConsoleLogging() : Utils.isLocal()) {
+//            RestAssured.filters(new RequestLoggingFilter())
+//            RestAssured.filters(new ResponseLoggingFilter())
 //             Temporary solution to prevent log duplication in Allure report. TODO: remove once JUnit tests are removed.
-            addRestAssuredFilterSafely(new LoggingFilter(conf.loggingCharacterSplitLimit()))
+            addRestAssuredFilterSafely(new RequestLoggingFilter())
+            addRestAssuredFilterSafely(new ResponseLoggingFilter())
         }
     }
 

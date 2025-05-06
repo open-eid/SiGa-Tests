@@ -34,11 +34,6 @@ interface TestConfig extends Config {
 
     @Key("rest-assured-console-logging")
     Boolean restAssuredConsoleLogging()
-
-    @Key("logging.character-split-limit")
-    @DefaultValue("10000")
-    Integer loggingCharacterSplitLimit()
-
 }
 
 class SigaProfileConverter implements Converter<SigaProfile> {
