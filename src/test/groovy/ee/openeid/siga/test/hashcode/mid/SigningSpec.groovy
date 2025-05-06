@@ -56,8 +56,8 @@ class SigningSpec extends GenericSpecification {
         "certificate issued under TEST of EID-SK 2016"                 | "60001017869" | "+37268000769"
         "certificate issued under TEST of ESTEID-SK 2015"              | "60001019906" | "+37200000766"
         "1 pair of RSA certificates"                                   | "39901019992" | "+37200001566"
-        "MID user is over 21 years old"                                | "45001019980" | "+37200001466"
-        "MID user is under 18 years old"                               | "61001019985" | "+37200001366"
+        "MID user is over 20 years old"                                | "60001017716" | "+37259100366"
+        "MID user is under 18 years old"                               | "51501017710" | "+37268100366"
     }
 
     def "MID sign per container with multiple users successful"() {

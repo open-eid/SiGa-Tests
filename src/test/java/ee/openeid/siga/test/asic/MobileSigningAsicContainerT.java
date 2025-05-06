@@ -98,9 +98,9 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void signAsiceContainerWithMidUserOver21Successfully() throws Exception {
+    void signAsiceContainerWithMidUserOver20Successfully() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("45001019980", "+37200001466", "LT"));
+        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001017716", "+37259100366", "LT"));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
         pollForMidSigning(flow, signatureId);
 
@@ -114,7 +114,7 @@ class MobileSigningAsicContainerT extends TestBase {
     @Test
     void signAsiceContainerWithMidUserUnder18Successfully() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("61001019985", "+37200001366", "LT"));
+        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("51501017710", "+37268100366", "LT"));
         String signatureId = response.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
         pollForMidSigning(flow, signatureId);
 
