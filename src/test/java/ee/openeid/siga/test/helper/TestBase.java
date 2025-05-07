@@ -200,6 +200,11 @@ public abstract class TestBase {
         return pollForSidSigningWithPollParameters(3500, 28000, flow, signatureId);
     }
 
+    // TODO: temporary solution for countering SIGA-424 related issues in tests
+    protected Response longPollForSidSigning(SigaApiFlow flow, String signatureId) {
+        return pollForSidSigningWithPollParameters(3500, 40000, flow, signatureId);
+    }
+
     @Step("Poll for Smart-ID signing response")
     protected Response pollForSidSigningWithPollParameters(Integer pollTimeInMillis, Integer pollLengthInMillis, SigaApiFlow flow, String signatureId) {
         with().pollInterval(pollTimeInMillis, MILLISECONDS).and().with().pollDelay(0, MILLISECONDS).atMost(pollLengthInMillis, MILLISECONDS)

@@ -409,8 +409,8 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
         Response signingRequest2 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
         String signatureId1 = signingRequest1.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         String signatureId2 = signingRequest2.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        pollForSidSigning(flow, signatureId1);
-        pollForSidSigning(flow, signatureId2);
+        longPollForSidSigning(flow, signatureId1);
+        longPollForSidSigning(flow, signatureId2);
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
 
@@ -426,8 +426,8 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
         Response signingRequest2 = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
         String signatureId1 = signingRequest1.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         String signatureId2 = signingRequest2.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        pollForSidSigning(flow, signatureId1);
-        pollForSidSigning(flow, signatureId2);
+        longPollForSidSigning(flow, signatureId1);
+        longPollForSidSigning(flow, signatureId2);
 
         Response validationResponse = getValidationReportForContainerInSession(flow);
 
