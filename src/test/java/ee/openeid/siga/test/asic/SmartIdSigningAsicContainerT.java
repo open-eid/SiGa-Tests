@@ -362,11 +362,12 @@ class SmartIdSigningAsicContainerT extends TestBase {
         signingResponse.then().statusCode(200);
     }
 
-    @Test
-    void signSmartIdAsicContainerInSessionWithSpecialCharNullInMessageToDisplayFails() throws Exception {
+    @ParameterizedTest(name = "Starting SID signing ASIC container not successful if messageToDisplay field contains char''{0}''")
+    @ValueSource(strings = {"\u0000","\n", "\r"})
+    void signSmartIdAsicContainerInSessionWithSpecialCharInMessageToDisplayFails(String specialChar) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
-        String messageToDisplay = "Special char = " + "\u0000";
+        String messageToDisplay = "Special char = " + specialChar;
         Response signingResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithMessageToDisplay(SID_EE_DEFAULT_DOCUMENT_NUMBER, messageToDisplay));
 
         expectError(signingResponse, 400, CLIENT_EXCEPTION, "Smart-ID service error");
