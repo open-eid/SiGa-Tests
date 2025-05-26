@@ -222,9 +222,15 @@ abstract class RequestSteps {
     }
 
     // VALIDATE
+    Response tryValidateContainerInSession(Flow flow) {
+        Response response = getInstance().getValidationReportInSessionRequest(flow, Method.GET).get()
+        return response
+
+    }
+
     @Step("Validate container in session")
     Response validateContainerInSession(Flow flow) {
-        Response response = getInstance().getValidationReportInSessionRequest(flow, Method.GET).get()
+        Response response = tryValidateContainerInSession(flow)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
