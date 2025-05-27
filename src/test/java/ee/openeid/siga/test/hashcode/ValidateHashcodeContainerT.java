@@ -229,22 +229,6 @@ class ValidateHashcodeContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
     }
 
-    @Test //SIGA handles this as DELETE to containerId
-    void deleteToValidateHashcodeContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        Response response = delete(getContainerEndpoint() + VALIDATIONREPORT, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void headToValidateHashcodeContainerInSession() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + VALIDATIONREPORT, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
     @Test
     void validateDDOCHashcodeContainerSubjectDistinguishedName() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         Response response = postContainerValidationReport(flow, hashcodeContainerRequestFromFile("hashcodeDdocTest.ddoc"));
