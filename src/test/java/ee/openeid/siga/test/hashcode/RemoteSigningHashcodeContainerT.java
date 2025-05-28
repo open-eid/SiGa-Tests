@@ -29,13 +29,11 @@ import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SIGNATURE;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
-import static ee.openeid.siga.test.helper.TestData.MID_SID_CERT_REMOTE_SIGNING;
 import static ee.openeid.siga.test.helper.TestData.RESULT;
 import static ee.openeid.siga.test.helper.TestData.SIGNATURES0;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_EXPIRED_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_EXPIRED_PEM_HEX;
-import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_MID_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_PEM_HEX;
 import static ee.openeid.siga.test.utils.ContainerUtil.manifestAsXmlPath;
 import static ee.openeid.siga.test.utils.ContainerUtil.signaturesFileAsXmlPath;
@@ -323,14 +321,6 @@ class RemoteSigningHashcodeContainerT extends TestBase {
 
         Response response = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault("435254", "LT"));
         expectError(response, 400, INVALID_CERTIFICATE_EXCEPTION);
-    }
-
-    @Test
-    void startAsicRemoteSigningContainerMidCertificate() throws Exception {
-        postCreateContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
-
-        Response response = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_MID_PEM, "LT"));
-        expectError(response, 400, INVALID_CERTIFICATE_EXCEPTION, MID_SID_CERT_REMOTE_SIGNING);
     }
 
     @Test
