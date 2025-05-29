@@ -222,13 +222,12 @@ abstract class RequestSteps {
     }
 
     // VALIDATE
+    @Step("Validate container in session")
     Response tryValidateContainerInSession(Flow flow) {
         Response response = getInstance().getValidationReportInSessionRequest(flow, Method.GET).get()
         return response
-
     }
 
-    @Step("Validate container in session")
     Response validateContainerInSession(Flow flow) {
         Response response = tryValidateContainerInSession(flow)
         response.then().statusCode(HttpStatus.SC_OK)
@@ -243,12 +242,12 @@ abstract class RequestSteps {
     }
 
     // AUGMENTING
+    @Step("Augment container")
     Response tryAugmentContainer(Flow flow) {
         Response response = getInstance().augmentationContainerRequest(flow, Method.PUT).put()
         return response
     }
 
-    @Step("Augment container")
     Response augmentContainer(Flow flow) {
         Response response = tryAugmentContainer(flow)
         response.then().statusCode(HttpStatus.SC_OK)
