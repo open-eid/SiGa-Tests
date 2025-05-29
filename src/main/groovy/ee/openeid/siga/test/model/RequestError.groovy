@@ -14,6 +14,7 @@ enum RequestError {
     INVALID_CERT("INVALID_CERTIFICATE_EXCEPTION", "Remote signing endpoint prohibits signing with Mobile-Id/Smart-Id certificate"),
 
     //AUGMENT ERRORS
+    NO_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any signatures"),
     NO_PERSONAL_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any trusted Estonian personal signatures")
 
     final String errorCode
