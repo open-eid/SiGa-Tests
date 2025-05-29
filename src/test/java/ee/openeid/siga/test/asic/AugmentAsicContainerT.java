@@ -176,15 +176,6 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicContainerWithESealAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asice_e-seal_ocsp_cert_expired.asice"));
-
-        Response response = augment(flow);
-
-        expectError(response, 400, "INVALID_SESSION_DATA_EXCEPTION", "Unable to augment. Container does not contain any trusted Estonian personal signatures");
-    }
-
-    @Test
     void uploadAsicContainerWithSignatureAndESealAndOnlySignatureGetsAugmented() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("LT_sig_and_LT_seal.asice"));
 

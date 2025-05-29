@@ -243,9 +243,14 @@ abstract class RequestSteps {
     }
 
     // AUGMENTING
+    Response tryAugmentContainer(Flow flow) {
+        Response response = getInstance().augmentationContainerRequest(flow, Method.PUT).put()
+        return response
+    }
+
     @Step("Augment container")
     Response augmentContainer(Flow flow) {
-        Response response = getInstance().augmentationContainerRequest(flow, Method.PUT).put()
+        Response response = tryAugmentContainer(flow)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
