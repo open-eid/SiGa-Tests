@@ -23,7 +23,7 @@ class HashcodeValidationEndpointSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Tag("SIGA-1091 - only POST should return 200")
+    @Tag("SIGA-1091")
     def "Validation with method #method is #result"() {
         when:
         Response response = hashcodeRequests.getValidationReportWithoutSessionRequest(flow, method, RequestData.uploadHashcodeRequestBody(DEFAULT_HASHCODE_CONTAINER)).request(method)
@@ -39,11 +39,11 @@ class HashcodeValidationEndpointSpec extends GenericSpecification {
         Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
-        Method.DELETE  || HttpStatus.SC_OK                 | "allowed" //SIGA handles this as DELETE to containerId
+        Method.DELETE  || HttpStatus.SC_OK                 | "allowed" //SIGA handles this as DELETE to containerId, SIGA-1091 - only POST should return 200
         Method.POST    || HttpStatus.SC_OK                 | "allowed"
     }
 
-    @Tag("SIGA-1091 - only GET should return 200")
+    @Tag("SIGA-1091")
     def "Validating container in session with method #method is #result"() {
         given:
         hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(DEFAULT_HASHCODE_CONTAINER))
@@ -56,7 +56,7 @@ class HashcodeValidationEndpointSpec extends GenericSpecification {
 
         where:
         method         || httpStatus                       | result
-        Method.HEAD    || HttpStatus.SC_OK                 | "allowed"
+        Method.HEAD    || HttpStatus.SC_OK                 | "allowed" //SIGA-1091 - only GET should return 200
         Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
