@@ -236,7 +236,7 @@ abstract class RequestSteps {
 
     @Step("Validate container without session")
     Response validateContainer(Flow flow, Map requestBody) {
-        Response response = getInstance().getValidationReportWithoutSessionRequest(flow, Method.GET, requestBody).post()
+        Response response = getInstance().getValidationReportWithoutSessionRequest(flow, Method.POST, requestBody).post()
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
