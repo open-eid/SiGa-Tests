@@ -47,4 +47,26 @@ class DatafileValidationReportSpec extends GenericSpecification {
                 .body("timeStampTokens[1].certificates", hasSize(3))
     }
 
+    def "Augmented XAdES signature validation report contains new archiveTimeStamps info"() {
+        when:
+        Response validationResponse = datafile.validateContainer(
+                flow, RequestData.uploadDatafileRequestBodyFromFile("TEST_ESTEID2018_ASiC-E_XAdES_LTA+LTA.sce"))
+
+        then:
+        validationResponse.then().rootPath("validationConclusion.signatures.info.")
+                .body("archiveTimeStamps[0].signedTime[0]", is("2025-06-09T14:43:20Z"))
+                .body("archiveTimeStamps[0].indication[0]", is("PASSED"))
+                .body("archiveTimeStamps[0].subIndication[0]", is(emptyOrNullString()))
+                .body("archiveTimeStamps[0].signedBy[0]", is("DEMO SK TIMESTAMPING UNIT 2025E"))
+                .body("archiveTimeStamps[0].country[0]", is("EE"))
+                .body("archiveTimeStamps[0].content[0]", startsWith("MIIHPQYJKoZIhvcNAQcCoIIHLjCCByoCAQMxDTALBg"))
+
+                .body("archiveTimeStamps[1].signedTime[0]", is("2025-06-09T14:43:20Z"))
+                .body("archiveTimeStamps[1].indication[0]", is("PASSED"))
+                .body("archiveTimeStamps[1].subIndication[0]", is(emptyOrNullString()))
+                .body("archiveTimeStamps[1].signedBy[0]", is("DEMO SK TIMESTAMPING UNIT 2025E"))
+                .body("archiveTimeStamps[1].country[0]", is("EE"))
+                .body("archiveTimeStamps[1].content[0]", startsWith("MIIHPAYJKoZIhvcNAQcCoIIHLTCCBykCAQMxDTALBg"))
+    }
+
 }
