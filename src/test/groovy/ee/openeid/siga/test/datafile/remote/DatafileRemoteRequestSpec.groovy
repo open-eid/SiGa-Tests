@@ -10,7 +10,9 @@ import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.restassured.response.Response
+import spock.lang.Tag
 
+@Tag("datafileContainer")
 @Epic("Datafile")
 @Feature("Remote signing request validation")
 class DatafileRemoteRequestSpec extends GenericSpecification {
