@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.sid
+package ee.openeid.siga.test.hashcode.sidSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
@@ -13,8 +13,8 @@ import spock.lang.Tag
 import static ee.openeid.siga.test.TestData.DEFAULT_SID_DEMO_ACCOUNT
 
 @Tag("smartId")
-@Epic("Hashcode")
-@Feature("SID signing endpoints validation")
+@Epic("Smart-ID signing (hashcode)")
+@Feature("SID endpoint validation")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 

@@ -1,7 +1,6 @@
 package ee.openeid.siga.test.datafile.timestamps
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.helper.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import io.qameta.allure.Epic
@@ -15,8 +14,8 @@ import spock.lang.Tag
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME
 
 @Tag("datafileContainer")
-@Epic("Datafile")
-@Feature("Timestamps")
+@Epic("Timestamps")
+@Feature("Timestamps endpoint checks")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 
@@ -24,7 +23,7 @@ class EndpointSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Story("Timestamps endpoint checks")
+    @Story("Timestamps HTTP method check")
     def "Timestamps with method #method is #result"() {
         given: "upload container for retrieving the timestamps"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(DEFAULT_ASICS_CONTAINER_NAME))

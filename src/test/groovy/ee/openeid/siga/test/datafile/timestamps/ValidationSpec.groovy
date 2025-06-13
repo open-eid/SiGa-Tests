@@ -13,16 +13,16 @@ import static org.hamcrest.Matchers.hasSize
 import static org.hamcrest.Matchers.is
 
 @Tag("datafileContainer")
-@Epic("Datafile")
-@Feature("Timestamps")
-class GetTimestampsSpec extends GenericSpecification {
+@Epic("Timestamps")
+@Feature("Get ASiC container timestamps")
+class ValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Story("Get timestamps of ASiC container")
+    @Story("Timestamped ASiC-S returns timestamps")
     def "Get timestamps from uploaded timestamped composite ASiC-S container is successful"() {
         given: "upload composite ASiC-S container with single timestamp"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(DEFAULT_ASICS_CONTAINER_NAME))
@@ -37,7 +37,7 @@ class GetTimestampsSpec extends GenericSpecification {
                 .body("timestamps[0].creationTime", is("2024-05-28T12:24:09Z"))
     }
 
-    @Story("Get timestamps of ASiC container")
+    @Story("ASiC container without timestamps returns empty list")
     def "Get timestamps from uploaded #containerType container without timestamps returns empty list"() {
         given: "upload container without timestamps"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(fileName))

@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.validation
+package ee.openeid.siga.test.hashcode.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
@@ -13,10 +13,9 @@ import spock.lang.Tag
 
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_HASHCODE_CONTAINER
 
-@Epic("Hashcode")
-@Feature("Validate hashcode container")
-@Story("Validation endpoint checks")
-class HashcodeValidationEndpointSpec extends GenericSpecification {
+@Epic("Validation Report (hashcode)")
+@Feature("Validate endpoint checks")
+class EndpointSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
@@ -24,6 +23,7 @@ class HashcodeValidationEndpointSpec extends GenericSpecification {
     }
 
     @Tag("SIGA-1091")
+    @Story("Validate without session HTTP method check")
     def "Validation with method #method is #result"() {
         when:
         Response response = hashcodeRequests.getValidationReportWithoutSessionRequest(flow, method, RequestData.uploadHashcodeRequestBody(DEFAULT_HASHCODE_CONTAINER)).request(method)
@@ -44,6 +44,7 @@ class HashcodeValidationEndpointSpec extends GenericSpecification {
     }
 
     @Tag("SIGA-1091")
+    @Story("Validate with session HTTP method check")
     def "Validating container in session with method #method is #result"() {
         given:
         hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(DEFAULT_HASHCODE_CONTAINER))

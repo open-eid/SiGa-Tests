@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.datafile.validation
+package ee.openeid.siga.test.datafile.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
@@ -11,9 +11,9 @@ import spock.lang.Tag
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
-@Epic("Datafile")
-@Feature("Validation Report")
-class DatafileValidationReportSpec extends GenericSpecification {
+@Epic("Validation Report (datafile)")
+@Feature("Get augmented container report")
+class ValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

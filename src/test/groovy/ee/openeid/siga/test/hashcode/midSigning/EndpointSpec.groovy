@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.mid
+package ee.openeid.siga.test.hashcode.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
@@ -13,8 +13,8 @@ import io.restassured.response.Response
 import spock.lang.Tag
 
 @Tag("mobileId")
-@Epic("Hashcode")
-@Feature("MID signing endpoints validation")
+@Epic("Mobile-ID signing (hashcode)")
+@Feature("MID endpoint validation")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 

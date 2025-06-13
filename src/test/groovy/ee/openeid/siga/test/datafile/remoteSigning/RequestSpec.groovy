@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.datafile.remote
+package ee.openeid.siga.test.datafile.remoteSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.helper.TestData
@@ -13,9 +13,9 @@ import io.restassured.response.Response
 import spock.lang.Tag
 
 @Tag("datafileContainer")
-@Epic("Datafile")
+@Epic("Remote signing (datafile)")
 @Feature("Remote signing request validation")
-class DatafileRemoteRequestSpec extends GenericSpecification {
+class RequestSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

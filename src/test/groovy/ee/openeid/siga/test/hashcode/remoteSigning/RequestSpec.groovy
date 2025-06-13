@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.remote
+package ee.openeid.siga.test.hashcode.remoteSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.helper.TestData
@@ -11,9 +11,9 @@ import io.qameta.allure.Feature
 import io.qameta.allure.Story
 import io.restassured.response.Response
 
-@Epic("Hashcode")
+@Epic("Remote signing (hashcode)")
 @Feature("Remote signing request validation")
-class HashcodeRemoteRequestSpec extends GenericSpecification {
+class RequestSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

@@ -13,8 +13,8 @@ import org.apache.http.HttpStatus
 import spock.lang.Tag
 
 @Tag("datafileContainer")
-@Epic("Datafile")
-@Feature("Augmentation")
+@Epic("Augmentation")
+@Feature("Augmentation endpoint checks")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 
@@ -22,7 +22,7 @@ class EndpointSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Story("Augmentation endpoint checks")
+    @Story("Augmentation HTTP method check")
     def "Augmentation with method #method is #result"() {
         given:
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerSingleSignatureValidUntil-2026-01-22.asice"))
@@ -45,7 +45,7 @@ class EndpointSpec extends GenericSpecification {
         Method.PUT     || HttpStatus.SC_OK                 | "allowed"
     }
 
-    @Story("Augmentation endpoint checks")
+    @Story("Augmentation not supported in hashcode")
     def "Augmentation endpoint not allowed in hashcode mode"() {
         given: "upload container for augmentation"
         hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(TestData.DEFAULT_HASHCODE_CONTAINER))
