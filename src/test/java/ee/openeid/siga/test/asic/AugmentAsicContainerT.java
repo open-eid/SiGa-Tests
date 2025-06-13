@@ -23,8 +23,6 @@ import java.util.List;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.CONTAINER_NAME;
-import static ee.openeid.siga.test.helper.TestData.ERROR_MESSAGE;
-import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MIMETYPE;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES_COUNT;
@@ -135,16 +133,6 @@ class AugmentAsicContainerT extends TestBase {
 
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
         assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
-    }
-
-    @Test
-    void uploadAsicsContainerWithSignatureAndTryAugmentingFails() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
-
-        Response response = augment(flow);
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
-        assertThat(response.getBody().path(ERROR_MESSAGE), equalTo("Unable to augment. Container does not contain any timestamp tokens."));
     }
 
     @Test

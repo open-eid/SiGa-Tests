@@ -15,7 +15,8 @@ enum RequestError {
 
     //AUGMENT ERRORS
     NO_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any signatures"),
-    NO_PERSONAL_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any trusted Estonian personal signatures")
+    NO_PERSONAL_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any trusted Estonian personal signatures"),
+    INVALID_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. The datafile in ASiC-S container must be a valid container.")
 
     final String errorCode
     final String errorMessage
