@@ -12,11 +12,13 @@ enum RequestError {
     INVALID_RESOURCE("RESOURCE_NOT_FOUND_EXCEPTION", "Session not found"),
     MISSING_SIGNATURES(CommonErrorCode.INVALID_CONTAINER, "Missing signatures"),
     INVALID_CERT("INVALID_CERTIFICATE_EXCEPTION", "Remote signing endpoint prohibits signing with Mobile-Id/Smart-Id certificate"),
+    INVALID_CONTAINER(CommonErrorCode.INVALID_CONTAINER, "Invalid container"),
 
     //AUGMENT ERRORS
     NO_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any signatures"),
     NO_PERSONAL_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any trusted Estonian personal signatures"),
-    INVALID_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. The datafile in ASiC-S container must be a valid container.")
+    INVALID_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. The datafile in ASiC-S container must be a valid container."),
+    NO_TIMESTAMPS(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any timestamp tokens."),
 
     final String errorCode
     final String errorMessage

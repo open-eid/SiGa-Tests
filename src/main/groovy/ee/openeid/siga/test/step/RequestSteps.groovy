@@ -24,8 +24,13 @@ abstract class RequestSteps {
     }
 
     @Step("Upload container")
-    Response uploadContainer(Flow flow, Map requestBody) {
+    Response tryUploadContainer(Flow flow, Map requestBody) {
         Response response = getInstance().uploadContainerRequest(flow, Method.POST, requestBody).post()
+        return response
+    }
+
+    Response uploadContainer(Flow flow, Map requestBody) {
+        Response response = tryUploadContainer(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
         return response
