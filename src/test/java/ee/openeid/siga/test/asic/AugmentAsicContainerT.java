@@ -81,61 +81,6 @@ class AugmentAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsicsContainerWithInvalidInnerContainerAndTimestampAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithDdocAndTimestamp.asics"));
-
-        augment(flow)
-                .then()
-                .statusCode(200)
-                .body("result", equalTo("OK"));
-
-        Response validationResponse = getValidationReportForContainerInSession(flow);
-        assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(0));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("DIGIDOC_XML_1.3"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2019-12-12T09:00:52Z"));
-
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(2));
-        assertThat(validationResponse.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-09-09T12:13:34Z"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-PASSED"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedTime"), withinOneHourOfCurrentTime());
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
-    }
-
-    @Test
-    void uploadAsicsContainerWithValidInnerContainerAndTimestampAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithBdocAndTimestamp.asics"));
-
-        augment(flow)
-                .then()
-                .statusCode(200)
-                .body("result", equalTo("OK"));
-
-        Response validationResponse = getValidationReportForContainerInSession(flow);
-        assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LT_TM"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("60001016970"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2023-07-07T11:48:32Z"));
-
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(2));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-03-27T12:42:57Z"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].indication"), equalTo("TOTAL-PASSED"));
-
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].signedBy"), equalTo("DEMO SK TIMESTAMPING UNIT 2025E"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[1].indication"), equalTo("TOTAL-PASSED"));
-    }
-
-    @Test
     // TODO SIGA-865: Signature with expired OCSP should maybe not be augmented
     void uploadAsicContainerWithSignatureWithExpiredOcspAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile("asice_ocsp_cert_expired.asice"));

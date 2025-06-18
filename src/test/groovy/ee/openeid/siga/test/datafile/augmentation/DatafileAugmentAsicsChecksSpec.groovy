@@ -25,7 +25,7 @@ class DatafileAugmentAsicsChecksSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Story("The container must not contain any signatures")
+    @Story("ASiC-S container must not contain any signatures")
     def "Augmenting ASiC-S with #description is not allowed"() {
         given: "upload composite container"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(fileName))
@@ -64,7 +64,7 @@ class DatafileAugmentAsicsChecksSpec extends GenericSpecification {
         "ASiC-S"            | "asicsContainerWithAsicsAndTimestamp.asics" | "2024-10-24T08:33:03Z"
         "ASiC-E"            | "asicsContainerWithAsiceAndTimestamp.asics" | "2025-01-13T17:28:36Z"
         "BDOC"              | "asicsContainerWithBdocAndTimestamp.asics"  | "2024-03-27T12:42:57Z"
-        "DDOC"              | "asicsContainerWithDdocAndTimestamp.asics"  | "2025-06-18T17:21:06Z"
+        "DDOC"              | "ValidDDOCinsideAsics.asics"                | "2025-04-04T08:23:44Z"
     }
 
     @Story("Allowed nested container types in ASiC-S are ASiC, BDOC and DDOC")
