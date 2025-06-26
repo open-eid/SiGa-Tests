@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.mid
+package ee.openeid.siga.test.hashcode.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
@@ -16,9 +16,9 @@ import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
 import static org.hamcrest.Matchers.is
 
 @Tag("mobileId")
-@Epic("Hashcode")
-@Feature("Mobile ID signing")
-class SigningSpec extends GenericSpecification {
+@Epic("Mobile-ID signing (hashcode)")
+@Feature("MID signing validation")
+class ValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

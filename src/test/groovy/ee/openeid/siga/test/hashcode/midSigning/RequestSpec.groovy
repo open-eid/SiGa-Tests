@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.hashcode.mid
+package ee.openeid.siga.test.hashcode.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.CommonErrorCode
@@ -16,8 +16,8 @@ import spock.lang.Tag
 import static org.hamcrest.Matchers.is
 
 @Tag("mobileId")
-@Epic("Hashcode")
-@Feature("Mobile ID request validation")
+@Epic("Mobile-ID signing (hashcode)")
+@Feature("MID request validation")
 class RequestSpec extends GenericSpecification {
     private Flow flow
 

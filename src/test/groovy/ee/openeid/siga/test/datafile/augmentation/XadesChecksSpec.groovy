@@ -12,16 +12,16 @@ import io.restassured.response.Response
 import spock.lang.Tag
 
 @Tag("datafileContainer")
-@Epic("Datafile")
-@Feature("Augmentation")
-@Story("Augmentation checks")
-class DatafileAugmentChecksSpec extends GenericSpecification {
+@Epic("Augmentation")
+@Feature("XAdES signature augmentation checks")
+class XadesChecksSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
         flow = Flow.buildForDefaultTestClientService()
     }
 
+    @Story("Augmentation requires at least one signature")
     def "Augmenting unsigned container returns no signature error"() {
         given: "upload container"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerWithoutSignatures.asice"))
@@ -33,6 +33,7 @@ class DatafileAugmentChecksSpec extends GenericSpecification {
         RequestErrorValidator.validate(response, RequestError.NO_SIGNATURES)
     }
 
+    @Story("Augmentation requires at least one signature")
     def "Augmenting container only with #description returns no personal signature error"() {
         given: "upload container"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(container))

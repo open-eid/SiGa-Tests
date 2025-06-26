@@ -9,17 +9,15 @@ import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.Utils
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
-import io.qameta.allure.Story
 import spock.lang.Tag
 
 import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
-@Epic("Datafile")
-@Feature("Augmentation")
-@Story("Augmentation of XAdES signature")
-class XadesSignatureSpec extends GenericSpecification {
+@Epic("Augmentation")
+@Feature("XAdES signature augmentation validation")
+class XadesValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
