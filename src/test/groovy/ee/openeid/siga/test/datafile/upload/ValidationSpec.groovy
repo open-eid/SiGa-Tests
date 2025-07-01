@@ -14,7 +14,7 @@ import spock.lang.Tag
 @Tag("datafileContainer")
 @Epic("Upload container (datafile)")
 @Feature("Upload container validation")
-class DatafileUploadContainerSpec extends GenericSpecification {
+class ValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

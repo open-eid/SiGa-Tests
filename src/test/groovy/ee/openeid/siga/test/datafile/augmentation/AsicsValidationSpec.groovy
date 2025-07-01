@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is
 @Tag("datafileContainer")
 @Epic("Augmentation")
 @Feature("ASiC-S augmentation validation")
-class DatafileAugmentAsicsSpec extends GenericSpecification {
+class AsicsValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {
