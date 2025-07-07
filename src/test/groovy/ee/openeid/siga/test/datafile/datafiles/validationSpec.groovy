@@ -37,8 +37,8 @@ class validationSpec extends GenericSpecification {
 
         where:
         nestedContainer | containerName                               | fileContent
-        "ASiC-E"        | "asicsContainerWithAsiceAndTimestamp.asics" | "dGVzdA=="
-        "ASiC-S"        | "asicsContainerWithAsicsAndTimestamp.asics" | "VGhpcyBpcyB0ZXN0IGZpbGUgZm9yIHRlc3RpbmcgcHVycG9zZSE="
+        "ASiC-E"        | "timestampedAsicsWithAsice.asics" | "dGVzdA=="
+        "ASiC-S"        | "timestampedAsicsWithTimestampedAsics.asics" | "VGhpcyBpcyB0ZXN0IGZpbGUgZm9yIHRlc3RpbmcgcHVycG9zZSE="
         "BDOC"          | "asicsContainerWithBdocAndTimestamp.asics"  | "VGhpcyBpcyBhIHRlc3QgZmlsZS4="
         "DDOC"          | "ValidDDOCinsideAsics.asics"                | "VGVzdCBhbmQgc29tZSBvdGhlciB0ZXN0"
     }
@@ -57,8 +57,8 @@ class validationSpec extends GenericSpecification {
 
         where:
         nestedContainer | containerName                                           | dataFiles
-        "ASiC-E"        | "asicsWithAsiceWithMultipleDatafilesAndTimestamp.asics" | ["CSV_test.csv", "PNG testfail.png", "Test.pdf", "TEST_TwoDatafiles_LT.asice"]
-        "ASiC-S"        | "asicsWithAsicsAndTimestampWithAsice.asics"             | ["TEST_ESTEID2018_ASiC-E_XAdES_LT.sce"]
+        "ASiC-E"        | "timestampedAsicsWithAsiceWithMultipleDatafiles.asics" | ["CSV_test.csv", "PNG testfail.png", "Test.pdf", "TEST_TwoDatafiles_LT.asice"]
+        "ASiC-S"        | "timestampedAsicsWithTimestampedAsicsWithAsice.asics"             | ["TEST_ESTEID2018_ASiC-E_XAdES_LT.sce"]
     }
 
     @Story("Get timestamped ASiC-S nested container datafiles")
@@ -75,9 +75,19 @@ class validationSpec extends GenericSpecification {
 
         where:
         datafileType | containerName                                   | dataFile
-        "CDOC"       | "asicsContainerWithCdocAndTimestamp.asics"      | "test.cdoc"
-        "DOCX"       | "asicsContainerWithDocxAndTimestamp.asics"      | "Test.docx"
-        "PDF"        | "asicsContainerWithSignedPdfAndTimestamp.asics" | "pdfSingleSignature.pdf"
+        "CDOC"       | "timestampedAsicsWithCdoc.asics"      | "test.cdoc"
+        "DOCX"       | "timestampedAsicsWithDocx.asics"      | "Test.docx"
+        "PDF"        | "timestampedAsicsWithSignedPdf.asics" | "pdfSingleSignature.pdf"
     }
 
 }
+
+
+/*
+Kui ASiC-S konteinerisse on kapseldatud sisemine ASiC-E, BDOC või DDOC konteiner,
+peaks SiGa tegema selle sisemise konteineri andmefailid kättesaadavaks nii, nagu oleks tegu välise konteineri andmefailidega,
+st kasutaja jaoks läbipaistvalt. Sisemist konteinerit ennast ei tohiks andmefailina tagastada.
+Kuna selliste kapseldatud konteinerite puhul on tegu arhiveeritud konteineritega, on sisemise konteineri muutmine keelatud,
+nii et igasugused katsed andmefaile lisada, muuta või kustutada peavad tagastama veateate.
+Aga kui andmefaile päritakse, tuleb tagastada sisemise konteineri andmefailid.
+*/

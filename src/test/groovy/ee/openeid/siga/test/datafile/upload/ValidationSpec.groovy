@@ -33,7 +33,7 @@ class ValidationSpec extends GenericSpecification {
         description                     | fileName
         "XAdES signature and timestamp" | "XadesMixedWithTst.asics"
         "CAdES signature and timestamp" | "CadesMixedWithTst.asics"
-        "CAdES signature"               | "asicsWithDdocWithCadesWithoutTimestamp.asics"
+        "CAdES signature"               | "cadesAsicsWithDdoc.asics"
         "additional folder"             | "AdditionalFolderInAsics.asics"
         "datafile missing"              | "DataFileMissingAsics.asics"
     }

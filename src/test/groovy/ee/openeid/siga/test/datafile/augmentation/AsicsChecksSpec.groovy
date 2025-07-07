@@ -61,8 +61,8 @@ class AsicsChecksSpec extends GenericSpecification {
 
         where:
         nestedContainerType | fileName                                    | firstTsTime
-        "ASiC-S"            | "asicsContainerWithAsicsAndTimestamp.asics" | "2024-10-24T08:33:03Z"
-        "ASiC-E"            | "asicsContainerWithAsiceAndTimestamp.asics" | "2025-01-13T17:28:36Z"
+        "ASiC-S"            | "timestampedAsicsWithTimestampedAsics.asics" | "2024-10-24T08:33:03Z"
+        "ASiC-E"            | "timestampedAsicsWithAsice.asics" | "2025-01-13T17:28:36Z"
         "BDOC"              | "asicsContainerWithBdocAndTimestamp.asics"  | "2024-03-27T12:42:57Z"
         "DDOC"              | "ValidDDOCinsideAsics.asics"                | "2025-04-04T08:23:44Z"
     }
@@ -81,9 +81,9 @@ class AsicsChecksSpec extends GenericSpecification {
         where:
         nestedFileType | fileName
         "TXT"          | "asicsContainerWithTxtFileAndTimestamp.asics"
-        "PDF"          | "asicsContainerWithSignedPdfAndTimestamp.asics"
-        "DOCX"         | "asicsContainerWithDocxAndTimestamp.asics"
-        "CDOC"         | "asicsContainerWithCdocAndTimestamp.asics"
+        "PDF"          | "timestampedAsicsWithSignedPdf.asics"
+        "DOCX"         | "timestampedAsicsWithDocx.asics"
+        "CDOC"         | "timestampedAsicsWithCdoc.asics"
     }
 
 

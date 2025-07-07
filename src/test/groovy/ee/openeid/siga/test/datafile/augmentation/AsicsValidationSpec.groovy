@@ -46,10 +46,10 @@ class AsicsValidationSpec extends GenericSpecification {
         where:
         description                           | fileName                                          | firstTsTime
         "valid nested container"              | "asicsContainerWithBdocAndTimestamp.asics"        | "2024-03-27T12:42:57Z"
-        "without manifest file"               | "asicsWithDdocAndTimestampAndNoManifest.asics"    | "2025-06-18T17:21:06Z"
-        "invalid nested container"            | "asicsContainerWithInvalidDdocAndTimestamp.asics" | "2024-09-09T12:13:34Z"
-        "untrusted timestamp"                 | "asicsWithAsicsAndBaltstampTimestamp.asics"       | "2025-06-19T10:16:44Z"
-//        "special chars in nested ASiC-S name" | "asicsWithAsicsWithSpecialCharsInFilename.asics"  | ""
+        "without manifest file"               | "timestampedAsicsWithDdocAndNoManifest.asics"    | "2025-06-18T17:21:06Z"
+        "invalid nested container"            | "timestampedAsicsWithInvalidDdoc.asics" | "2024-09-09T12:13:34Z"
+        "untrusted timestamp"                 | "timestampedAsicsWithTimestampedAsicsWithBaltstamp.asics"       | "2025-06-19T10:16:44Z"
+//        "special chars in nested ASiC-S name" | "timestampedAsicsWithTimestampedAsicsWithSpecialChars.asics"  | ""
     }
 
     @Issue("SIGA-1111")
