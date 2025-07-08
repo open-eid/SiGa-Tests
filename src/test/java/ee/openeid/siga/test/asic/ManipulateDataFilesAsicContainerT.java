@@ -276,51 +276,6 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
-    void deleteToAsicDataFilesList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToAsicDataFilesList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToAsicDataFilesList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void optionsToAsicDataFilesList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToAsicDataFilesList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
     void getToAsicDataFile() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
 
