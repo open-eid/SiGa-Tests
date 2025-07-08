@@ -13,8 +13,8 @@ import static org.hamcrest.Matchers.contains
 import static org.hamcrest.Matchers.containsInAnyOrder
 
 @Tag("datafileContainer")
-@Epic("Get datafiles (datafile)")
-@Feature("Get datafiles validation")
+@Epic("Get data files (datafile)")
+@Feature("Get data files validation")
 class validationSpec extends GenericSpecification {
     private Flow flow
 
@@ -22,15 +22,15 @@ class validationSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Story("Get timestamped ASiC-S nested container datafiles")
-    def "Timestamped ASiC-S containing #nestedContainer returns datafiles from the nested container"() {
+    @Story("Get timestamped ASiC-S nested container data files")
+    def "Timestamped ASiC-S containing #nestedContainer returns data files from the nested container"() {
         given: "upload ASiC-S container"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
 
-        when:
+        when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then:
+        then: "then data files are returned"
         response.then()
                 .body("dataFiles.fileName", contains("test.txt"))
                 .body("dataFiles.fileContent", contains(fileContent))
@@ -43,15 +43,15 @@ class validationSpec extends GenericSpecification {
         "DDOC"          | "ValidDDOCinsideAsics.asics"                | "VGVzdCBhbmQgc29tZSBvdGhlciB0ZXN0"
     }
 
-    @Story("Get timestamped ASiC-S nested container datafiles")
-    def "Timestamped ASiC-S containing nested container returns datafiles from the first level nested container: #nestedContainer"() {
+    @Story("Get timestamped ASiC-S nested container data files")
+    def "Timestamped ASiC-S containing nested container returns data files from the first level nested container: #nestedContainer"() {
         given: "upload ASiC-S container"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
 
-        when:
+        when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then:
+        then: "then data files are returned"
         response.then()
                 .body("dataFiles.fileName", containsInAnyOrder(dataFiles as String[]))
 
@@ -61,15 +61,15 @@ class validationSpec extends GenericSpecification {
         "ASiC-S"        | "timestampedAsicsWithTimestampedAsicsWithAsice.asics"             | ["TEST_ESTEID2018_ASiC-E_XAdES_LT.sce"]
     }
 
-    @Story("Get timestamped ASiC-S nested container datafiles")
+    @Story("Get timestamped ASiC-S nested container data files")
     def "Timestamped ASiC-S containing datafile returns it: #datafileType"() {
         given: "upload ASiC-S container"
         datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
 
-        when:
+        when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then:
+        then: "then data files are returned"
         response.then()
                 .body("dataFiles.fileName", contains(dataFile))
 
@@ -83,11 +83,6 @@ class validationSpec extends GenericSpecification {
 }
 
 
-/*
-Kui ASiC-S konteinerisse on kapseldatud sisemine ASiC-E, BDOC või DDOC konteiner,
-peaks SiGa tegema selle sisemise konteineri andmefailid kättesaadavaks nii, nagu oleks tegu välise konteineri andmefailidega,
-st kasutaja jaoks läbipaistvalt. Sisemist konteinerit ennast ei tohiks andmefailina tagastada.
-Kuna selliste kapseldatud konteinerite puhul on tegu arhiveeritud konteineritega, on sisemise konteineri muutmine keelatud,
-nii et igasugused katsed andmefaile lisada, muuta või kustutada peavad tagastama veateate.
-Aga kui andmefaile päritakse, tuleb tagastada sisemise konteineri andmefailid.
+
+
 */
