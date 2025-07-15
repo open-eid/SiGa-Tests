@@ -22,14 +22,12 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINER;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DATAFILES;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
-import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_DATAFILE_CONTENT;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.DUPLICATE_DATA_FILE;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
-import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.TEST_FILE_EXTENSIONS;
 import static ee.openeid.siga.test.helper.TestData.UPLOADED_FILENAME;
 import static ee.openeid.siga.test.utils.ContainerUtil.extractEntryFromContainer;
@@ -40,7 +38,6 @@ import static ee.openeid.siga.test.utils.RequestBuilder.addDataFilesToAsicReques
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainerRequestFromFile;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainersDataRequestWithDefault;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,91 +50,6 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     @BeforeEach
     void setUp() {
         flow = SigaApiFlow.buildForTestClient1Service1();
-    }
-
-
-    @Test
-    void createAsicContainerAndRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
-
-        response.then()
-                .statusCode(200)
-                .body("result", equalTo("OK"));
-
-        response = getDataFileList(flow);
-
-        response.then()
-                .statusCode(200)
-                .body("dataFiles[0]", nullValue());
-    }
-
-    @Test
-    void uploadAsicContainerAndRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
-
-        response.then()
-                .statusCode(200)
-                .body("result", equalTo("OK"));
-
-        response = getDataFileList(flow);
-
-        response.then()
-                .statusCode(200)
-                .body("dataFiles[0]", nullValue());
-    }
-
-    @Test
-    void uploadAsicContainerAndRemoveNotExistingDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        Response response = deleteDataFile(flow, "random.txt");
-
-        expectError(response, 400, RESOURCE_NOT_FOUND);
-    }
-
-    @Test
-    void uploadAsicContainerWithSignaturesAndTryToRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[1].fileName"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
-    void uploadAsicsContainerWithTimestampsAndTryToRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
-
-        Response response = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Unable to add/remove data file. Container contains timestamp token(s)");
-    }
-
-    @Test
-    void uploadAsicContainerWithSpecialCharactersAndTryToRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("NonconventionalCharactersInDataFile.asice"));
-
-        Response deleteResponse = deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
-        deleteResponse.then().statusCode(200);
-
-        Response response = getDataFileList(flow);
-        response.then()
-                .statusCode(200)
-                .body("dataFiles[0]", nullValue());
-    }
-
-    //Some invalid chars (/, ?, \, \u0000) produce different errors as the filename is in URL and are excluded from test
-    @ParameterizedTest(name = "Deleting datafile from ASIC container not allowed if fileName contains ''{0}''")
-    @ValueSource(strings = {"`", "*", "<", ">", "|", "\"", ":", "\u0017", "\u0007"})
-    void uploadAsicContainerAndTryRemovingDataFileWithInvalidFilename(String invalidChar) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-        Response response = deleteDataFile(flow, "Char=" + invalidChar + "isInvalid");
-
-        expectError(response, 400, INVALID_REQUEST, "Data file name is invalid");
     }
 
     @Test

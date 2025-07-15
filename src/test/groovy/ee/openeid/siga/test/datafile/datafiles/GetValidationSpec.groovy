@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.*
 @Tag("datafileContainer")
 @Epic("Get-add-delete data files (datafile)")
 @Feature("Get data files validation")
-class validationSpec extends GenericSpecification {
+class GetValidationSpec extends GenericSpecification {
     private Flow flow
 
     def setup() {

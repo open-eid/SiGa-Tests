@@ -65,8 +65,13 @@ abstract class RequestSteps {
     }
 
     @Step("Delete data file")
-    Response deleteDataFile(Flow flow, String datafileName) {
+    Response tryDeleteDataFile(Flow flow, String datafileName) {
         Response response = getInstance().deleteDataFileRequest(flow, Method.DELETE, datafileName).delete()
+        return response
+    }
+
+    Response deleteDataFile(Flow flow, String datafileName) {
+        Response response = tryDeleteDataFile(flow, datafileName)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }

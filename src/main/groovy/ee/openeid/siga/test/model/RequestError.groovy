@@ -20,6 +20,11 @@ enum RequestError {
     INVALID_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. The datafile in ASiC-S container must be a valid container."),
     NO_TIMESTAMPS(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any timestamp tokens."),
 
+    //DATAFILE DELETION ERRORS
+    SIGNATURE_PRESENT(CommonErrorCode.INVALID_SESSION_DATA, "Unable to add/remove data file. Container contains signature(s)"),
+    TIMESTAMP_PRESENT(CommonErrorCode.INVALID_SESSION_DATA, "Unable to add/remove data file. Container contains timestamp token(s)"),
+    INVALID_DATAFILE_NAME(CommonErrorCode.INVALID_REQUEST, "Data file name is invalid"),
+
     final String errorCode
     final String errorMessage
 
