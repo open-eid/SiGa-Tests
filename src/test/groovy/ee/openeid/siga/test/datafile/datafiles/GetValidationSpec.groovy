@@ -29,7 +29,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles.fileName", contains("test.txt"))
                 .body("dataFiles.fileContent", contains(fileContent))
@@ -50,7 +50,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles.fileName", containsInAnyOrder(dataFiles as String[]))
 
@@ -68,7 +68,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles.fileName", contains(dataFile))
 
@@ -87,7 +87,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles", hasSize(1),
                         "dataFiles[0].fileName", is(fileName),
@@ -109,7 +109,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles", is(empty()))
     }
@@ -122,7 +122,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles[0].fileName", is("test.xml"),
                         "dataFiles[0].fileContent", startsWith("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz"),
@@ -140,7 +140,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles", hasSize(1),
                         "dataFiles[0].fileName", is(defaultFile.fileName),
@@ -155,7 +155,7 @@ class GetValidationSpec extends GenericSpecification {
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)
 
-        then: "then data files are returned"
+        then: "data files are returned"
         response.then()
                 .body("dataFiles", hasSize(1),
                         "dataFiles[0].fileName", is("test.txt"),
