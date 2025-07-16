@@ -29,9 +29,17 @@ class RequestData {
 
     static Map createDatafileRequestDefaultBody() {
         [containerName: "datafileContainerSingleSignature.asice",
-         dataFiles    : [["fileName"   : "testing.txt",
-                          "fileContent": "cmFuZG9tdGV4dA=="]]
+         dataFiles    : [TestData.defaultDataFile()]
         ]
+    }
+
+    static Map addDatafileRequestBody(List dataFiles) {
+        [dataFiles: dataFiles]
+    }
+
+    static Map dataFileMap(String fileName, String fileContent) {
+        [fileName   : fileName,
+         fileContent: fileContent]
     }
 
     static Map signatureProductionPlace() {

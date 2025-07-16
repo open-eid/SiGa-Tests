@@ -16,6 +16,11 @@ class HashcodeSteps extends RequestSteps {
     }
 
     Response createDefaultContainer(Flow flow) {
-        return createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+        return createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultHashcodeDataFile()]))
     }
+
+    Response addDefaultDataFile(Flow flow) {
+        return addDataFiles(flow, RequestData.createHashcodeRequestBody([TestData.defaultHashcodeDataFile()]))
+    }
+
 }

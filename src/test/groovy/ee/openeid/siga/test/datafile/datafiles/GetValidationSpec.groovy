@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.datafile.datafiles
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import io.qameta.allure.Epic
@@ -135,7 +136,7 @@ class GetValidationSpec extends GenericSpecification {
     def "Created ASiC-E returns all data files"() {
         given: "create ASiC-E container"
         datafile.createDefaultContainer(flow)
-        Map defaultFile = RequestData.createDatafileRequestDefaultBody().dataFiles[0]
+        Map defaultFile = TestData.defaultDataFile()
 
         when: "get data files"
         Response response = datafile.getDataFilesList(flow)

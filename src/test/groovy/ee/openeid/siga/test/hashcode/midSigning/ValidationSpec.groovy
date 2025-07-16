@@ -155,7 +155,7 @@ class ValidationSpec extends GenericSpecification {
 
         when:
         switch (datafileAction) {
-            case "added" -> hashcode.addDataFiles(flow, RequestData.createHashcodeRequestBody([TestData.defaultFile()]))
+            case "added" -> hashcode.addDefaultDataFile(flow)
             case "deleted" -> hashcode.deleteDataFile(flow, hashcode.getDataFilesList(flow).path("dataFiles[0].fileName"))
         }
         hashcode.pollForMidSigningStatus(flow, signatureId)

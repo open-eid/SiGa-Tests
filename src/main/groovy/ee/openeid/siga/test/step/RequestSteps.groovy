@@ -50,9 +50,14 @@ abstract class RequestSteps {
         return response
     }
 
-    @Step("Add data file")
-    Response addDataFiles(Flow flow, Map requestBody) {
+    @Step("Add data files")
+    Response tryAddDataFiles(Flow flow, Map requestBody) {
         Response response = getInstance().addDataFilesRequest(flow, Method.POST, requestBody).post()
+        return response
+    }
+
+    Response addDataFiles(Flow flow, Map requestBody) {
+        Response response = tryAddDataFiles(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }

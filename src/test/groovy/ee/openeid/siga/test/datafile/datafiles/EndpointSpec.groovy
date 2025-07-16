@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.datafile.datafiles
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import io.qameta.allure.Epic
@@ -32,7 +33,7 @@ class EndpointSpec extends GenericSpecification {
         Response response
 
         if (Method.POST) { //POST is used to add datafile to a container
-            Map requestBody = [dataFiles: RequestData.createDatafileRequestDefaultBody().dataFiles]
+            Map requestBody = RequestData.addDatafileRequestBody([TestData.defaultDataFile()])
             response = datafileRequests.addDataFilesRequest(flow, method, requestBody).request(method)
         } else {
             response = datafileRequests.getDataFilesRequest(flow, method).request(method)
