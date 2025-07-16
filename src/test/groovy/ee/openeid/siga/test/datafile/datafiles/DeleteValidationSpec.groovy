@@ -27,11 +27,11 @@ class DeleteValidationSpec extends GenericSpecification {
     }
 
     @Story("Delete unsigned ASiC-E container data files")
-    def "When unsigned ASiC-E with data file #containerAction, then data file deletion is successful"() {
+    def "When #containerDesc with data file #containerAction, then data file deletion is successful"() {
         given: "create/upload ASiC-E container"
         switch (containerAction) {
             case "created" -> datafile.createDefaultContainer(flow)
-            case "uploaded" -> datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerWithoutSignatures.asice"))
+            case "uploaded" -> datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
         }
         String dataFileName = datafile.getDataFilesList(flow).getBody().path("dataFiles[0].fileName")
 
@@ -42,9 +42,10 @@ class DeleteValidationSpec extends GenericSpecification {
         datafile.getDataFilesList(flow).then().body("dataFiles", is(empty()))
 
         where:
-        containerAction | _
-        "created"       | _
-        "uploaded"      | _
+        containerDesc          | containerAction | containerName
+        "unsigned ASiC-E"      | "uploaded"      | "containerWithoutSignatures.asice"
+        "untimestamped ASiC-S" | "uploaded"      | "0xSIG_0xTST_asics.asics"
+        "new ASiC-E"           | "created"       | _
     }
 
     @Story("Delete unsigned ASiC-E container data files")
@@ -112,5 +113,6 @@ class DeleteValidationSpec extends GenericSpecification {
         where:
         invalidChar << ["`", "*", "<", ">", "|", "\"", ":", "\u0017", "\u0007"]
     }
+
 
 }
