@@ -26,10 +26,8 @@ import static ee.openeid.siga.test.helper.TestData.DEFAULT_DATAFILE_CONTENT;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.DUPLICATE_DATA_FILE;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
-import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.MANIFEST;
 import static ee.openeid.siga.test.helper.TestData.TEST_FILE_EXTENSIONS;
-import static ee.openeid.siga.test.helper.TestData.UPLOADED_FILENAME;
 import static ee.openeid.siga.test.utils.ContainerUtil.extractEntryFromContainer;
 import static ee.openeid.siga.test.utils.ContainerUtil.manifestAsXmlPath;
 import static ee.openeid.siga.test.utils.RequestBuilder.addDataFileToAsicRequest;
@@ -53,109 +51,6 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
-    void uploadAsiceContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        Response response = getDataFileList(flow);
-
-        response.then()
-                .statusCode(200)
-                .body("dataFiles[0].fileName", equalTo(UPLOADED_FILENAME))
-                .body("dataFiles[0].fileContent", startsWith("c2VlIG9uIHRlc3RmYWls"))
-                .body("dataFiles[1].fileName", equalTo("testFile.txt"))
-                .body("dataFiles[1].fileContent", equalTo("eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-    }
-
-    @Test
-    void uploadAsicsContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithTxtFileWithoutTimestampAndSignature.asics"));
-
-        Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "Cannot add datafile to specified container.");
-    }
-
-    @Test
-    void uploadAsicContainerAndAddDuplicateDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-        Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        expectError(response, 400, DUPLICATE_DATA_FILE);
-    }
-
-    @Test
-    void uploadAsicContainerAndAddEmptyDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", ""));
-
-        expectError(response, 400, INVALID_REQUEST);
-    }
-
-    @ParameterizedTest(name = "Adding datafile to ASIC container not allowed if fileName contains ''{0}''")
-    @ValueSource(strings = {"/", "`", "?", "*", "\\", "<", ">", "|", "\"", ":", "\u0017", "\u0000", "\u0007"})
-    void uploadAsicContainerAndTryAddingDataFileWithInvalidFilename(String invalidChar) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-
-        Response response = addDataFile(flow, addDataFileToAsicRequest("Char=" + invalidChar + ".txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        expectError(response, 400, INVALID_REQUEST, "Data file name is invalid");
-    }
-
-    @Test
-    void createAsicContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        Response response = getDataFileList(flow);
-
-        response.then()
-                .statusCode(200)
-                .body("dataFiles[0].fileName", equalTo(DEFAULT_FILENAME))
-                .body("dataFiles[0].fileContent", startsWith(DEFAULT_DATAFILE_CONTENT))
-                .body("dataFiles[1].fileName", equalTo("testFile.txt"))
-                .body("dataFiles[1].fileContent", equalTo("eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-    }
-
-    @Test
-    void createAsicContainerAndAddDuplicateDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = addDataFile(flow, addDataFileToAsicRequest(DEFAULT_FILENAME, "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        expectError(response, 400, DUPLICATE_DATA_FILE);
-    }
-
-    @Test
-    void createAsicContainerAndAddMultipleDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        JSONObject dataFiles = addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu");
-        JSONObject dataFile = new JSONObject();
-        dataFile.put("fileName", "testFile2.xml");
-        dataFile.put("fileContent", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQgdG8gaGFuZGxlLg==");
-        dataFiles.getJSONArray("dataFiles").put(dataFile);
-
-        addDataFile(flow, dataFiles);
-
-        Response response = getDataFileList(flow);
-
-        response.then()
-                .statusCode(200)
-                .body("dataFiles[0].fileName", equalTo(DEFAULT_FILENAME))
-                .body("dataFiles[0].fileContent", startsWith(DEFAULT_DATAFILE_CONTENT))
-                .body("dataFiles[1].fileName", equalTo("testFile.txt"))
-                .body("dataFiles[1].fileContent", equalTo("eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"))
-                .body("dataFiles[2].fileName", equalTo("testFile2.xml"))
-                .body("dataFiles[2].fileContent", equalTo("eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQgdG8gaGFuZGxlLg=="));
-    }
-
-    @Test
     void createAsicContainerAndAddMultipleDataFileMimeTypeFromFileExtension() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         addDataFile(flow, addDataFilesToAsicRequest(TEST_FILE_EXTENSIONS.stream()
@@ -167,24 +62,6 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
             String expectedMimeType = MimeType.fromFileName("*." + TEST_FILE_EXTENSIONS.get(i)).getMimeTypeString();
             assertEquals(expectedMimeType, manifest.getString("manifest:manifest.manifest:file-entry[" + (2 + i) + "].@manifest:media-type"));
         }
-    }
-
-    @Test
-    void createAsicContainerAndAddEmptyDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", ""));
-
-        expectError(response, 400, INVALID_REQUEST);
-    }
-
-    @Test
-    void uploadSignedAsicContainerAndAddDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
     @Test

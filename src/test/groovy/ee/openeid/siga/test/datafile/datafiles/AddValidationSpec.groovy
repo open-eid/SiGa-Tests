@@ -1,0 +1,172 @@
+package ee.openeid.siga.test.datafile.datafiles
+
+import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
+import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.RequestError
+import ee.openeid.siga.test.request.RequestData
+import ee.openeid.siga.test.util.RequestErrorValidator
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
+import io.qameta.allure.Issue
+import io.qameta.allure.Story
+import io.restassured.response.Response
+import spock.lang.Tag
+
+import static org.hamcrest.Matchers.*
+
+@Tag("datafileContainer")
+@Epic("Get-add-delete data files (datafile)")
+@Feature("Add data files validation")
+class AddValidationSpec extends GenericSpecification {
+    private Flow flow
+
+    def setup() {
+        flow = Flow.buildForDefaultTestClientService()
+    }
+
+    @Story("Add data file to unsigned container")
+    def "Adding data file to uploaded #containerDesc is successful"() {
+        given: "upload container"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
+        datafile.getDataFilesList(flow).then().body("dataFiles", hasSize(1))
+
+        when: "add default data file"
+        datafile.addDefaultDataFile(flow)
+
+        then: "new data file is added"
+        datafile.getDataFilesList(flow).then()
+                .body("dataFiles", hasSize(2))
+                .body("dataFiles", hasItem(TestData.defaultDataFile()))
+
+
+        where:
+        containerDesc     | containerName
+        "unsigned ASiC-E" | "containerWithoutSignatures.asice"
+        "unsigned BDOC"   | "bdocWithoutSignature.bdoc"
+    }
+
+    @Story("Adding data file to unsigned container")
+    def "Adding data file to created unsigned ASiC-E is successful"() {
+        given: "create container with default data file"
+        datafile.createDefaultContainer(flow)
+
+        when: "add new data file"
+        Map newDatafile = ["fileName": "test.txt", "fileContent": "c2VlIG9uIHRlc3RmYWls"]
+        datafile.addDataFiles(flow, RequestData.addDatafileRequestBody([newDatafile]))
+
+        then: "new data file is added"
+        datafile.getDataFilesList(flow).then()
+                .body("dataFiles", containsInAnyOrder(newDatafile, TestData.defaultDataFile()))
+    }
+
+    @Story("Add data file to unsigned container")
+    def "Adding multiple data files to unsigned #containerAction container is successful"() {
+        given: "upload unsigned container"
+        switch (containerAction) {
+            case "uploaded" -> datafile.uploadContainer(flow,
+                    RequestData.uploadDatafileRequestBodyFromFile("containerWithoutSignatures.asice"))
+            case "created" -> datafile.createDefaultContainer(flow)
+        }
+
+        when: "add two data files"
+        Map firstDataFile = ["fileName": "testFile1.xml", "fileContent": "cmFuZG9tdGV4dA=="]
+        Map secondDataFile = ["fileName": "testFile2.xml", "fileContent": "dGVzdA=="]
+
+        datafile.addDataFiles(flow, RequestData.addDatafileRequestBody([firstDataFile, secondDataFile]))
+
+        then: "new data files are added"
+        datafile.getDataFilesList(flow).then()
+                .body("dataFiles", hasSize(3))
+                .body("dataFiles", hasItems(firstDataFile, secondDataFile))
+
+        where:
+        containerAction | _
+        "uploaded"      | _
+        "created"       | _
+    }
+
+    @Story("Adding duplicate data file is not allowed")
+    def "Adding a second data file with #fileName name and #fileContent content is #result"() {
+        given: "create container"
+        datafile.createDefaultContainer(flow)
+
+        when: "try adding data file"
+        Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([dataFile]))
+
+        then: "result is returned"
+        switch (result) {
+            case "not allowed" -> response.then().statusCode(400)
+                    .body("errorCode", is("DUPLICATE_DATA_FILE_EXCEPTION"),
+                            "errorMessage", is("Duplicate data files not allowed: testing.txt"))
+            case "allowed" -> response.then().statusCode(200)
+        }
+
+        where:
+        fileName    | fileContent | dataFile                                                        || result
+        "duplicate" | "duplicate" | TestData.defaultDataFile()                                      || "not allowed"
+        "duplicate" | "different" | ["fileName": "testing.txt", "fileContent": "dGVzdA=="]          || "not allowed"
+        "unique"    | "duplicate" | ["fileName": "New Name.txt", "fileContent": "cmFuZG9tdGV4dA=="] || "allowed"
+    }
+
+    @Story("Adding data file to unsupported container types not allowed")
+    def "Adding data file to #containerDesc is not allowed"() {
+        given: "upload container"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
+
+        when: "try adding default data file"
+        Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([TestData.defaultDataFile()]))
+
+        then: "error is returned"
+        RequestErrorValidator.validate(response, error)
+
+        where:
+        containerDesc          | containerName                                 || error
+        "signed ASiC-E"        | TestData.DEFAULT_ASICE_CONTAINER_NAME         || RequestError.SIGNATURE_PRESENT
+        "signed BDOC"          | "valid-bdoc-tm-newer.bdoc"                    || RequestError.SIGNATURE_PRESENT
+        "signed ASiC-S"        | "asicsContainerWithLtSignatureWithoutTST.scs" || RequestError.SIGNATURE_PRESENT
+        "timestamped ASiC-S"   | TestData.DEFAULT_ASICS_CONTAINER_NAME         || RequestError.TIMESTAMP_PRESENT
+        "untimestamped ASiC-S" | "0xSIG_0xTST_asics.asics"                     || RequestError.INVALID_DATAFILE_CONTAINER
+    }
+
+    @Story("Adding data file with forbidden characters in fileName returns error")
+    def "Trying to add data file returns error, when fileName contains #invalidChar"() {
+        given: "upload unsigned container"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerWithoutSignatures.asice"))
+
+        when: "try adding data file with invalid char in fileName"
+        Map dataFile = TestData.defaultDataFile()
+        dataFile.fileName = "Char=${invalidChar}isInvalid"
+
+        Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([dataFile]))
+
+        then: "then error is returned"
+        RequestErrorValidator.validate(response, RequestError.INVALID_DATAFILE_NAME)
+
+        where:
+        invalidChar << ["/", "`", "?", "*", "\\", "<", ">", "|", "\"", ":", "\u0017", "\u0000", "\u0007"]
+    }
+
+    @Issue("SIGA-1121")
+    @Issue("SIGA-1122")
+    @Story("Adding data file with invalid data is not allowed")
+    def "Trying to add a data file with #fileDescription is not allowed"() {
+        given: "upload unsigned container"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerWithoutSignatures.asice"))
+
+        when: "try adding data file with invalid data"
+        Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([dataFile]))
+
+        then: "error is returned"
+        response.then().statusCode(400).body("errorCode", is("REQUEST_VALIDATION_EXCEPTION"))
+
+        where:
+        fileDescription   | dataFile
+        "empty content"   | ["fileName": "testing.txt", "fileContent": ""]
+        "invalid content" | ["fileName": "testing.txt", "fileContent": "abc"]
+        "empty name"      | ["fileName": "", "fileContent": "cmFuZG9tdGV4dA=="]
+        "empty list"      | [] // Technical error is returned, should be user friendly error (SIGA-1122)
+//        "additional data" | ["fileName": "testing.txt", "fileContent": "cmFuZG9tdGV4dA==", "extraField": "extra"]
+    }
+
+}
