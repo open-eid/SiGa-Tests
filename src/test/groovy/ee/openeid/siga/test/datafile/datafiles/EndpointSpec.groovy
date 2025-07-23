@@ -53,4 +53,29 @@ class EndpointSpec extends GenericSpecification {
         Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
     }
+
+    @Story("Delete data files endpoint HTTP method check")
+    def "Delete data files endpoint with method #method is #result"() {
+        given: "create default container"
+        datafile.createDefaultContainer(flow)
+
+        when: "delete data file endpoint request with HTTP method"
+        String dataFileName = TestData.defaultDataFile().fileName
+        Response response = datafileRequests.deleteDataFileRequest(flow, method, dataFileName).request(method)
+
+        then: "request is allowed/not allowed"
+        response.then().statusCode(httpStatus)
+
+        where:
+        method         || httpStatus                       | result
+        Method.DELETE  || HttpStatus.SC_OK                 | "allowed"
+        Method.GET     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.POST    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+    }
+
 }
