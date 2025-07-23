@@ -56,9 +56,7 @@ class XadesValidationSpec extends GenericSpecification {
         datafile.remoteSigning(flow, RequestData.remoteSigningStartDefaultRequest())
 
         when: "augment container in session"
-        sleep(10000)
         datafile.augmentContainer(flow)
-        Utils.saveContainerFromResponse(datafile.getContainer(flow))
 
         then: "augmentation is successful and signature is LTA"
         datafile.validateContainerInSession(flow).then().rootPath("validationConclusion.")

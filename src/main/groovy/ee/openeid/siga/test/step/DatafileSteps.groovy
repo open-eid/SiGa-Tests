@@ -22,4 +22,8 @@ class DatafileSteps extends RequestSteps {
     Response addDefaultDataFile(Flow flow) {
         return addDataFiles(flow, RequestData.addDatafileRequestBody([TestData.defaultDataFile()]))
     }
+
+    Response uploadContainerFromFile(Flow flow, String containerName) {
+        return uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
+    }
 }
