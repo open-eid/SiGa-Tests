@@ -51,20 +51,6 @@ class ManipulateDataFilesAsicContainerT extends TestBase {
     }
 
     @Test
-    void createAsicContainerAndAddMultipleDataFileMimeTypeFromFileExtension() throws JSONException, NoSuchAlgorithmException, InvalidKeyException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        addDataFile(flow, addDataFilesToAsicRequest(TEST_FILE_EXTENSIONS.stream()
-                .map(ext -> addDataFileToAsicRequestDataFile("filename." + ext, DEFAULT_DATAFILE_CONTENT))
-                .collect(Collectors.toList())));
-
-        XmlPath manifest = manifestAsXmlPath(extractEntryFromContainer(MANIFEST, getContainer(flow).getBody().path(CONTAINER).toString()));
-        for (int i = 0; i < TEST_FILE_EXTENSIONS.size(); ++i) {
-            String expectedMimeType = MimeType.fromFileName("*." + TEST_FILE_EXTENSIONS.get(i)).getMimeTypeString();
-            assertEquals(expectedMimeType, manifest.getString("manifest:manifest.manifest:file-entry[" + (2 + i) + "].@manifest:media-type"));
-        }
-    }
-
-    @Test
     void getToAsicDataFile() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
         postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
 

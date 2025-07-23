@@ -5,14 +5,18 @@ import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
+import ee.openeid.siga.test.util.ContainerUtil
 import ee.openeid.siga.test.util.RequestErrorValidator
+import eu.europa.esig.dss.enumerations.MimeType
 import io.qameta.allure.Epic
 import io.qameta.allure.Feature
 import io.qameta.allure.Issue
 import io.qameta.allure.Story
+import io.restassured.path.xml.XmlPath
 import io.restassured.response.Response
 import spock.lang.Tag
 
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
@@ -84,6 +88,28 @@ class AddValidationSpec extends GenericSpecification {
         containerAction | _
         "uploaded"      | _
         "created"       | _
+    }
+
+    @Story("Add data file to unsigned container")
+    def "Adding data files with different MIME types is successful and correct MIME types are assigned"() {
+        given: "create default container"
+        datafile.createDefaultContainer(flow)
+        String defaultFileContent = TestData.defaultDataFile().fileContent
+
+        when: "add data files with different file extensions"
+        List addedDataFiles = TestData.FILE_EXTENSIONS.collect { String ext ->
+            [fileName: "filename.${ext}", fileContent: defaultFileContent]
+        }
+        datafile.addDataFiles(flow, RequestData.addDatafileRequestBody(addedDataFiles))
+
+        then: "in manifest.xml for added data files correct MIME types are assigned"
+        XmlPath manifest = ContainerUtil.manifestAsXmlPath(datafile.getContainer(flow).path("container").toString(),
+                "META-INF/manifest.xml")
+
+        TestData.FILE_EXTENSIONS.eachWithIndex { ext, i ->
+            def expectedMimeType = MimeType.fromFileName("*.$ext").mimeTypeString
+            assertThat(expectedMimeType, is(manifest.getString("manifest:manifest.manifest:file-entry[${2 + i}].@manifest:media-type")))
+        }
     }
 
     @Story("Adding duplicate data file is not allowed")

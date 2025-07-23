@@ -1,5 +1,7 @@
 package ee.openeid.siga.test.util
 
+import io.restassured.path.xml.XmlPath
+import io.restassured.path.xml.config.XmlPathConfig
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry
 import org.apache.commons.compress.archivers.zip.ZipFile
 import org.apache.commons.compress.utils.SeekableInMemoryByteChannel
@@ -26,7 +28,26 @@ class ContainerUtil {
         return zipFile.getInputStream(entry).readAllBytes()
     }
 
+    static byte[] extractEntryBytesFromBase64Container(String containerBase64String, String entryPath) {
+        return extractEntryBytesFromZipFile(base64ToZipFile(containerBase64String), entryPath)
+    }
+
     static String extractEntryFromZipFile(ZipFile zipFile, String entryPath) {
         return new String(extractEntryBytesFromZipFile(zipFile, entryPath))
+    }
+
+    static XmlPath configureXmlPathForManifest(XmlPath xmlPath) {
+        return xmlPath.using(XmlPathConfig.xmlPathConfig().declaredNamespace("manifest",
+                "urn:oasis:names:tc:opendocument:xmlns:manifest:1.0"))
+    }
+
+    static XmlPath manifestAsXmlPath(byte[] manifestBytes) {
+        return new ByteArrayInputStream(manifestBytes).withCloseable { inputStream ->
+            configureXmlPathForManifest(XmlPath.from(inputStream))
+        }
+    }
+
+    static XmlPath manifestAsXmlPath(String containerBase64String, String entryPath) {
+        return manifestAsXmlPath(extractEntryBytesFromBase64Container(containerBase64String, entryPath))
     }
 }
