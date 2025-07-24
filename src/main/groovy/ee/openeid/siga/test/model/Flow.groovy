@@ -33,4 +33,9 @@ class Flow {
     static Flow buildForDefaultTestClientService() {
         buildForTestClientService(Client.CLIENT1, Service.SERVICE1)
     }
+
+    static Flow buildForTestClient1Service2() {
+        buildForTestClientService(Client.CLIENT1, Service.SERVICE2)
+    }
+
 }

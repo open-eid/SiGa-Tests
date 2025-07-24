@@ -216,8 +216,13 @@ abstract class RequestSteps {
 
     // SIG/TS LIST & INFO
     @Step("Get signature list")
-    Response getSignatureList(Flow flow) {
+    Response tryGetSignatureList(Flow flow) {
         Response response = getInstance().getSignatureListRequest(flow, Method.GET).get()
+        return response
+    }
+
+    Response getSignatureList(Flow flow) {
+        Response response = tryGetSignatureList(flow)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
