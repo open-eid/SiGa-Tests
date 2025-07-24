@@ -122,9 +122,10 @@ class AddValidationSpec extends GenericSpecification {
 
         then: "result is returned"
         switch (result) {
-            case "not allowed" -> response.then().statusCode(400)
-                    .body("errorCode", is("DUPLICATE_DATA_FILE_EXCEPTION"),
-                            "errorMessage", is("Duplicate data files not allowed: testing.txt"))
+            case "not allowed" -> RequestErrorValidator.validate(
+                    response,
+                    RequestError.DUPLICATE_DATAFILE.errorCode,
+                    RequestError.DUPLICATE_DATAFILE.getMessage("testing.txt"))
             case "allowed" -> response.then().statusCode(200)
         }
 
@@ -184,14 +185,14 @@ class AddValidationSpec extends GenericSpecification {
         Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([dataFile]))
 
         then: "error is returned"
-        response.then().statusCode(400).body("errorCode", is("REQUEST_VALIDATION_EXCEPTION"))
+        RequestErrorValidator.validate(response, error)
 
         where:
-        fileDescription   | dataFile
-        "empty content"   | ["fileName": "testing.txt", "fileContent": ""]
-        "invalid content" | ["fileName": "testing.txt", "fileContent": "abc"]
-        "empty name"      | ["fileName": "", "fileContent": "cmFuZG9tdGV4dA=="]
-        "empty list"      | [] // Technical error is returned, should be user friendly error (SIGA-1122)
+        fileDescription   | dataFile                                           || error
+        "empty content"   | ["fileName": "testing.txt", "fileContent": ""]      | RequestError.INVALID_DATAFILE_CONTENT
+        "invalid content" | ["fileName": "testing.txt", "fileContent": "abc"]   | RequestError.INVALID_DATAFILE_CONTENT
+        "empty name"      | ["fileName": "", "fileContent": "cmFuZG9tdGV4dA=="] | RequestError.INVALID_DATAFILE_NAME
+        "empty list"      | []                                                  | RequestError.INVALID_JSON
 //        "additional data" | ["fileName": "testing.txt", "fileContent": "cmFuZG9tdGV4dA==", "extraField": "extra"]
     }
 

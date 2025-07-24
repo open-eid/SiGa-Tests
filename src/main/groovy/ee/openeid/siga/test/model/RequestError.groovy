@@ -25,6 +25,10 @@ enum RequestError {
     TIMESTAMP_PRESENT(CommonErrorCode.INVALID_SESSION_DATA, "Unable to add/remove data file. Container contains timestamp token(s)"),
     INVALID_DATAFILE_NAME(CommonErrorCode.INVALID_REQUEST, "Data file name is invalid"),
     INVALID_DATAFILE_CONTAINER(CommonErrorCode.INVALID_SESSION_DATA, "Cannot add datafile to specified container."),
+    INVALID_DATAFILE_CONTENT(CommonErrorCode.INVALID_REQUEST, "Base64 content is invalid"),
+    INVALID_JSON(CommonErrorCode.INVALID_REQUEST, "JSON parse error: Cannot deserialize value of type `ee.openeid.siga.webapp.json.DataFile` from Array value (token `JsonToken.START_ARRAY`)"),
+    DUPLICATE_DATAFILE("DUPLICATE_DATA_FILE_EXCEPTION", "Duplicate data files not allowed: {0}"),
+    DATAFILE_NOT_FOUND("RESOURCE_NOT_FOUND_EXCEPTION", "Data file named {0} not found"),
 
     final String errorCode
     final String errorMessage
@@ -32,6 +36,14 @@ enum RequestError {
     RequestError(String errorCode, String errorMessage) {
         this.errorCode = errorCode
         this.errorMessage = errorMessage
+    }
+
+    String getMessage(Object... args) {
+        if (args.length == 0) {
+            return errorMessage
+        } else {
+            return errorMessage.replaceAll(/\{(\d+)\}/) { match, index -> args[index as int] }
+        }
     }
 }
 

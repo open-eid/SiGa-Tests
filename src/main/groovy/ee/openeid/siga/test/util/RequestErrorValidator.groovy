@@ -8,9 +8,13 @@ import static org.hamcrest.Matchers.is
 
 class RequestErrorValidator {
     static validate(Response response, RequestError expectedError) {
+        validate(response, expectedError.errorCode, expectedError.errorMessage)
+    }
+
+    static validate(Response response, String errorCode, String errorMessage) {
         response.then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body("errorCode", is(expectedError.errorCode))
-                .body("errorMessage", is(expectedError.errorMessage))
+                .body("errorCode", is(errorCode))
+                .body("errorMessage", is(errorMessage))
     }
 }
