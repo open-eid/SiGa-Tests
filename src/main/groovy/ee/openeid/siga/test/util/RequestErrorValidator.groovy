@@ -7,14 +7,10 @@ import org.apache.http.HttpStatus
 import static org.hamcrest.Matchers.is
 
 class RequestErrorValidator {
-    static validate(Response response, RequestError expectedError) {
-        validate(response, expectedError.errorCode, expectedError.errorMessage)
-    }
-
-    static validate(Response response, String errorCode, String errorMessage) {
+    static validate(Response response, RequestError expectedError, String... messageModifiers) {
         response.then()
                 .statusCode(HttpStatus.SC_BAD_REQUEST)
-                .body("errorCode", is(errorCode))
-                .body("errorMessage", is(errorMessage))
+                .body("errorCode", is(expectedError.errorCode))
+                .body("errorMessage", is(expectedError.getMessage(messageModifiers)))
     }
 }

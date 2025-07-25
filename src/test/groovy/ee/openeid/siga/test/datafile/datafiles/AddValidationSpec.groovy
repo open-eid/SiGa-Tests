@@ -117,16 +117,13 @@ class AddValidationSpec extends GenericSpecification {
         given: "create container"
         datafile.createDefaultContainer(flow)
 
-        when: "try adding data file"
+        when: "try adding duplicate/unique data file"
         Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([dataFile]))
 
-        then: "result is returned"
-        switch (result) {
-            case "not allowed" -> RequestErrorValidator.validate(
-                    response,
-                    RequestError.DUPLICATE_DATAFILE.errorCode,
-                    RequestError.DUPLICATE_DATAFILE.getMessage("testing.txt"))
-            case "allowed" -> response.then().statusCode(200)
+        then: "adding data file is not allowed/allowed"
+        switch (fileName) {
+            case "duplicate" -> RequestErrorValidator.validate(response, RequestError.DUPLICATE_DATAFILE, dataFile.fileName)
+            case "unique" -> response.then().statusCode(200)
         }
 
         where:

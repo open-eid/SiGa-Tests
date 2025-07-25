@@ -101,10 +101,7 @@ class DeleteValidationSpec extends GenericSpecification {
         Response response = datafile.tryDeleteDataFile(flow, "random name.txt")
 
         then: "error is returned"
-        RequestErrorValidator.validate(
-                response,
-                RequestError.DATAFILE_NOT_FOUND.errorCode,
-                RequestError.DATAFILE_NOT_FOUND.getMessage("random name.txt"))
+        RequestErrorValidator.validate(response, RequestError.DATAFILE_NOT_FOUND, "random name.txt")
 
         where:
         containerType | containerName
