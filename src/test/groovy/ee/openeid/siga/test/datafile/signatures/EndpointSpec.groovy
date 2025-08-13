@@ -5,12 +5,18 @@ import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.util.RequestErrorValidator
+import io.qameta.allure.Epic
+import io.qameta.allure.Feature
 import io.qameta.allure.Issue
 import io.qameta.allure.Story
 import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import spock.lang.Tag
 
+@Tag("datafileContainer")
+@Epic("Signatures (datafile)")
+@Feature("Signatures endpoint checks")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 
