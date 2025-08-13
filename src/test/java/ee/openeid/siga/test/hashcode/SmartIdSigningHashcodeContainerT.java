@@ -8,6 +8,7 @@ import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoi
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdSigningResponse;
 import ee.openeid.siga.webapp.json.GetHashcodeContainerSmartIdCertificateChoiceStatusResponse;
 import io.restassured.response.Response;
+import org.hamcrest.Matchers;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -584,6 +585,8 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
         Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
         deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
+        // Temporarily check deletion as test in DEV environment seems to be flaky and sometimes no error is returned on signature finalization
+        assertThat(getDataFileList(flow).path("dataFiles"), Matchers.hasSize(0));
         String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response pollResponse = pollForSidSigning(flow, signatureId);
 
