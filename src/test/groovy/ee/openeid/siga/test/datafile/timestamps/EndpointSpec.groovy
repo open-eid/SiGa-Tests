@@ -37,7 +37,7 @@ class EndpointSpec extends GenericSpecification {
         where:
         method         || httpStatus                       | result
         Method.GET     || HttpStatus.SC_OK                 | "allowed"
-        Method.HEAD    || HttpStatus.SC_OK                 | "allowed"
+        Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"

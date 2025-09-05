@@ -1,19 +1,16 @@
-package ee.openeid.siga.test.hashcode.midSigning
+package ee.openeid.siga.test.hashcode.remoteSigning
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
-import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
-import ee.openeid.siga.test.util.RequestErrorValidator
+import ee.openeid.siga.test.util.DigestSigner
 import io.qameta.allure.*
 import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
-import spock.lang.Tag
 
-@Tag("mobileId")
-@Epic("Mobile-ID signing (hashcode)")
-@Feature("MID endpoint validation")
+@Epic("Remote signing (hashcode)")
+@Feature("Remote signing endpoint validation")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 
@@ -21,28 +18,17 @@ class EndpointSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Issue("SIGA-708")
-    @Story("MID status not available through SID status endpoint")
-    def "MID status polling with SID status polling endpoint not allowed"() {
-        given:
-        hashcode.createDefaultContainer(flow)
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
-        String signatureId = startResponse.path("generatedSignatureId")
-
-        when:
-        Response statusResponse = hashcode.tryGetSmartIdSigningStatus(flow, signatureId)
-
-        then:
-        RequestErrorValidator.validate(statusResponse, RequestError.INVALID_TYPE_MID)
-    }
-
-    @Story("MID signing HTTP method check")
-    def "Start MID signing with method #method is #result"() {
+    @Story("Start remote signing HTTP method check")
+    def "Start remote signing with method #method is #result"() {
         given:
         hashcode.createDefaultContainer(flow)
 
         when:
-        Response response = hashcodeRequests.startMidSigningRequest(flow, method, RequestData.midSigningRequestDefaultBody()).request(method)
+        Response response = hashcodeRequests.startRemoteSigningRequest(
+                flow,
+                method,
+                RequestData.remoteSigningStartDefaultRequest())
+                .request(method)
 
         then:
         response.then().statusCode(httpStatus)
@@ -59,29 +45,33 @@ class EndpointSpec extends GenericSpecification {
         Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
     }
 
-    @Story("MID signing status HTTP method check")
-    def "Get MID signing status with method #method is #result"() {
+    @Story("Finalize remote signing HTTP method check")
+    def "Finalize remote signing with method #method is #result"() {
         given:
         hashcode.createDefaultContainer(flow)
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
-        String signatureId = startResponse.path("generatedSignatureId")
+        Response startResponse = hashcode.startRemoteSigning(flow, RequestData.remoteSigningStartDefaultRequest())
 
         when:
-        Response response = hashcodeRequests.getMidSigningStatusRequest(flow, method, signatureId).request(method)
+        Response response = hashcodeRequests.finalizeRemoteSigningRequest(
+                flow,
+                method,
+                RequestData.remoteSigningFinalizeRequest(DigestSigner.signDigest(startResponse)),
+                startResponse.path("generatedSignatureId"))
+                .request(method)
 
         then:
         response.then().statusCode(httpStatus)
 
         where:
         method         || httpStatus                       | result
-        Method.GET     || HttpStatus.SC_OK                 | "allowed"
-        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PUT     || HttpStatus.SC_OK                 | "allowed"
         Method.POST    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.GET     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
-        Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
     }
 
 }

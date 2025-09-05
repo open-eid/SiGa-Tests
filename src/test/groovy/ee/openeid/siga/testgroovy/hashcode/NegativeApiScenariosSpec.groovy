@@ -3,7 +3,6 @@ package ee.openeid.siga.testgroovy.hashcode
 import ee.openeid.siga.test.model.SigaApiFlow
 import ee.openeid.siga.testgroovy.helper.TestBaseSpecification
 import ee.openeid.siga.webapp.json.CreateContainerMobileIdSigningResponse
-import ee.openeid.siga.webapp.json.CreateContainerRemoteSigningResponse
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoiceResponse
 import io.restassured.response.Response
@@ -33,33 +32,10 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        REMOTE_SIGNING                       || 405    || INVALID_REQUEST
-        MID_SIGNING                          || 405    || INVALID_REQUEST
         SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
-    }
-
-    def "DELETE to hashcode remote signing finalization should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class)
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "DELETE to hashcode MID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"))
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "DELETE to hashcode SID signing status should fail"() {
@@ -130,28 +106,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
     def "DELETE to upload hashcode container should fail"() {
         expect:
         Response response = delete(UPLOAD + HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    // POST requests that should fail
-    def "POST to hashcode remote signing finalization should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class)
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "POST to hashcode MID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"))
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow, "request")
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -235,24 +189,11 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        REMOTE_SIGNING                       || 405    || INVALID_REQUEST
-        MID_SIGNING                          || 405    || INVALID_REQUEST
         SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "PUT to hashcode MID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"))
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "PUT to hashcode SID signing status should fail"() {
@@ -355,22 +296,10 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        REMOTE_SIGNING                       || 405    || INVALID_REQUEST
-        MID_SIGNING                          || 405    || INVALID_REQUEST
         SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 400    || INVALID_CONTAINER_EXCEPTION
         SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "GET to hashcode remote signing finalization should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class)
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "GET to create hashcode container should fail"() {
@@ -416,22 +345,10 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status
-        REMOTE_SIGNING                       || 405
-        MID_SIGNING                          || 405
         SMARTID_SIGNING                      || 405
         VALIDATIONREPORT                     || 400
         SMARTID_SIGNING + CERTIFICATE_CHOICE || 405
         DATAFILES + "/" + "testing.txt"      || 405
-    }
-
-    def "HEAD to hashcode remote signing finalization should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class)
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow)
-
-        assertThat(response.statusCode(), equalTo(405))
     }
 
     def "HEAD to create hashcode container should fail"() {
@@ -476,34 +393,11 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        REMOTE_SIGNING                       || 405    || INVALID_REQUEST
-        MID_SIGNING                          || 405    || INVALID_REQUEST
         SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "OPTIONS to hashcode remote signing finalization should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class)
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow)
-
-        assertThat(response.statusCode(), equalTo(405))
-    }
-
-    def "OPTION to hashcode MID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"))
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
     }
 
     def "OPTION to hashcode SID certificate status should fail"() {
@@ -615,34 +509,11 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        REMOTE_SIGNING                       || 405    || INVALID_REQUEST
-        MID_SIGNING                          || 405    || INVALID_REQUEST
         SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "PATCH to hashcode remote signing finalization should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class)
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PATCH to hashcode MID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"))
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "PATCH to hashcode SID certificate status should fail"() {
