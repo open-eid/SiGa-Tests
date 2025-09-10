@@ -32,32 +32,8 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
-        SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
-    }
-
-    def "DELETE to hashcode SID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER))
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "DELETE to hashcode SID certificate status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId()
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "DELETE to create hashcode container should fail"() {
@@ -106,28 +82,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
     def "DELETE to upload hashcode container should fail"() {
         expect:
         Response response = delete(UPLOAD + HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "POST to hashcode SID certificate status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId()
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "POST to hashcode SID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER))
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow, "request")
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -189,33 +143,9 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
-        SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "PUT to hashcode SID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER))
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PUT to hashcode SID certificate status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId()
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "PUT to create hashcode container should fail"() {
@@ -296,9 +226,7 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 400    || INVALID_CONTAINER_EXCEPTION
-        SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
@@ -345,9 +273,7 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status
-        SMARTID_SIGNING                      || 405
         VALIDATIONREPORT                     || 400
-        SMARTID_SIGNING + CERTIFICATE_CHOICE || 405
         DATAFILES + "/" + "testing.txt"      || 405
     }
 
@@ -393,33 +319,9 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
-        SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "OPTION to hashcode SID certificate status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId()
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "OPTION to hashcode SID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER))
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
     }
 
     def "OPTIONS to create hashcode container should fail"() {
@@ -509,33 +411,9 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SMARTID_SIGNING                      || 405    || INVALID_REQUEST
         VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
-        SMARTID_SIGNING + CERTIFICATE_CHOICE || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "PATCH to hashcode SID certificate status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId()
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PATCH to hashcode SID signing status should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER))
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId()
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "Patch to validate hashcode container should fail"() {

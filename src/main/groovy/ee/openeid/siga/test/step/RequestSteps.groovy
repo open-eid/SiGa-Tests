@@ -1,6 +1,5 @@
 package ee.openeid.siga.test.step
 
-
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.request.SigaRequests
@@ -166,7 +165,7 @@ abstract class RequestSteps {
 
     @Step("Poll Smart-ID Certificate Choice status")
     pollForSidCertificateChoiceStatus(Flow flow, String certificateId) {
-        def conditions = new PollingConditions(timeout: 28, initialDelay: 0, delay: 3.5)
+        def conditions = new PollingConditions(timeout: 28, initialDelay: 0.5, delay: 3.5)
         conditions.eventually {
             assert tryGetSidCertificateChoiceStatus(flow, certificateId).path("sidStatus") != "OUTSTANDING_TRANSACTION"
         }

@@ -5,9 +5,10 @@ import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.RequestErrorValidator
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
+import io.qameta.allure.*
+import io.restassured.http.Method
 import io.restassured.response.Response
+import org.apache.http.HttpStatus
 import spock.lang.Tag
 
 import static ee.openeid.siga.test.TestData.DEFAULT_SID_DEMO_ACCOUNT
@@ -37,4 +38,117 @@ class EndpointSpec extends GenericSpecification {
         where:
         profile << ["", " ", "123", "@!*", "UNKNOWN", "B_BES", "B_EPES", "LT_TM", "lt_TM", "lt_tm", "LT-TM", "LT TM", "T", "LTA"]
     }
+
+    @Story("SID start certificate choice HTTP method check")
+    def "Start SID certificate choice with method #method is #result"() {
+        given:
+        hashcode.createDefaultContainer(flow)
+
+        when:
+        Response certificateChoice = hashcodeRequests.startSidCertificateChoiceRequest(
+                flow,
+                method,
+                RequestData.sidCertificateChoiceRequestDefaultBody())
+                .request(method)
+
+        then:
+        certificateChoice.then().statusCode(httpStatus)
+
+        where:
+        method         || httpStatus                       | result
+        Method.POST    || HttpStatus.SC_OK                 | "allowed"
+        Method.GET     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+    }
+
+    @Story("SID certificate choice status HTTP method check")
+    def "SID certificate choice status with method #method is #result"() {
+        given:
+        hashcode.createDefaultContainer(flow)
+        Response startResponse = hashcode.startSidCertificateChoice(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
+
+        when:
+        Response certificateChoiceStatus = hashcodeRequests.getSidCertificateStatusRequest(
+                flow,
+                method,
+                startResponse.path("generatedCertificateId"))
+                .request(method)
+
+        then:
+        certificateChoiceStatus.then().statusCode(httpStatus)
+
+        where:
+        method         || httpStatus                       | result
+        Method.GET     || HttpStatus.SC_OK                 | "allowed"
+        Method.POST    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+    }
+
+    @Story("SID start signing HTTP method check")
+    def "SID start signing with method #method is #result"() {
+        given:
+        hashcode.createDefaultContainer(flow)
+        String sidDocumentNumber = hashcode.getSidDocumentNumber(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
+
+        when:
+        Response startSigningResponse = hashcodeRequests.startSidSigningRequest(
+                flow,
+                method,
+                RequestData.sidSigningRequestDefaultBody(sidDocumentNumber))
+                .request(method)
+
+        then:
+        startSigningResponse.then().statusCode(httpStatus)
+
+        where:
+        method         || httpStatus                       | result
+        Method.POST    || HttpStatus.SC_OK                 | "allowed"
+        Method.GET     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+    }
+
+    @Story("SID signing status HTTP method check")
+    def "SID signing status with method #method is #result"() {
+        given:
+        hashcode.createDefaultContainer(flow)
+        String sidDocumentNumber = hashcode.getSidDocumentNumber(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
+        Response startSigningResponse = hashcode.startSidSigning(flow, RequestData.sidSigningRequestDefaultBody(sidDocumentNumber))
+
+        when:
+        Response sidSigningStatus = hashcodeRequests.getSidSigningStatusRequest(
+                flow,
+                method,
+                startSigningResponse.path("generatedSignatureId"))
+                .request(method)
+
+        then:
+        sidSigningStatus.then().statusCode(httpStatus)
+
+        where:
+        method         || httpStatus                       | result
+        Method.GET     || HttpStatus.SC_OK                 | "allowed"
+        Method.POST    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+    }
+
 }

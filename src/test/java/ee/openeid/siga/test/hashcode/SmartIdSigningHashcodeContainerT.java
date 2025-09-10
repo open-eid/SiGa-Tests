@@ -551,28 +551,6 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     }
 
     @Test
-    void headToHashcodeSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void headToHashcodeSmartIdCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
     void signWithSmartIdInvalidRole() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
         Response response = postSmartIdSigningInSession(flow, smartIdSigningRequest("LT", null, null, null, null, null, "", null));
