@@ -32,22 +32,12 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
     }
 
     def "DELETE to create hashcode container should fail"() {
         expect:
         Response response = delete(HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "DELETE to validate hashcode container in session should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + VALIDATIONREPORT, flow)
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -82,15 +72,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
     def "DELETE to upload hashcode container should fail"() {
         expect:
         Response response = delete(UPLOAD + HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "POST to validate hashcode container in session should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + VALIDATIONREPORT, flow, "request")
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -143,7 +124,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
@@ -151,22 +131,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
     def "PUT to create hashcode container should fail"() {
         expect:
         Response response = put(HASHCODE_CONTAINERS, flow, hashcodeContainersDataRequestWithDefault().toString())
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PUT to validate hashcode container should fail"() {
-        expect:
-        Response response = put(getContainerEndpoint() + VALIDATIONREPORT, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PUT to validate hashcode container in session should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + VALIDATIONREPORT, flow, "request")
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -226,7 +190,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        VALIDATIONREPORT                     || 400    || INVALID_CONTAINER_EXCEPTION
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
@@ -235,13 +198,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         Response response = get(HASHCODE_CONTAINERS, flow)
 
         expectError(response, 405, INVALID_REQUEST)
-    }
-    //SIGA handles this as DELETE to containerId
-    def "GET to validate hashcode container should fail"() {
-        expect:
-        Response response = get(getContainerEndpoint() + VALIDATIONREPORT, flow)
-
-        assertThat(response.statusCode(), equalTo(400))
     }
 
     def "GET to hashcode data fail should fail"() {
@@ -273,7 +229,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status
-        VALIDATIONREPORT                     || 400
         DATAFILES + "/" + "testing.txt"      || 405
     }
 
@@ -282,13 +237,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         Response response = head(HASHCODE_CONTAINERS, flow)
 
         assertThat(response.statusCode(), equalTo(405))
-    }
-
-    def "HEAD to validate hashcode container should fail"() {
-        expect:
-        Response response = head(getContainerEndpoint() + VALIDATIONREPORT, flow)
-
-        assertThat(response.statusCode(), equalTo(400))
     }
 
     def "HEAD to hashcode data file should fail"() {
@@ -319,7 +267,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
@@ -327,22 +274,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
     def "OPTIONS to create hashcode container should fail"() {
         expect:
         Response response = options(HASHCODE_CONTAINERS, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
-    }
-
-    def "OPTIONS to validate hashcode container should fail"() {
-        expect:
-        Response response = options(getContainerEndpoint() + VALIDATIONREPORT, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
-    }
-
-    def "OPTIONS to validate hashcode container in session should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + VALIDATIONREPORT, flow)
 
         assertThat(response.statusCode(), equalTo(405))
     }
@@ -411,30 +342,13 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        VALIDATIONREPORT                     || 405    || INVALID_REQUEST
         SIGNATURES                           || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "Patch to validate hashcode container should fail"() {
-        expect:
-        Response response = patch(getContainerEndpoint() + VALIDATIONREPORT, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "PATCH to create hashcode container should fail"() {
         expect:
         Response response = patch(HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PATCH to validate hashcode container in session should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + VALIDATIONREPORT, flow)
 
         expectError(response, 405, INVALID_REQUEST)
     }
