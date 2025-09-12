@@ -10,6 +10,10 @@ class RequestData {
         [dataFiles: dataFiles]
     }
 
+    static Map createHashcodeRequestDefaultBody() {
+        [dataFiles: [TestData.defaultHashcodeDataFile()]]
+    }
+
     static Map uploadHashcodeRequestBody(String containerBase64) {
         [container: containerBase64]
     }

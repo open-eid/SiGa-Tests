@@ -1,6 +1,5 @@
 package ee.openeid.siga.test.step
 
-import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.*
 import io.restassured.response.Response
@@ -14,11 +13,11 @@ class HashcodeSteps extends RequestSteps {
     }
 
     Response createDefaultContainer(Flow flow) {
-        return createContainer(flow, RequestData.createHashcodeRequestBody([TestData.defaultHashcodeDataFile()]))
+        return createContainer(flow, RequestData.createHashcodeRequestDefaultBody())
     }
 
     Response addDefaultDataFile(Flow flow) {
-        return addDataFiles(flow, RequestData.createHashcodeRequestBody([TestData.defaultHashcodeDataFile()]))
+        return addDataFiles(flow, RequestData.createHashcodeRequestDefaultBody())
     }
 
     Response uploadContainerFromFile(Flow flow, String containerName) {

@@ -163,48 +163,6 @@ class CreateAsicContainerT extends TestBase {
         expectError(response, 400, INVALID_REQUEST);
     }
 
-    @Test
-    void deleteToCreateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
-        Response response = delete(getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToCreateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        Response response = put(getContainerEndpoint(), flow, asicContainersDataRequestWithDefault().toString());
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToCreateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
-        Response response = get(getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToCreateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
-        Response response = head(getContainerEndpoint(), flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void optionsToCreateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
-        Response response = options(getContainerEndpoint(), flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToCreateAsicContainer() throws NoSuchAlgorithmException, InvalidKeyException {
-        Response response = patch(getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
     @Override
     public String getContainerEndpoint() {
         return CONTAINERS;

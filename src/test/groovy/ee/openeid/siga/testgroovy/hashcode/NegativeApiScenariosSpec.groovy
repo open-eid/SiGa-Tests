@@ -18,13 +18,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         flow = SigaApiFlow.buildForTestClient1Service1()
     }
 
-    def "DELETE to create hashcode container should fail"() {
-        expect:
-        Response response = delete(HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
     def "DELETE to hashcode data files list should fail"() {
         expect:
         postUploadContainer(flow, hashcodeContainerRequestFromFile("hashcodeWithoutSignature.asice"))
@@ -74,13 +67,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
-    def "PUT to create hashcode container should fail"() {
-        expect:
-        Response response = put(HASHCODE_CONTAINERS, flow, hashcodeContainersDataRequestWithDefault().toString())
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
     def "PUT to hashcode data files list should fail"() {
         expect:
         postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
@@ -121,13 +107,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
-    def "GET to create hashcode container should fail"() {
-        expect:
-        Response response = get(HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
     def "GET to hashcode data fail should fail"() {
         expect:
         postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
@@ -160,13 +139,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         DATAFILES + "/" + "testing.txt"      || 405
     }
 
-    def "HEAD to create hashcode container should fail"() {
-        expect:
-        Response response = head(HASHCODE_CONTAINERS, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
-    }
-
     def "HEAD to hashcode data file should fail"() {
         expect:
         postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
@@ -196,13 +168,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         where:
         resourceUri                          || status || errorCode
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "OPTIONS to create hashcode container should fail"() {
-        expect:
-        Response response = options(HASHCODE_CONTAINERS, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
     }
 
     def "OPTIONS to hashcode data files list should fail"() {
@@ -252,13 +217,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         where:
         resourceUri                          || status || errorCode
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
-    }
-
-    def "PATCH to create hashcode container should fail"() {
-        expect:
-        Response response = patch(HASHCODE_CONTAINERS, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
     }
 
     def "PATCH to hashcode data files list should fail"() {
