@@ -31,6 +31,11 @@ class RequestData {
          containerName: containerName]
     }
 
+    static Map uploadDatafileRequestDefaultBody() {
+        [container    : Base64.encodeBase64String(Utils.readFileFromResources(TestData.DEFAULT_ASICE_CONTAINER_NAME)),
+         containerName: TestData.DEFAULT_ASICE_CONTAINER_NAME]
+    }
+
     static Map uploadDatafileRequestBodyFromFile(String containerName) {
         uploadDatafileRequestBody(Base64.encodeBase64String(Utils.readFileFromResources(containerName)), containerName)
     }

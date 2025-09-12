@@ -216,43 +216,6 @@ class RetrieveAsicContainerT extends TestBase {
         expectError(response, 400, RESOURCE_NOT_FOUND);
     }
 
-    @Test
-    void postToGetAsicContainer() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId(), flow, "");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToGetAsicContainer() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId(), flow);
-
-        response.then()
-                .statusCode(200);
-    }
-
-    @Test
-    void optionsToGetAsicContainer() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void patchToGetAsicContainer() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICE_CONTAINER_NAME));
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
     @Override
     public String getContainerEndpoint() {
         return CONTAINERS;

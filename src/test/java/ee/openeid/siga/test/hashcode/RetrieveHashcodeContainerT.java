@@ -187,16 +187,6 @@ class RetrieveHashcodeContainerT extends TestBase {
         expectError(response, 400, RESOURCE_NOT_FOUND);
     }
 
-    @Test
-    void headToGetHashcodeContainer() throws Exception {
-        postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId(), flow);
-
-        response.then()
-                .statusCode(200);
-    }
-
     @Override
     public String getContainerEndpoint() {
         return HASHCODE_CONTAINERS;

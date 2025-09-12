@@ -2,9 +2,7 @@ package ee.openeid.siga.test.step
 
 import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
-import ee.openeid.siga.test.request.DatafileRequests
-import ee.openeid.siga.test.request.RequestData
-import ee.openeid.siga.test.request.SigaRequests
+import ee.openeid.siga.test.request.*
 import io.restassured.response.Response
 
 @Singleton
@@ -26,4 +24,9 @@ class DatafileSteps extends RequestSteps {
     Response uploadContainerFromFile(Flow flow, String containerName) {
         return uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
     }
+
+    Response uploadDefaultContainer(Flow flow) {
+        return uploadContainer(flow, RequestData.uploadDatafileRequestDefaultBody())
+    }
+
 }

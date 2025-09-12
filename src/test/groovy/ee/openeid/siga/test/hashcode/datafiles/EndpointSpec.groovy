@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.datafile.datafiles
+package ee.openeid.siga.test.hashcode.datafiles
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
@@ -8,10 +8,8 @@ import io.qameta.allure.*
 import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
-import spock.lang.Tag
 
-@Tag("datafileContainer")
-@Epic("Get-add-delete data files (datafile)")
+@Epic("Get-add-delete data files (hashcode)")
 @Feature("Datafiles endpoints checks")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
@@ -23,16 +21,16 @@ class EndpointSpec extends GenericSpecification {
     @Story("Get-Add data files endpoint HTTP method check")
     def "Get-Add data files endpoint with method #method is #result"() {
         given: "upload container"
-        datafile.uploadContainerFromFile(flow, "containerWithoutSignatures.asice")
+        hashcode.uploadContainerFromFile(flow, "hashcodeWithoutSignature.asice")
 
         when: "make /datafiles endpoint request with HTTP method"
         Response response
 
         if (Method.POST) { //POST is used to add datafile to a container
-            Map requestBody = RequestData.addDatafileRequestBody([TestData.defaultDataFile()])
-            response = datafileRequests.addDataFilesRequest(flow, method, requestBody).request(method)
+            Map requestBody = RequestData.addDatafileRequestBody([TestData.defaultHashcodeDataFile()])
+            response = hashcodeRequests.addDataFilesRequest(flow, method, requestBody).request(method)
         } else {
-            response = datafileRequests.getDataFilesRequest(flow, method).request(method)
+            response = hashcodeRequests.getDataFilesRequest(flow, method).request(method)
         }
 
         then: "request is allowed/not allowed"
@@ -53,11 +51,11 @@ class EndpointSpec extends GenericSpecification {
     @Story("Delete data files endpoint HTTP method check")
     def "Delete data files endpoint with method #method is #result"() {
         given: "create default container"
-        datafile.createDefaultContainer(flow)
+        hashcode.createDefaultContainer(flow)
 
         when: "delete data file endpoint request with HTTP method"
-        String dataFileName = TestData.defaultDataFile().fileName
-        Response response = datafileRequests.deleteDataFileRequest(flow, method, dataFileName).request(method)
+        String dataFileName = TestData.defaultHashcodeDataFile().fileName
+        Response response = hashcodeRequests.deleteDataFileRequest(flow, method, dataFileName).request(method)
 
         then: "request is allowed/not allowed"
         response.then().statusCode(httpStatus)

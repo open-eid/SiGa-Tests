@@ -18,7 +18,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.stream.Collectors;
 
 import static ee.openeid.siga.test.helper.TestData.CONTAINER;
-import static ee.openeid.siga.test.helper.TestData.DATAFILES;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILENAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_FILESIZE;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_SHA256_DATAFILE;
@@ -43,7 +42,6 @@ import static ee.openeid.siga.test.utils.RequestBuilder.hashcodeContainerRequest
 import static ee.openeid.siga.test.utils.RequestBuilder.hashcodeContainersDataRequestWithDefault;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ManipulateDataFilesHashcodeContainerT extends TestBase {
@@ -322,15 +320,6 @@ class ManipulateDataFilesHashcodeContainerT extends TestBase {
         Response response = addDataFile(flow, addDataFileToHashcodeRequest(DEFAULT_FILENAME, DEFAULT_SHA256_DATAFILE, DEFAULT_SHA512_DATAFILE, DEFAULT_FILESIZE));
 
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
-    void headToHashcodeDataFilesList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, hashcodeContainerRequestFromFile("hashcode.asice"));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
     }
 
     @Override

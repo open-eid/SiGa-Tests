@@ -167,53 +167,6 @@ class UploadAsicContainerT extends TestBase {
     }
 
     @Test
-    void deleteToUploadAsicContainer() throws Exception {
-        Response response = delete(UPLOAD + getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToUploadAsicContainer() throws Exception {
-        JSONObject request = new JSONObject();
-        request.put("containerName", "container.asice");
-        request.put("container", "RnKZobNWVy8u92sDL4S2j1BUzMT5qTgt6hm90TfAGRo=");
-
-        Response response = put(UPLOAD + getContainerEndpoint(), flow, request.toString());
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToUploadAsicContainer() throws Exception {
-        Response response = get(UPLOAD + getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToUploadAsicContainer() throws Exception {
-        Response response = head(UPLOAD + getContainerEndpoint(), flow);
-
-        response.then()
-                .statusCode(405);
-    }
-
-    @Test
-    void optionsToUploadAsicContainer() throws Exception {
-        Response response = options(UPLOAD + getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void patchToUploadAsicContainer() throws Exception {
-        Response response = patch(UPLOAD + getContainerEndpoint(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
     void uploadContainerWithDuplicateDataFiles() throws Exception {
         Response response = postUploadContainer(flow, asicContainerRequestFromFile("asice_duplicate_data_files.asice"));
 
