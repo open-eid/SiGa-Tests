@@ -7,7 +7,6 @@ import ee.openeid.siga.webapp.json.CreateContainerSmartIdCertificateChoiceRespon
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse;
 import ee.openeid.siga.webapp.json.GetContainerSmartIdCertificateChoiceStatusResponse;
 import io.restassured.response.Response;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -16,9 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 import static ee.openeid.siga.test.helper.TestData.CERTIFICATE_CHOICE;
 import static ee.openeid.siga.test.helper.TestData.CLIENT_EXCEPTION;
@@ -33,7 +29,6 @@ import static ee.openeid.siga.test.helper.TestData.SID_EE_DEFAULT_DOCUMENT_NUMBE
 import static ee.openeid.siga.test.helper.TestData.SID_EE_MULT_ACCOUNTS_DOCUMENT_NUMBER;
 import static ee.openeid.siga.test.helper.TestData.SMARTID_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.SMARTID_SIGNING;
-import static ee.openeid.siga.test.helper.TestData.STATUS;
 import static ee.openeid.siga.test.helper.TestData.USER_CANCEL;
 import static ee.openeid.siga.test.helper.TestData.USER_SELECTED_WRONG_VC;
 import static ee.openeid.siga.test.utils.RequestBuilder.addDataFileToAsicRequest;
@@ -594,246 +589,6 @@ class SmartIdSigningAsicContainerT extends TestBase {
         Response pollResponse = pollForSidSigning(flow, signatureId);
 
         expectError(pollResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
-    void deleteToStartAsicSmartIdSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToStartAsicSmartIdSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToStartAsicSmartIdSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToStartAsicSmartIdSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void optionsToStartAsicSmartIdSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToStartAsicSmartIdSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void deleteToStartAsicCertificateChoice() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToStartAsicCertificateChoice() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToStartAsicCertificateChoice() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToStartAsicCertificateChoice() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void optionsToStartAsicCertificateChoice() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToStartAsicCertificateChoice() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void deleteToAsicSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToAsicSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void postToAsicSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToAsicSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void optionsToAsicSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToAsicSmartIdSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        String signatureId = startResponse.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void deleteToAsicSmartIdCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToAsicSmartIdSCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void postToAsicSmartIdCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToAsicSmartIdCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void optionsToAsicSmartIdCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void patchToAsicSmartIdCertificateStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"));
-        String generatedCertificateId = certificateChoice.as(CreateContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId();
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING + CERTIFICATE_CHOICE + "/" + generatedCertificateId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
     }
 
     @Test

@@ -6,16 +6,12 @@ import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateContainerRemoteSigningResponse;
 import io.restassured.response.Response;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 import static ee.openeid.siga.test.helper.TestData.AUTH_CERT_PEM;
 import static ee.openeid.siga.test.helper.TestData.AUTH_CERT_PEM_HEX;
@@ -28,7 +24,6 @@ import static ee.openeid.siga.test.helper.TestData.INVALID_CERTIFICATE_EXCEPTION
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SIGNATURE;
-import static ee.openeid.siga.test.helper.TestData.REMOTE_SIGNING;
 import static ee.openeid.siga.test.helper.TestData.RESULT;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_EXPIRED_PEM;
@@ -454,120 +449,6 @@ class RemoteSigningAsicContainerT extends TestBase {
                 dataToSignResponse.getGeneratedSignatureId());
 
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
-    void deleteToStartAsicRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToStartAsicRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToStartAsicRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToStartAsicRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void optionsToStartAsicRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToStartAsicRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void deleteToAsicFinalizeRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToAsicFinalizeRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void postToAsicFinalizeRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToAsicFinalizeRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void optionsToAsicFinalizeRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToAsicFinalizeRemoteSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        CreateContainerRemoteSigningResponse startResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateContainerRemoteSigningResponse.class);
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + REMOTE_SIGNING + "/" + startResponse.getGeneratedSignatureId(), flow);
-
-        expectError(response, 405, INVALID_REQUEST);
     }
 
     @Override

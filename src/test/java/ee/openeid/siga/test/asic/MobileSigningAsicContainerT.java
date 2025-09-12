@@ -5,7 +5,6 @@ import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateContainerMobileIdSigningResponse;
 import io.restassured.response.Response;
-import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -14,23 +13,18 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.EXPIRED_TRANSACTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
-import static ee.openeid.siga.test.helper.TestData.MID_SIGNING;
 import static ee.openeid.siga.test.helper.TestData.NOT_VALID;
 import static ee.openeid.siga.test.helper.TestData.PHONE_ABSENT;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.SENDING_ERROR;
 import static ee.openeid.siga.test.helper.TestData.SERVICE_SECRET_2;
 import static ee.openeid.siga.test.helper.TestData.SERVICE_UUID_2;
-import static ee.openeid.siga.test.helper.TestData.STATUS;
 import static ee.openeid.siga.test.helper.TestData.USER_CANCEL;
 import static ee.openeid.siga.test.utils.RequestBuilder.addDataFileToAsicRequest;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainerRequestFromFile;
@@ -39,7 +33,6 @@ import static ee.openeid.siga.test.utils.RequestBuilder.midSigningRequest;
 import static ee.openeid.siga.test.utils.RequestBuilder.midSigningRequestWithDefault;
 import static ee.openeid.siga.test.utils.RequestBuilder.midSigningRequestWithMessageToDisplay;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @EnabledIfSigaProfileActive({"datafileContainer", "mobileId"})
 class MobileSigningAsicContainerT extends TestBase {
@@ -414,126 +407,6 @@ class MobileSigningAsicContainerT extends TestBase {
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", signatureProfile));
 
         expectError(response, 400, INVALID_REQUEST, "Invalid signature profile");
-    }
-
-    @Test
-    void deleteToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void getToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = get(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void optionsToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToStartAsiceMidSigning() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void deleteToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void putToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void postToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow, "request");
-
-        expectError(response, 405, INVALID_REQUEST);
-    }
-
-    @Test
-    void headToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void optionsToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        assertThat(response.statusCode(), equalTo(405));
-    }
-
-    @Test
-    void patchToAsiceMidSigningStatus() throws NoSuchAlgorithmException, InvalidKeyException, JSONException {
-        postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response startResponse = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019906", "+37200000766", "LT"));
-        String signatureId = startResponse.as(CreateContainerMobileIdSigningResponse.class).getGeneratedSignatureId();
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + MID_SIGNING + "/" + signatureId + STATUS, flow);
-
-        expectError(response, 405, INVALID_REQUEST);
     }
 
     @Test

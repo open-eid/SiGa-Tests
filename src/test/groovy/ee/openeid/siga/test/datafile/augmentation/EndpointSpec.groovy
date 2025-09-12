@@ -48,7 +48,7 @@ class EndpointSpec extends GenericSpecification {
     @Story("Augmentation not supported in hashcode")
     def "Augmentation endpoint not allowed in hashcode mode"() {
         given: "upload container for augmentation"
-        hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(TestData.DEFAULT_HASHCODE_CONTAINER))
+        hashcode.uploadDefaultContainer(flow)
 
         when: "try augment request through hashcode endpoint"
         Response response = hashcodeRequests.augmentationContainerRequest(flow, Method.PUT).put()

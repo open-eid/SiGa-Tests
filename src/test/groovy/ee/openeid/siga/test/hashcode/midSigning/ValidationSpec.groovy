@@ -40,7 +40,7 @@ class ValidationSpec extends GenericSpecification {
 
     def "MID sign successful with following user: #userDescription"() {
         given:
-        hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBody(TestData.DEFAULT_HASHCODE_CONTAINER))
+        hashcode.uploadDefaultContainer(flow)
 
         when:
         hashcode.midSigning(flow, personId, phoneNo)

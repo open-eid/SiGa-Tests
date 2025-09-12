@@ -18,6 +18,10 @@ class RequestData {
         [container: containerBase64]
     }
 
+    static Map uploadHashcodeRequestDefaultBody() {
+        [container: TestData.DEFAULT_HASHCODE_CONTAINER]
+    }
+
     static Map uploadHashcodeRequestBodyFromFile(String fileName) {
         uploadHashcodeRequestBody(Base64.encodeBase64String(Utils.readFileFromResources(fileName)))
     }
