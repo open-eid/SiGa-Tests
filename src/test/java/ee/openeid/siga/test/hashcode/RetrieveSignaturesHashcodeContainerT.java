@@ -5,20 +5,16 @@ import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerRemoteSigningResponse;
 import io.restassured.response.Response;
 import org.json.JSONException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.util.Arrays;
 
 import static ee.openeid.siga.test.helper.TestData.*;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
 import static ee.openeid.siga.test.utils.RequestBuilder.*;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 
@@ -200,24 +196,6 @@ class RetrieveSignaturesHashcodeContainerT extends TestBase {
         response.then()
                 .statusCode(400)
                 .body(ERROR_CODE, equalTo(RESOURCE_NOT_FOUND));
-    }
-
-    @Test
-    void headToRetrieveHashcodeSignatureList() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES, flow);
-
-        assertThat(response.statusCode(), equalTo(200));
-    }
-
-    @Test
-    void headToRetrieveHashcodeSignatureInfo() throws NoSuchAlgorithmException, InvalidKeyException, JSONException, IOException {
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME));
-
-        Response response = head(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES + "/" + getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"), flow);
-
-        assertThat(response.statusCode(), equalTo(200));
     }
 
     @Override

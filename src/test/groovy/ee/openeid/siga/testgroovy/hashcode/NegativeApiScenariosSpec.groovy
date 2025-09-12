@@ -2,9 +2,6 @@ package ee.openeid.siga.testgroovy.hashcode
 
 import ee.openeid.siga.test.model.SigaApiFlow
 import ee.openeid.siga.testgroovy.helper.TestBaseSpecification
-import ee.openeid.siga.webapp.json.CreateContainerMobileIdSigningResponse
-import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse
-import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoiceResponse
 import io.restassured.response.Response
 import spock.lang.Unroll
 
@@ -21,20 +18,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         flow = SigaApiFlow.buildForTestClient1Service1()
     }
 
-    // DELETE requests that should fail
-    def "DELETE to hashcode #resourceUri should fail"() {
-        expect:
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + resourceUri, flow)
-
-        expectError(response, status, errorCode)
-
-        where:
-        resourceUri                          || status || errorCode
-        SIGNATURES                           || 405    || INVALID_REQUEST
-    }
-
     def "DELETE to create hashcode container should fail"() {
         expect:
         Response response = delete(HASHCODE_CONTAINERS, flow)
@@ -47,24 +30,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         postUploadContainer(flow, hashcodeContainerRequestFromFile("hashcodeWithoutSignature.asice"))
 
         Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "DELETE to retrieve hashcode signature list should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "DELETE to retrieve hashcode signature info should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = delete(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES + "/" + getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"), flow)
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -94,24 +59,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         expectError(response, 405, INVALID_REQUEST)
     }
 
-    def "POST to retrieve hashcode signature list should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "POST to retrieve hashcode signature info should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = post(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES + "/" + getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"), flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
     // PUT requests that should fail
     @Unroll
     def "PUT to hashcode #resourceUri should fail"() {
@@ -124,7 +71,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SIGNATURES                           || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
@@ -149,24 +95,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
 
         Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + DATAFILES + "/" + getDataFileList(flow).getBody().path("dataFiles[0].fileName"), flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PUT to retrieve hashcode signature list should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES, flow, "request")
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PUT to retrieve hashcode signature info should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = put(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES + "/" + getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"), flow, "request")
 
         expectError(response, 405, INVALID_REQUEST)
     }
@@ -267,7 +195,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SIGNATURES                           || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
@@ -305,24 +232,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         expectError(response, 405, INVALID_REQUEST)
     }
 
-    def "OPTIONS to retrieve hashcode signature list should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES, flow)
-
-        assertThat(response.statusCode(), equalTo(405))
-    }
-
-    def "OPTIONS to retrieve hashcode signature info should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = options(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES + "/" + getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"), flow)
-
-        assertThat(response.statusCode(), equalTo(405))
-    }
-
     def "OPTIONS to upload hashcode container should fail"() {
         expect:
         Response response = options(UPLOAD + HASHCODE_CONTAINERS, flow)
@@ -342,7 +251,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
 
         where:
         resourceUri                          || status || errorCode
-        SIGNATURES                           || 405    || INVALID_REQUEST
         DATAFILES + "/" + "testing.txt"      || 405    || INVALID_REQUEST
     }
 
@@ -376,24 +284,6 @@ class NegativeApiScenariosSpec extends TestBaseSpecification {
         postUploadContainer(flow, hashcodeContainerRequest(DEFAULT_HASHCODE_CONTAINER))
 
         Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId(), flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PATCH to retrieve hashcode signature list should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES, flow)
-
-        expectError(response, 405, INVALID_REQUEST)
-    }
-
-    def "PATCH to retrieve hashcode signature info should fail"() {
-        expect:
-        postUploadContainer(flow, hashcodeContainerRequestFromFile(DEFAULT_HASHCODE_CONTAINER_NAME))
-
-        Response response = patch(getContainerEndpoint() + "/" + flow.getContainerId() + SIGNATURES + "/" + getSignatureList(flow).getBody().path("signatures[0].generatedSignatureId"), flow)
 
         expectError(response, 405, INVALID_REQUEST)
     }

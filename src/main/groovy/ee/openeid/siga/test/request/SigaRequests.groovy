@@ -132,7 +132,7 @@ abstract class SigaRequests {
     }
 
     RequestSpecification getSignatureInfoRequest(Flow flow, Method method, String signatureId) {
-        String endpoint = "${getBasePath()}/${flow.getContainerId()}/signatures${signatureId}"
+        String endpoint = "${getBasePath()}/${flow.getContainerId()}/signatures/${signatureId}"
         return sigaRequestBase(flow, method, endpoint)
     }
 

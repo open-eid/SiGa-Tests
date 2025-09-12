@@ -1,4 +1,4 @@
-package ee.openeid.siga.test.datafile.signatures
+package ee.openeid.siga.test.hashcode.signatures
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
@@ -9,11 +9,9 @@ import io.qameta.allure.*
 import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
-import spock.lang.Tag
 
-@Tag("datafileContainer")
-@Epic("Signatures (datafile)")
-@Feature("Signatures and signer info endpoint checks")
+@Epic("Signatures (hashcode)")
+@Feature("Signatures endpoint checks")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 
@@ -24,10 +22,10 @@ class EndpointSpec extends GenericSpecification {
     @Story("Signature list endpoint HTTP method check")
     def "Get signature list with method #method is #result"() {
         given: "upload signed container"
-        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICE_CONTAINER_NAME)
+        hashcode.uploadContainerFromFile(flow, TestData.DEFAULT_HASHCODE_CONTAINER_NAME)
 
         when: "get signature list endpoint request with HTTP method"
-        Response response = datafileRequests.getSignatureListRequest(flow, method).request(method)
+        Response response = hashcodeRequests.getSignatureListRequest(flow, method).request(method)
 
         then: "request is allowed/not allowed"
         response.then().statusCode(httpStatus)
@@ -47,11 +45,11 @@ class EndpointSpec extends GenericSpecification {
     @Story("Signature list endpoint request checks")
     def "Get signature list with not existing container ID returns error"() {
         given: "upload signed container"
-        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICE_CONTAINER_NAME)
+        hashcode.uploadContainerFromFile(flow, TestData.DEFAULT_HASHCODE_CONTAINER_NAME)
 
         when: "try getting not existing container signature list"
         flow.setContainerId("not_existing")
-        Response response = datafile.tryGetSignatureList(flow)
+        Response response = hashcode.tryGetSignatureList(flow)
 
         then: "request is not allowed"
         RequestErrorValidator.validate(response, RequestError.INVALID_RESOURCE)
@@ -60,14 +58,14 @@ class EndpointSpec extends GenericSpecification {
     @Story("Signature list endpoint request checks")
     def "Get signature list of other sessions container returns error"() {
         given: "upload signed container for two services"
-        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
+        hashcode.uploadContainerFromFile(flow, TestData.DEFAULT_HASHCODE_CONTAINER_NAME)
 
         Flow flow_service2 = Flow.buildForTestClient1Service2()
-        datafile.uploadContainerFromFile(flow_service2, TestData.DEFAULT_ASICE_CONTAINER_NAME)
+        hashcode.uploadContainerFromFile(flow_service2, TestData.DEFAULT_HASHCODE_CONTAINER_NAME)
 
         when: "try getting signature list of other session container"
         flow.setContainerId(flow_service2.containerId)
-        Response response = datafile.tryGetSignatureList(flow)
+        Response response = hashcode.tryGetSignatureList(flow)
 
         then: "request is not allowed"
         RequestErrorValidator.validate(response, RequestError.INVALID_RESOURCE)
@@ -76,11 +74,11 @@ class EndpointSpec extends GenericSpecification {
     @Story("Signer info endpoint HTTP method check")
     def "Get signer info with method #method is #result"() {
         given: "upload signed container"
-        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICE_CONTAINER_NAME)
-        String signatureId = datafile.getSignatureList(flow).path("signatures[0].generatedSignatureId")
+        hashcode.uploadContainerFromFile(flow, TestData.DEFAULT_HASHCODE_CONTAINER_NAME)
+        String signatureId = hashcode.getSignatureList(flow).path("signatures[0].generatedSignatureId")
 
         when: "get signer info endpoint request with HTTP method"
-        Response response = datafileRequests.getSignatureInfoRequest(flow, method, signatureId).request(method)
+        Response response = hashcodeRequests.getSignatureInfoRequest(flow, method, signatureId).request(method)
 
         then: "request is allowed/not allowed"
         response.then().statusCode(httpStatus)
