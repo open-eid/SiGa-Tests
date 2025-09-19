@@ -2,9 +2,8 @@ package ee.openeid.siga.test.datafile.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
-import ee.openeid.siga.test.request.RequestData
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
+import io.qameta.allure.*
+import io.restassured.module.jsv.JsonSchemaValidator
 import io.restassured.response.Response
 import spock.lang.Tag
 
@@ -20,11 +19,28 @@ class ValidationSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
+    @Story("Validation report corresponds to schema")
+    def "Validation report corresponds to schema: #containerType"() {
+        expect:
+        datafile.validateContainerFromFile(flow, containerName).then()
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("static/ValidationReportSchema.json"))
+
+        where:
+        containerType                  | containerName
+        "Signed ASiC-E"                | "TEST_ESTEID2018_ASiC-E_XAdES_LT+LT.sce"
+        "Signed BDOC"                  | "valid-bdoc-tm-newer.bdoc"
+        "Signed DDOC"                  | "ddocSingleSignature.ddoc"
+        "Timestamped ASiC-S"           | "2xTstFirstInvalidSecondNotCoveringNestedTimestampedAsics.asics"
+        "Timestamped composite ASiC-S" | "timestampedAsicsWithAsice.asics"
+        "Signed ASiC-S"                | "signedAsicsWithSignedDdoc.scs"
+        "Signed PDF"                   | "pdfSingleTestSignature.pdf"
+    }
+
     //TODO: SIGA-1098 - comment in errors paths, if fixed
     def "Timestamped ASiC-S validation report contains all new timestamp token info"() {
         when:
-        Response validationResponse = datafile.validateContainer(
-                flow, RequestData.uploadDatafileRequestBodyFromFile("2xTstFirstInvalidSecondNotCoveringNestedTimestampedAsics.asics"))
+        Response validationResponse = datafile.validateContainerFromFile(flow,
+                "2xTstFirstInvalidSecondNotCoveringNestedTimestampedAsics.asics")
 
         then:
         validationResponse.then().rootPath("validationConclusion.")
@@ -49,8 +65,8 @@ class ValidationSpec extends GenericSpecification {
 
     def "Augmented XAdES signature validation report contains new archiveTimeStamps info"() {
         when:
-        Response validationResponse = datafile.validateContainer(
-                flow, RequestData.uploadDatafileRequestBodyFromFile("TEST_ESTEID2018_ASiC-E_XAdES_LTA+LTA.sce"))
+        Response validationResponse = datafile.validateContainerFromFile(flow,
+                "TEST_ESTEID2018_ASiC-E_XAdES_LTA+LTA.sce")
 
         then:
         validationResponse.then().rootPath("validationConclusion.signatures.info.")

@@ -29,4 +29,8 @@ class DatafileSteps extends RequestSteps {
         return uploadContainer(flow, RequestData.uploadDatafileRequestDefaultBody())
     }
 
+    Response validateContainerFromFile(Flow flow, String containerName) {
+        return validateContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(containerName))
+    }
+
 }

@@ -5,9 +5,8 @@ import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.RequestErrorValidator
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Story
+import io.qameta.allure.*
+import io.restassured.module.jsv.JsonSchemaValidator
 import io.restassured.response.Response
 
 @Epic("Validation Report (hashcode)")
@@ -17,6 +16,19 @@ class ValidationSpec extends GenericSpecification {
 
     def setup() {
         flow = Flow.buildForDefaultTestClientService()
+    }
+
+    @Issue("SIGA-1149")
+    @Story("Validation report corresponds to schema")
+    def "Validation report corresponds to schema: #containerType"() {
+        expect:
+        hashcode.validateContainerFromFile(flow, containerName).then()
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("static/ValidationReportSchema.json"))
+
+        where:
+        containerType   | containerName
+        "Signed ASiC-E" | "hashcode.asice"
+        "Signed DDOC"   | "hashcodeDdocTest.ddoc" //In report validatedDocument field should be null
     }
 
     @Story("Signature filename check")

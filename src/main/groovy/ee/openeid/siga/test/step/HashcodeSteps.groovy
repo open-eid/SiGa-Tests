@@ -28,4 +28,8 @@ class HashcodeSteps extends RequestSteps {
         return uploadContainer(flow, RequestData.uploadHashcodeRequestDefaultBody())
     }
 
+    Response validateContainerFromFile(Flow flow, String containerName) {
+        return validateContainer(flow, RequestData.uploadHashcodeRequestBodyFromFile(containerName))
+    }
+
 }
