@@ -1,0 +1,133 @@
+{
+  "validationConclusion": {
+    "policy": {
+      "policyDescription": "Policy according most common requirements of Estonian Public Administration, to validate Qualified Electronic Signatures and Electronic Seals with Qualified Certificates (according to Regulation (EU) No 910/2014, aka eIDAS). I.e. signatures that have been recognized as Advanced electronic Signatures (AdES) and AdES supported by a Qualified Certificate (AdES/QC) do not produce a positive validation result, with exception for seals, where AdES/QC and above will produce positive result. Signatures and Seals which are not compliant with ETSI standards (referred by eIDAS) may produce unknown or invalid validation result. Validation process is based on eIDAS Article 32 and referred ETSI standards.",
+      "policyName": "POLv4",
+      "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
+    },
+    "validationTime": "${json-unit.ignore}",
+    "validatedDocument": {
+      "filename": "containerWithMultipleSignatures.asice",
+      "fileHash": null,
+      "hashAlgo": null
+    },
+    "validationLevel": "ARCHIVAL_DATA",
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      },
+      {
+        "content": "Container \"mimetype\" file must not be compressed"
+      }
+    ],
+    "signatureForm": "ASiC-E",
+    "signatures": [
+      {
+        "id": "S0",
+        "signatureFormat": "XAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
+        "signedBy": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865",
+        "subjectDistinguishedName": {
+          "serialNumber": "11404176865",
+          "commonName": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "test.xml",
+            "scope": "FULL",
+            "content": "Full document"
+          },
+          {
+            "name": "test.txt",
+            "scope": "FULL",
+            "content": "Full document"
+          }
+        ],
+        "claimedSigningTime": "2014-11-17T14:11:47Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2014-11-17T14:11:46Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      },
+      {
+        "id": "id-bec591d4978fe37e34586c42d2dc996a",
+        "signatureFormat": "XAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
+        "signedBy": "JÕEORG,JAAK-KRISTJAN,38001085718",
+        "subjectDistinguishedName": {
+          "serialNumber": "PNOEE-38001085718",
+          "commonName": "JÕEORG,JAAK-KRISTJAN,38001085718"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "test.xml",
+            "scope": "FULL",
+            "content": "Full document"
+          },
+          {
+            "name": "test.txt",
+            "scope": "FULL",
+            "content": "Full document"
+          }
+        ],
+        "claimedSigningTime": "2019-08-28T11:50:21Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2019-08-28T11:50:23Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      },
+      {
+        "id": "id-416aca42e4f53758868a06011cc2c04a",
+        "signatureFormat": "XAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
+        "signedBy": "JÕEORG,JAAK-KRISTJAN,38001085718",
+        "subjectDistinguishedName": {
+          "serialNumber": "PNOEE-38001085718",
+          "commonName": "JÕEORG,JAAK-KRISTJAN,38001085718"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "test.xml",
+            "scope": "FULL",
+            "content": "Full document"
+          },
+          {
+            "name": "test.txt",
+            "scope": "FULL",
+            "content": "Full document"
+          }
+        ],
+        "claimedSigningTime": "2019-08-28T11:50:22Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2019-08-28T11:50:24Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      }
+    ],
+    "timeStampTokens": [
+    ],
+    "validSignaturesCount": 3,
+    "signaturesCount": 3
+  }
+}

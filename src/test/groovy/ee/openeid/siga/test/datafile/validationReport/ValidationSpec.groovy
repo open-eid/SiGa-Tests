@@ -2,11 +2,13 @@ package ee.openeid.siga.test.datafile.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.util.Utils
 import io.qameta.allure.*
 import io.restassured.module.jsv.JsonSchemaValidator
 import io.restassured.response.Response
 import spock.lang.Tag
 
+import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
@@ -36,7 +38,7 @@ class ValidationSpec extends GenericSpecification {
         "Signed PDF"                   | "pdfSingleTestSignature.pdf"
     }
 
-    //TODO: SIGA-1098 - comment in errors paths, if fixed
+    //TODO: SIGA-1125 - comment in errors paths, if fixed
     def "Timestamped ASiC-S validation report contains all new timestamp token info"() {
         when:
         Response validationResponse = datafile.validateContainerFromFile(flow,
@@ -83,6 +85,26 @@ class ValidationSpec extends GenericSpecification {
                 .body("archiveTimeStamps[1].signedBy[0]", is("DEMO SK TIMESTAMPING UNIT 2025E"))
                 .body("archiveTimeStamps[1].country[0]", is("EE"))
                 .body("archiveTimeStamps[1].content[0]", startsWith("MIIHPAYJKoZIhvcNAQcCoIIHLTCCBykCAQMxDTALBg"))
+    }
+
+    def "Validation report of '#containerType' contains all relevant info"() {
+        when:
+        Response validationResponse = datafile.validateContainerFromFile(flow, containerName)
+
+        then:
+        String expectedReport = new String(Utils.readFileFromResources("${containerName}_Report.json"))
+        String actualReport = validationResponse.then().extract().asString()
+        assertJsonEquals(expectedReport, actualReport)
+
+        where:
+        containerType         | containerName
+        "signed ASiC-E"       | "containerWithMultipleSignatures.asice"
+        "signed BDOC"         | "valid-bdoc-tm-newer.bdoc"
+        "signed DDOC"         | "ddocSingleSignature.ddoc"
+        "signed PDF"          | "pdfSingleTestSignature.pdf"
+        "signed CAdES ASiC-S" | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
+        "signed XAdES ASiC-S" | "signedAsicsWithSignedDdoc.scs"
+        "timestamped ASiC-S"  | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
     }
 
 }

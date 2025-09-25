@@ -1,0 +1,60 @@
+{
+  "validationConclusion": {
+    "policy": {
+      "policyDescription": "Policy according most common requirements of Estonian Public Administration, to validate Qualified Electronic Signatures and Electronic Seals with Qualified Certificates (according to Regulation (EU) No 910/2014, aka eIDAS). I.e. signatures that have been recognized as Advanced electronic Signatures (AdES) and AdES supported by a Qualified Certificate (AdES/QC) do not produce a positive validation result, with exception for seals, where AdES/QC and above will produce positive result. Signatures and Seals which are not compliant with ETSI standards (referred by eIDAS) may produce unknown or invalid validation result. Validation process is based on eIDAS Article 32 and referred ETSI standards.",
+      "policyName": "POLv4",
+      "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
+    },
+    "validationTime": "${json-unit.ignore}",
+    "validatedDocument": {
+      "filename": "ddocSingleSignature.ddoc",
+      "fileHash": null,
+      "hashAlgo": null
+    },
+    "validationLevel": null,
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      },
+      {
+        "content": "The algorithm SHA1 used in DDOC is no longer considered reliable for signature creation!"
+      }
+    ],
+    "signatureForm": "DIGIDOC_XML_1.3",
+    "signatures": [
+      {
+        "id": "S0",
+        "signatureFormat": "DIGIDOC_XML_1.3",
+        "signatureLevel": null,
+        "signedBy": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865",
+        "subjectDistinguishedName": {
+          "serialNumber": "11404176865",
+          "commonName": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "test.txt",
+            "scope": "FullSignatureScope",
+            "content": "Digest of the document content"
+          }
+        ],
+        "claimedSigningTime": "2018-11-23T13:31:00Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2018-11-23T13:31:01Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      }
+    ],
+    "timeStampTokens": [
+    ],
+    "validSignaturesCount": 1,
+    "signaturesCount": 1
+  }
+}

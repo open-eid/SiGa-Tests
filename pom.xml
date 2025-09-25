@@ -201,6 +201,13 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/net.javacrumbs.json-unit/json-unit -->
+        <dependency>
+            <groupId>net.javacrumbs.json-unit</groupId>
+            <artifactId>json-unit</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

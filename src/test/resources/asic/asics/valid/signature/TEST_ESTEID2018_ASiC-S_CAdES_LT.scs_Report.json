@@ -1,0 +1,57 @@
+{
+  "validationConclusion": {
+    "policy": {
+      "policyDescription": "Policy according most common requirements of Estonian Public Administration, to validate Qualified Electronic Signatures and Electronic Seals with Qualified Certificates (according to Regulation (EU) No 910/2014, aka eIDAS). I.e. signatures that have been recognized as Advanced electronic Signatures (AdES) and AdES supported by a Qualified Certificate (AdES/QC) do not produce a positive validation result, with exception for seals, where AdES/QC and above will produce positive result. Signatures and Seals which are not compliant with ETSI standards (referred by eIDAS) may produce unknown or invalid validation result. Validation process is based on eIDAS Article 32 and referred ETSI standards.",
+      "policyName": "POLv4",
+      "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
+    },
+    "validationTime": "${json-unit.ignore}",
+    "validatedDocument": {
+      "filename": "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs",
+      "fileHash": null,
+      "hashAlgo": null
+    },
+    "validationLevel": "ARCHIVAL_DATA",
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      }
+    ],
+    "signatureForm": "ASiC-S",
+    "signatures": [
+      {
+        "id": "S-7A2A3098AF34DA01D233651344B11B7FB992824B5A18745C5305B7ACD762AD7A",
+        "signatureFormat": "CAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
+        "signedBy": "JÕEORG,JAAK-KRISTJAN,38001085718",
+        "subjectDistinguishedName": {
+          "serialNumber": "PNOEE-38001085718",
+          "commonName": "JÕEORG,JAAK-KRISTJAN,38001085718"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "test.txt",
+            "scope": "FULL",
+            "content": "Full document"
+          }
+        ],
+        "claimedSigningTime": "2024-09-13T14:13:05Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2024-09-13T14:13:06Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      }
+    ],
+    "timeStampTokens": [
+    ],
+    "validSignaturesCount": 1,
+    "signaturesCount": 1
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "validationConclusion": {
+    "policy": {
+      "policyDescription": "Policy according most common requirements of Estonian Public Administration, to validate Qualified Electronic Signatures and Electronic Seals with Qualified Certificates (according to Regulation (EU) No 910/2014, aka eIDAS). I.e. signatures that have been recognized as Advanced electronic Signatures (AdES) and AdES supported by a Qualified Certificate (AdES/QC) do not produce a positive validation result, with exception for seals, where AdES/QC and above will produce positive result. Signatures and Seals which are not compliant with ETSI standards (referred by eIDAS) may produce unknown or invalid validation result. Validation process is based on eIDAS Article 32 and referred ETSI standards.",
+      "policyName": "POLv4",
+      "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
+    },
+    "validationTime": "${json-unit.ignore}",
+    "validatedDocument": {
+      "filename": "pdfSingleTestSignature.pdf",
+      "fileHash": null,
+      "hashAlgo": null
+    },
+    "validationLevel": "ARCHIVAL_DATA",
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      }
+    ],
+    "signatureForm": null,
+    "signatures": [
+      {
+        "id": "S-4D0D5A83688FC617AA83810ED74E26C5A79063D110B00AD207EAB3EFDC3F5619",
+        "signatureFormat": "PAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
+        "signedBy": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865",
+        "subjectDistinguishedName": {
+          "serialNumber": "11404176865",
+          "commonName": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "Partial PDF",
+            "scope": "PARTIAL",
+            "content": "The document ByteRange : [0, 2226, 21172, 314]"
+          }
+        ],
+        "claimedSigningTime": "2020-05-27T09:59:07Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2020-05-27T09:59:09Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      }
+    ],
+    "timeStampTokens": [
+    ],
+    "validSignaturesCount": 1,
+    "signaturesCount": 1
+  }
+}

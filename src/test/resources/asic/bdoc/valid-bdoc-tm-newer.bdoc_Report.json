@@ -1,0 +1,57 @@
+{
+  "validationConclusion": {
+    "policy": {
+      "policyDescription": "Policy according most common requirements of Estonian Public Administration, to validate Qualified Electronic Signatures and Electronic Seals with Qualified Certificates (according to Regulation (EU) No 910/2014, aka eIDAS). I.e. signatures that have been recognized as Advanced electronic Signatures (AdES) and AdES supported by a Qualified Certificate (AdES/QC) do not produce a positive validation result, with exception for seals, where AdES/QC and above will produce positive result. Signatures and Seals which are not compliant with ETSI standards (referred by eIDAS) may produce unknown or invalid validation result. Validation process is based on eIDAS Article 32 and referred ETSI standards.",
+      "policyName": "POLv4",
+      "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
+    },
+    "validationTime": "${json-unit.ignore}",
+    "validatedDocument": {
+      "filename": "valid-bdoc-tm-newer.bdoc",
+      "fileHash": null,
+      "hashAlgo": null
+    },
+    "validationLevel": null,
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      }
+    ],
+    "signatureForm": "ASiC-E",
+    "signatures": [
+      {
+        "id": "id-14077f4aa96f37fe59f65fbfcde8ea12",
+        "signatureFormat": "XAdES_BASELINE_LT_TM",
+        "signatureLevel": "QESIG",
+        "signedBy": "O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970",
+        "subjectDistinguishedName": {
+          "serialNumber": "60001016970",
+          "commonName": "O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"
+        },
+        "indication": "TOTAL-PASSED",
+        "subIndication": null,
+        "errors": [
+        ],
+        "signatureScopes": [
+          {
+            "name": "test.txt",
+            "scope": "FullSignatureScope",
+            "content": "Digest of the document content"
+          }
+        ],
+        "claimedSigningTime": "2023-07-07T11:48:29Z",
+        "warnings": [
+        ],
+        "info": {
+          "bestSignatureTime": "2023-07-07T11:48:32Z",
+          "archiveTimeStamps": [
+          ]
+        }
+      }
+    ],
+    "timeStampTokens": [
+    ],
+    "validSignaturesCount": 1,
+    "signaturesCount": 1
+  }
+}
