@@ -1,14 +1,10 @@
 package ee.openeid.siga.test.hashcode.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.TestData
-import ee.openeid.siga.test.model.ErrorCode
-import ee.openeid.siga.test.model.Flow
-import ee.openeid.siga.test.model.RequestError
+import ee.openeid.siga.test.model.*
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.RequestErrorValidator
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
+import io.qameta.allure.*
 import io.restassured.response.Response
 import spock.lang.Tag
 
@@ -36,6 +32,20 @@ class ValidationSpec extends GenericSpecification {
         hashcode.validateContainerInSession(flow)
                 .then()
                 .body("validationConclusion.validSignaturesCount", is(1))
+    }
+
+    @Story("MID sign existing container")
+    def "MID sign existing container with Thales ID-card signature successful"() {
+        given: "upload container with existing signatures"
+        hashcode.uploadContainer(flow,
+                RequestData.uploadHashcodeRequestBodyFromFile("hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LT+LTA.asice"))
+
+        when: "MID sign"
+        hashcode.midSigning(flow, RequestData.midSigningRequestDefaultBody())
+
+        then: "validate container to have valid signatures"
+        hashcode.validateContainerInSession(flow).then()
+                .body("validationConclusion.validSignaturesCount", is(2))
     }
 
     def "MID sign successful with following user: #userDescription"() {
