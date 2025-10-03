@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.utils;
 
 import ee.openeid.siga.test.model.SigaApiFlow;
+import ee.openeid.siga.test.util.Utils;
 import org.apache.commons.codec.binary.Base64;
 import org.json.JSONException;
 import org.springframework.web.util.UriUtils;
@@ -84,21 +85,16 @@ public class RequestBuilder {
 
     public static JSONObject hashcodeContainerRequestFromFile(String containerName) throws JSONException, IOException {
         JSONObject request = new JSONObject();
-        ClassLoader classLoader = RequestBuilder.class.getClassLoader();
 
-        File file = new File(classLoader.getResource("hashcode/" + containerName).getFile());
-
-        String fileBase64 = Base64.encodeBase64String(Files.readAllBytes(file.toPath()));
+        String fileBase64 = Base64.encodeBase64String(Utils.readFileFromResources(containerName));
         request.put("container", fileBase64);
         return request;
     }
 
     public static JSONObject asicContainerRequestFromFile(String containerName) throws JSONException, IOException {
         JSONObject request = new JSONObject();
-        ClassLoader classLoader = RequestBuilder.class.getClassLoader();
 
-        File file = new File(classLoader.getResource("asic/" + containerName).getFile());
-        String fileBase64 = Base64.encodeBase64String(Files.readAllBytes(file.toPath()));
+        String fileBase64 = Base64.encodeBase64String(Utils.readFileFromResources(containerName));
         request.put("container", fileBase64);
         request.put("containerName", containerName);
         return request;

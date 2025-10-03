@@ -3,6 +3,7 @@ package ee.openeid.siga.test.asic;
 import ee.openeid.siga.test.helper.EnabledIfSigaProfileActive;
 import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
+import ee.openeid.siga.test.util.Utils;
 import ee.openeid.siga.webapp.json.CreateContainerMobileIdSigningResponse;
 import ee.openeid.siga.webapp.json.CreateContainerRemoteSigningResponse;
 import ee.openeid.siga.webapp.json.CreateContainerSmartIdSigningResponse;
@@ -13,9 +14,7 @@ import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -282,7 +281,7 @@ class AugmentAsicContainerT extends TestBase {
         assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
 
         byte[] innerContainer = extractEntryFromContainer("valid-bdoc-tm-newer.bdoc", augmentedContainerBase64);
-        byte[] originalContainer = readFile("asic/valid-bdoc-tm-newer.bdoc");
+        byte[] originalContainer = Utils.readFileFromResources("valid-bdoc-tm-newer.bdoc");
         // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
         //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
         //       In that case, the zip archive contents comparison is not needed.
@@ -317,7 +316,7 @@ class AugmentAsicContainerT extends TestBase {
         assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
 
         byte[] innerContainer = extractEntryFromContainer("esteid2018signerAiaOcspLT.asice", augmentedContainerBase64);
-        byte[] originalContainer = readFile("asic/esteid2018signerAiaOcspLT.asice");
+        byte[] originalContainer = Utils.readFileFromResources("esteid2018signerAiaOcspLT.asice");
         // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
         //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
         //       In that case, the zip archive contents comparison is not needed.
@@ -357,7 +356,7 @@ class AugmentAsicContainerT extends TestBase {
         assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
 
         byte[] innerContainer = extractEntryFromContainer("tAndLtLevelSignatures.asice", augmentedContainerBase64);
-        byte[] originalContainer = readFile("asic/tAndLtLevelSignatures.asice");
+        byte[] originalContainer = Utils.readFileFromResources("tAndLtLevelSignatures.asice");
         // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
         //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
         //       In that case, the zip archive contents comparison is not needed.
@@ -392,7 +391,7 @@ class AugmentAsicContainerT extends TestBase {
         assertEquals(MimeTypeEnum.ASICS.getMimeTypeString(), mimeType);
 
         byte[] innerContainer = extractEntryFromContainer("containerSingleSignatureWithExpiredSignerAndTsCertificates.asice", augmentedContainerBase64);
-        byte[] originalContainer = readFile("asic/containerSingleSignatureWithExpiredSignerAndTsCertificates.asice");
+        byte[] originalContainer = Utils.readFileFromResources("containerSingleSignatureWithExpiredSignerAndTsCertificates.asice");
         // TODO: SIGA-897: If the original container will be preserved as an exact byte-level copy inside the resulting ASiC-S container,
         //       compare the byte arrays of original container and wrapped inner container, using assertArrayEquals(originalContainer, innerContainer).
         //       In that case, the zip archive contents comparison is not needed.
@@ -419,11 +418,5 @@ class AugmentAsicContainerT extends TestBase {
     @Override
     public String getContainerEndpoint() {
         return CONTAINERS;
-    }
-
-    private byte[] readFile(String path) throws IOException {
-        ClassLoader classLoader = AugmentAsicContainerT.class.getClassLoader();
-        File file = new File(classLoader.getResource(path).getFile());
-        return Files.readAllBytes(file.toPath());
     }
 }
