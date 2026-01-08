@@ -400,7 +400,7 @@ class AugmentAsicContainerT extends TestBase {
 
     @Test
     void uploadAsicContainerWithExpiredOcspCertificateAndAugmentSucceeds() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("signedContainerWithEmptyDatafiles.asice"));
+        postUploadContainer(flow, asicContainerRequestFromFile("asice_ocsp_cert_expired.asice"));
 
         augment(flow).then()
                 .statusCode(200);
