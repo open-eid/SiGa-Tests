@@ -105,7 +105,7 @@ class ValidationSpec extends GenericSpecification {
         validationResponse.then().body("validationConclusion.validSignaturesCount", is(validSignaturesCount))
         if (validSignaturesCount == 1) {
             validationResponse.then().body("validationConclusion.signatures[0].subjectDistinguishedName.serialNumber",
-                    is("60001019906"))
+                    is("PNOEE-60001019906"))
         }
 
         where:
