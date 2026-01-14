@@ -49,6 +49,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
 
 class RemoteSigningHashcodeContainerT extends TestBase {
 
@@ -374,7 +375,9 @@ class RemoteSigningHashcodeContainerT extends TestBase {
         CreateHashcodeContainerRemoteSigningResponse dataToSignResponse = postRemoteSigningInSession(flow, remoteSigningRequestWithDefault(SIGNER_CERT_ESTEID2018_PEM, "LT")).as(CreateHashcodeContainerRemoteSigningResponse.class);
 
         Response response = putRemoteSigningInSession(flow, remoteSigningSignatureValueRequest("yW9mTV2U+Hfl5EArvg9evTgb0BSHp/p9brr1K5bBIsE="), dataToSignResponse.getGeneratedSignatureId());
-        expectError(response, 400, INVALID_SIGNATURE);
+        expectError(response, 400, INVALID_SIGNATURE, matchesPattern(
+                "Unable to finalize signature\\. Error on signature augmentation\\. \\[S-[A-Z0-9]{64}: Cryptographic signature verification has failed / Signature verification failed against the best candidate\\.]"
+        ));
     }
 
     @Test

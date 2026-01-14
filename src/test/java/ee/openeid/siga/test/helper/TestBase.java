@@ -9,6 +9,7 @@ import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.hamcrest.Matcher;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -357,10 +358,14 @@ public abstract class TestBase {
     }
 
     protected void expectError(Response response, int status, String code, String message) {
+        expectError(response, status, code, equalTo(message));
+    }
+
+    protected void expectError(Response response, int status, String code, Matcher<String> messageMatcher) {
         response.then()
                 .statusCode(status)
                 .body(ERROR_CODE, equalTo(code))
-                .body(ERROR_MESSAGE, equalTo(message));
+                .body(ERROR_MESSAGE, messageMatcher);
     }
 
     protected void expectMidStatus(Response response, String message) {
