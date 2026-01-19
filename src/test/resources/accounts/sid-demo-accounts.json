@@ -1,0 +1,26 @@
+{
+  "smartId": {
+    "accounts": {
+      "demo_test_sk_eid_q_2024e": {
+        "documentNumber": "PNOEE-40504040001-DEM0-Q",
+        "country": "EE",
+        "personalCode": "40504040001"
+      },
+      "demo_other_accounts": {
+        "documentNumber": "PNOEE-39901012239-MOCK-Q",
+        "country": "EE",
+        "personalCode": "39901012239"
+      },
+      "demo_user_refused": {
+        "documentNumber": "PNOEE-30403039928-MOCK-Q",
+        "country": "EE",
+        "personalCode": "30403039928"
+      }
+    },
+    "roles": {
+      "defaultSigner": "demo_test_sk_eid_q_2024e",
+      "otherActiveAccounts": "demo_other_accounts",
+      "userRefused": "demo_user_refused"
+    }
+  }
+}

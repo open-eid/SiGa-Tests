@@ -1,0 +1,26 @@
+{
+  "smartId": {
+    "accounts": {
+      "mock_ee": {
+        "documentNumber": "PNOEE-30303039914-MOCK-Q",
+        "country": "EE",
+        "personalCode": "30303039914"
+      },
+      "mock_other_accounts": {
+        "documentNumber": "PNOEE-30303039816-MOCK-Q",
+        "country": "EE",
+        "personalCode": "30303039816"
+      },
+      "mock_user_refused": {
+        "documentNumber": "PNOEE-30403039950-MOCK-Q",
+        "country": "EE",
+        "personalCode": "30403039950"
+      }
+    },
+    "roles": {
+      "defaultSigner": "mock_ee",
+      "otherActiveAccounts": "mock_other_accounts",
+      "userRefused": "mock_user_refused"
+    }
+  }
+}

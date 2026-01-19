@@ -34,6 +34,9 @@ interface TestConfig extends Config {
 
     @Key("rest-assured-console-logging")
     Boolean restAssuredConsoleLogging()
+
+    @Key("test-sid-accounts-file")
+    String testSidAccountsFilePath()
 }
 
 class SigaProfileConverter implements Converter<SigaProfile> {

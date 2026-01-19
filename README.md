@@ -20,15 +20,16 @@ https://github.com/open-eid/SiGa#running-siga-with-docker, then the default conf
 
 **Descriptions of parameters in `application.properties`:**
 
-| Parameter                     | Example                              | Description                                                  |
-|:------------------------------|:-------------------------------------|:-------------------------------------------------------------|
-| siga.application-context-path | `/siga-webapp-2.0.1`                 | Custom service context.                                      |
-| siga.hostname                 | `localhost`                          | Service URL.                                                 |
-| siga.port                     | `8443`                               | Service port.                                                |
-| siga.protocol                 | `https`                              | Service protocol.                                            |
-| siga.profiles.active          | `datafileContainer,smartId,mobileId` | Define what profile tests to run.                            |
-| test-files-directory          | `src/test/resources/`                | Test files directory path.                                   |
-| rest-assured-console-logging  | `false`                              | Enable RestAssured request/response console logging filters. |
+| Parameter                     | Example                                              | Description                                                  |
+|:------------------------------|:-----------------------------------------------------|:-------------------------------------------------------------|
+| siga.application-context-path | `/siga-webapp-2.0.1`                                 | Custom service context.                                      |
+| siga.hostname                 | `localhost`                                          | Service URL.                                                 |
+| siga.port                     | `8443`                                               | Service port.                                                |
+| siga.protocol                 | `https`                                              | Service protocol.                                            |
+| siga.profiles.active          | `datafileContainer,smartId,mobileId`                 | Define what profile tests to run.                            |
+| test-files-directory          | `src/test/resources/`                                | Test files directory path.                                   |
+| test-sid-accounts-file        | `src/test/resources/accounts/sid-demo-accounts.json` | Location of Smart-Id test accounts.                          |
+| rest-assured-console-logging  | `false`                                              | Enable RestAssured request/response console logging filters. |
 
 ## Running tests
 
