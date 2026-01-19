@@ -1,11 +1,9 @@
 package ee.openeid.siga.testgroovy
 
+import ee.openeid.siga.test.accounts.SmartIdAccount
 import ee.openeid.siga.test.model.SigaApiFlow
 import ee.openeid.siga.testgroovy.helper.TestBaseSpecification
-import ee.openeid.siga.webapp.json.CreateHashcodeContainerMobileIdSigningResponse
-import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoiceResponse
-import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdSigningResponse
-import ee.openeid.siga.webapp.json.GetHashcodeContainerSmartIdCertificateChoiceStatusResponse
+import ee.openeid.siga.webapp.json.*
 import io.restassured.response.Response
 
 import static ee.openeid.siga.test.helper.TestData.HASHCODE_CONTAINERS
@@ -23,7 +21,9 @@ class AuthenticationSpec extends TestBaseSpecification {
     def "Sign with SID as Client 3 - no contact info"() {
         expect:
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault())
-        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest("30303039914", "EE"))
+        Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest(
+                SmartIdAccount.defaultSigner().personalCode,
+                SmartIdAccount.defaultSigner().country))
         String generatedCertificateId = certificateChoice.as(CreateHashcodeContainerSmartIdCertificateChoiceResponse.class).getGeneratedCertificateId()
 
         pollForSidCertificateStatus(flow, generatedCertificateId)

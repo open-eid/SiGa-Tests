@@ -11,15 +11,15 @@ class SmartIdAccounts {
 
     static SmartIdAccount byRole(String role) {
         Map sidAccounts = load()
-        String accountKey = sidAccounts.smartId.roles[role]
-        assert accountKey: "Unknown Smart-ID role '${role}'. Available roles: ${sidAccounts.smartId.roles.keySet()}"
+        String accountKey = sidAccounts.roles[role]
+        assert accountKey: "Unknown Smart-ID role '${role}'. Available roles: ${sidAccounts.roles.keySet()}"
         return byAccount(accountKey)
     }
 
     static SmartIdAccount byAccount(String accountKey) {
         Map sidAccounts = load()
-        def account = sidAccounts.smartId.accounts[accountKey]
-        assert account: "Unknown Smart-ID account key '${accountKey}'. Available keys: ${sidAccounts.smartId.accounts.keySet()}"
+        def account = sidAccounts.accounts[accountKey]
+        assert account: "Unknown Smart-ID account key '${accountKey}'. Available keys: ${sidAccounts.accounts.keySet()}"
         return account + [key: accountKey] // include key for debugging
     }
 
@@ -33,8 +33,8 @@ class SmartIdAccounts {
         Map sidAccounts = new JsonSlurper().parse(is) as Map
 
         // minimal validation (fail fast)
-        assert sidAccounts.smartId?.accounts instanceof Map
-        assert sidAccounts.smartId?.roles instanceof Map
+        assert sidAccounts?.accounts instanceof Map
+        assert sidAccounts?.roles instanceof Map
 
         cachedAccounts = sidAccounts
         return cachedAccounts

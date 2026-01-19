@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.request
 
 import ee.openeid.siga.test.TestData
+import ee.openeid.siga.test.accounts.SmartIdAccount
 import ee.openeid.siga.test.util.Utils
 import org.apache.commons.codec.binary.Base64
 
@@ -104,8 +105,8 @@ class RequestData {
     }
 
     static Map sidCertificateChoiceRequestDefaultBody() {
-        ["personIdentifier": "30303039914",
-         "country"         : "EE"]
+        ["personIdentifier": SmartIdAccount.defaultSigner().personalCode,
+         "country"         : SmartIdAccount.defaultSigner().country]
     }
 
     static Map sidSigningRequestDefaultBody(String documentNumber) {

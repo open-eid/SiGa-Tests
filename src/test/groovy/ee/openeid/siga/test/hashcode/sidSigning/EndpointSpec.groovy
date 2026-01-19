@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.hashcode.sidSigning
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.accounts.SmartIdAccount
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -10,8 +11,6 @@ import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import spock.lang.Tag
-
-import static ee.openeid.siga.test.TestData.DEFAULT_SID_DEMO_ACCOUNT
 
 @Tag("smartId")
 @Epic("Smart-ID signing (hashcode)")
@@ -26,7 +25,7 @@ class EndpointSpec extends GenericSpecification {
     def "SID signing request not allowed with invalid profile: #profile"() {
         given: "Upload container and use default SID Demo account"
         hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.sidSigningRequestDefaultBody(DEFAULT_SID_DEMO_ACCOUNT)
+        Map signingRequestBody = RequestData.sidSigningRequestDefaultBody(SmartIdAccount.defaultSigner().documentNumber)
 
         when: "Try signing with invalid profile"
         signingRequestBody["signatureProfile"] = profile

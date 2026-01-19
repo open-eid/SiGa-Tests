@@ -1,5 +1,8 @@
 package ee.openeid.siga.test.helper;
 
+import ee.openeid.siga.test.accounts.SmartIdAccount;
+import ee.openeid.siga.test.accounts.SmartIdAccounts;
+
 import java.util.List;
 import java.util.Set;
 
@@ -149,8 +152,8 @@ public class TestData {
     );
 
     //Test numbers
-    public static final String SID_EE_DEFAULT_DOCUMENT_NUMBER = "PNOEE-30303039914-MOCK-Q";
-    public static final String SID_EE_MULT_ACCOUNTS_DOCUMENT_NUMBER = "PNOEE-30303039816-MOCK-Q";
+    public static final String SID_EE_DEFAULT_DOCUMENT_NUMBER = SmartIdAccount.defaultSigner().getDocumentNumber();
+    public static final String SID_EE_MULT_ACCOUNTS_DOCUMENT_NUMBER = SmartIdAccounts.byRole("otherActiveAccounts").getDocumentNumber();
 
     // Invalid signature profiles for datafile endpoints
     public static final Set<String> INVALID_SIGNATURE_PROFILES = Set.of(

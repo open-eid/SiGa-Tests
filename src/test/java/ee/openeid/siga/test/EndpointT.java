@@ -1,5 +1,6 @@
 package ee.openeid.siga.test;
 
+import ee.openeid.siga.test.accounts.SmartIdAccount;
 import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
 import ee.openeid.siga.webapp.json.CreateHashcodeContainerSmartIdCertificateChoiceResponse;
@@ -42,7 +43,9 @@ class EndpointT extends TestBase {
         String smartIdSigningUrl = getContainerEndpoint() + "/" + flow.getContainerId() + SMARTID_SIGNING;
 
         String certificateEndpointWithSlash = smartIdSigningUrl + CERTIFICATE_CHOICE + "/";
-        Response responseCertificate = post(certificateEndpointWithSlash, flow, smartIdCertificateChoiceRequest("30303039914", "EE").toString());
+        Response responseCertificate = post(certificateEndpointWithSlash, flow, smartIdCertificateChoiceRequest(
+                SmartIdAccount.defaultSigner().getPersonalCode(),
+                SmartIdAccount.defaultSigner().getCountry()).toString());
         responseCertificate.then().statusCode(200);
 
         String signingEndpointWithSlash = smartIdSigningUrl + "/";
