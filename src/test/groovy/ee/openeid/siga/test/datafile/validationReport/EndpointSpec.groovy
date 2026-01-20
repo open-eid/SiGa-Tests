@@ -19,7 +19,6 @@ class EndpointSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Issue("SIGA-1091")
     @Story("Validate without session HTTP method check")
     def "Validation with method #method is #result"() {
         expect: "try validating container with HTTP method"
@@ -33,13 +32,13 @@ class EndpointSpec extends GenericSpecification {
         where:
         method         || httpStatus                       | result
         Method.POST    || HttpStatus.SC_OK                 | "allowed"
-//        Method.GET     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.GET     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.HEAD    || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PATCH   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
-//        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+        Method.DELETE  || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
     }
 
     @Story("Validate with session HTTP method check")
