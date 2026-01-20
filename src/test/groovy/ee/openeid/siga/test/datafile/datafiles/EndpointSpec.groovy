@@ -3,7 +3,9 @@ package ee.openeid.siga.test.datafile.datafiles
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
+import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.*
 import io.restassured.http.Method
 import io.restassured.response.Response
@@ -72,6 +74,29 @@ class EndpointSpec extends GenericSpecification {
         Method.TRACE   || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.OPTIONS || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
         Method.PUT     || HttpStatus.SC_METHOD_NOT_ALLOWED | "not allowed"
+    }
+
+    @Story("Adding data file with invalid request body is not allowed")
+    def "Trying to add a data file with #description is #result"() {
+        given: "upload unsigned container"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("containerWithoutSignatures.asice"))
+
+        when: "try adding data file"
+        Response response = datafile.tryAddDataFiles(flow, RequestData.addDatafileRequestBody([dataFile]))
+
+        then: "response is returned"
+        if (result == "allowed") {
+            response.then().statusCode(HttpStatus.SC_OK)
+        } else {
+            RequestErrorValidator.validate(response, (RequestError) error)
+        }
+
+        where:
+        description            | dataFile                                           || result        | error
+        "empty list"           | []                                                 || "not allowed" | RequestError.INVALID_JSON
+        "invalid name type"    | TestData.defaultDataFile() + ["fileName": true]    || "not allowed" | RequestError.INVALID_JSON
+        "invalid content type" | TestData.defaultDataFile() + ["fileContent": 1234] || "not allowed" | RequestError.INVALID_JSON
+        "extra field"          | TestData.defaultDataFile() + [extraField: "extra"] || "allowed"     | _
     }
 
 }

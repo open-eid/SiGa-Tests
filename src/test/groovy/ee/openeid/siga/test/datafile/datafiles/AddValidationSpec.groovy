@@ -8,10 +8,7 @@ import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.ContainerUtil
 import ee.openeid.siga.test.util.RequestErrorValidator
 import eu.europa.esig.dss.enumerations.MimeType
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Issue
-import io.qameta.allure.Story
+import io.qameta.allure.*
 import io.restassured.path.xml.XmlPath
 import io.restassured.response.Response
 import spock.lang.Tag
@@ -171,8 +168,6 @@ class AddValidationSpec extends GenericSpecification {
         invalidChar << ["/", "`", "?", "*", "\\", "<", ">", "|", "\"", ":", "\u0017", "\u0000", "\u0007"]
     }
 
-    @Issue("SIGA-1121")
-    @Issue("SIGA-1122")
     @Story("Adding data file with invalid data is not allowed")
     def "Trying to add a data file with #fileDescription is not allowed"() {
         given: "upload unsigned container"
@@ -186,11 +181,9 @@ class AddValidationSpec extends GenericSpecification {
 
         where:
         fileDescription   | dataFile                                           || error
-        "empty content"   | ["fileName": "testing.txt", "fileContent": ""]      | RequestError.INVALID_DATAFILE_CONTENT
-        "invalid content" | ["fileName": "testing.txt", "fileContent": "abc"]   | RequestError.INVALID_DATAFILE_CONTENT
-        "empty name"      | ["fileName": "", "fileContent": "cmFuZG9tdGV4dA=="] | RequestError.INVALID_DATAFILE_NAME
-        "empty list"      | []                                                  | RequestError.INVALID_JSON
-//        "additional data" | ["fileName": "testing.txt", "fileContent": "cmFuZG9tdGV4dA==", "extraField": "extra"]
+        "empty content"   | TestData.defaultDataFile() + ["fileContent": ""]    | RequestError.INVALID_DATAFILE_CONTENT
+        "invalid content" | TestData.defaultDataFile() + ["fileContent": "abc"] | RequestError.INVALID_DATAFILE_CONTENT
+        "empty name"      | TestData.defaultDataFile() + ["fileName": ""]       | RequestError.INVALID_DATAFILE_NAME
     }
 
 }
