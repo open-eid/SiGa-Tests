@@ -6,7 +6,9 @@ import ee.openeid.siga.test.request.RequestData
 import io.qameta.allure.*
 import spock.lang.Tag
 
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.Matchers.is
+import static org.hamcrest.Matchers.lessThan
 
 @Tag("smartId")
 @Epic("Smart-ID signing (hashcode)")
@@ -18,7 +20,7 @@ class ValidationSpec extends GenericSpecification {
         flow = Flow.buildForDefaultTestClientService()
     }
 
-    @Story("MID sign existing container")
+    @Story("SID sign existing container")
     def "SID sign existing container with Thales ID-card signature successful"() {
         given: "upload container with existing signatures"
         hashcode.uploadContainer(flow,
@@ -30,5 +32,22 @@ class ValidationSpec extends GenericSpecification {
         then: "validate container to have valid signatures"
         hashcode.validateContainerInSession(flow).then()
                 .body("validationConclusion.validSignaturesCount", is(2))
+    }
+
+    @Story("SID sign container with 256 datafiles")
+    def "SID sign hashcode container with 256 datafiles under 5 seconds"() {
+        given: "upload unsigned container with 256 datafiles"
+        hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBodyFromFile("hashcode-container-256.asice"))
+
+        when: "Sign and measure the time"
+        long startSignTime = System.nanoTime()
+        hashcode.sidSigningSuccessful(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
+        long endSignTime = System.nanoTime()
+
+        then: "Signing time is under 5 seconds"
+        long elapsedMs = (long) ((endSignTime - startSignTime) / 1_000_000)
+        assertThat(elapsedMs, lessThan(5000L))
+
+        println("\nAEG: ${elapsedMs}")
     }
 }
