@@ -104,7 +104,7 @@ class ValidationSpec extends GenericSpecification {
         where:
         containerDesc              | fileName
         "ASiC-S without timestamp" | "asicsContainerWithBdocWithoutTimestamp.asics"
-        "ASiC-S with signature"    | "cadesAsicsWithDdoc"
+        "ASiC-S with signature"    | "signedAsicsWithSignedDdoc.scs"
         "ASiC-E with signature"    | "validAsiceLta.asice"
         "BDOC with signature"      | "valid-bdoc-tm-newer.bdoc"
     }

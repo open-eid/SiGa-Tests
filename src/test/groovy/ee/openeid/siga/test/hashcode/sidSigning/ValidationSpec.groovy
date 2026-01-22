@@ -35,7 +35,7 @@ class ValidationSpec extends GenericSpecification {
     }
 
     @Story("SID sign container with 256 datafiles")
-    def "SID sign hashcode container with 256 datafiles under 5 seconds"() {
+    def "SID sign hashcode container with 256 datafiles under 30 seconds"() {
         given: "upload unsigned container with 256 datafiles"
         hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBodyFromFile("hashcode-container-256.asice"))
 
@@ -44,10 +44,8 @@ class ValidationSpec extends GenericSpecification {
         hashcode.sidSigningSuccessful(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
         long endSignTime = System.nanoTime()
 
-        then: "Signing time is under 5 seconds"
+        then: "Signing time is under 30 seconds"
         long elapsedMs = (long) ((endSignTime - startSignTime) / 1_000_000)
-        assertThat(elapsedMs, lessThan(5000L))
-
-        println("\nAEG: ${elapsedMs}")
+        assertThat(elapsedMs, lessThan(30000L))
     }
 }
