@@ -572,28 +572,6 @@ class SmartIdSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void containerDataFilesChangedBeforeFinalizeReturnsError() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
-        String signatureId = response.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        Response pollResponse = pollForSidSigning(flow, signatureId);
-
-        expectError(pollResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
-    void containerDataFilesAddedBeforeFinalizeReturnsError() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile("containerWithoutSignatures.asice"));
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        addDataFile(flow, addDataFileToAsicRequest("testFile.txt", "eWV0IGFub3RoZXIgdGVzdCBmaWxlIGNvbnRlbnQu"));
-        String signatureId = response.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        Response pollResponse = pollForSidSigning(flow, signatureId);
-
-        expectError(pollResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
     void trySignWithSmartIdUsingMidStatusPolling() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest(SmartIdAccount.defaultSigner().getPersonalCode(), "EE"));

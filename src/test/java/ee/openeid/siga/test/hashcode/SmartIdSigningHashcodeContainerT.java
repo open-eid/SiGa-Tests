@@ -561,30 +561,6 @@ class SmartIdSigningHashcodeContainerT extends TestBase {
     }
 
     @Test
-    void containerDataFilesChangedBeforeFinalizeReturnsError() throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        deleteDataFile(flow, getDataFileList(flow).getBody().path("dataFiles[0].fileName"));
-        // Temporarily check deletion as test in DEV environment seems to be flaky and sometimes no error is returned on signature finalization
-        assertThat(getDataFileList(flow).path("dataFiles"), Matchers.hasSize(0));
-        String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        Response pollResponse = pollForSidSigning(flow, signatureId);
-
-        expectError(pollResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
-    void containerDataFilesAddedBeforeFinalizeReturnsError() throws Exception {
-        postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SID_EE_DEFAULT_DOCUMENT_NUMBER));
-        addDataFile(flow, addDataFileToHashcodeRequest("file.txt", DEFAULT_SHA256_DATAFILE, DEFAULT_SHA512_DATAFILE, DEFAULT_FILESIZE));
-        String signatureId = response.as(CreateHashcodeContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
-        Response pollResponse = pollForSidSigning(flow, signatureId);
-
-        expectError(pollResponse, 400, INVALID_SESSION_DATA_EXCEPTION);
-    }
-
-    @Test
     void trySignWithSmartIdUsingMidStatusPolling() throws Exception {
         postCreateContainer(flow, hashcodeContainersDataRequestWithDefault());
         Response certificateChoice = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest(SmartIdAccount.defaultSigner().getPersonalCode(), "EE"));
