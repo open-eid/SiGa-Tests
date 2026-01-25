@@ -1,5 +1,6 @@
 package ee.openeid.siga.test.asic;
 
+import ee.openeid.siga.test.accounts.SmartIdAccount;
 import ee.openeid.siga.test.helper.EnabledIfSigaProfileActive;
 import ee.openeid.siga.test.helper.TestBase;
 import ee.openeid.siga.test.model.SigaApiFlow;
@@ -30,7 +31,6 @@ import static ee.openeid.siga.test.helper.TestData.REPORT_TIMESTAMP_TOKENS;
 import static ee.openeid.siga.test.helper.TestData.REPORT_VALID_SIGNATURES_COUNT;
 import static ee.openeid.siga.test.helper.TestData.SID_EE_DEFAULT_DOCUMENT_NUMBER;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
-import static ee.openeid.siga.test.matcher.IsoZonedTimestampMatcher.withinOneHourOfCurrentTime;
 import static ee.openeid.siga.test.utils.ContainerUtil.assertZipFilesEqual_entriesInExactOrder;
 import static ee.openeid.siga.test.utils.ContainerUtil.extractEntryFromContainer;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
@@ -44,7 +44,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnabledIfSigaProfileActive("datafileContainer")
@@ -223,8 +222,8 @@ class AugmentAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
 
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LTA"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("TESTNUMBER,OK"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-30303039914"));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo(SmartIdAccount.defaultSigner().getCommonName()));
+        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo(SmartIdAccount.defaultSigner().getSerialNumber()));
     }
 
     @Test

@@ -33,7 +33,6 @@ import static ee.openeid.siga.test.helper.TestData.SMARTID_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.SMARTID_SIGNING;
 import static ee.openeid.siga.test.helper.TestData.USER_CANCEL;
 import static ee.openeid.siga.test.helper.TestData.USER_SELECTED_WRONG_VC;
-import static ee.openeid.siga.test.utils.RequestBuilder.addDataFileToAsicRequest;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainerRequestFromFile;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainersDataRequestWithDefault;
 import static ee.openeid.siga.test.utils.RequestBuilder.smartIdCertificateChoiceRequest;
@@ -530,7 +529,7 @@ class SmartIdSigningAsicContainerT extends TestBase {
     @Test
     void signWithSmartIdUserRefusedCertChoice() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039961-MOCK-Q"));
+        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", SmartIdAccounts.byRole("userRefused").getDocumentNumber()));
         String signatureId = response.as(CreateContainerSmartIdSigningResponse.class).getGeneratedSignatureId();
         Response signingResponse = pollForSidSigning(flow, signatureId);
         expectSmartIdStatus(signingResponse, USER_CANCEL);

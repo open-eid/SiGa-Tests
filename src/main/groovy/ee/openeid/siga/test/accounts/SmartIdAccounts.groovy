@@ -18,9 +18,9 @@ class SmartIdAccounts {
 
     static SmartIdAccount byAccount(String accountKey) {
         Map sidAccounts = load()
-        def account = sidAccounts.accounts[accountKey]
+        Map account = sidAccounts.accounts[accountKey] as Map
         assert account: "Unknown Smart-ID account key '${accountKey}'. Available keys: ${sidAccounts.accounts.keySet()}"
-        return account + [key: accountKey] // include key for debugging
+        SmartIdAccount.fromMap(accountKey, account)
     }
 
     private static Map load() {

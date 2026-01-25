@@ -3,7 +3,8 @@
     "demo_test_sk_eid_q_2024e": {
       "documentNumber": "PNOEE-40504040001-DEM0-Q",
       "country": "EE",
-      "personalCode": "40504040001"
+      "personalCode": "40504040001",
+      "commonName": "TEST,OK"
     },
     "demo_other_accounts": {
       "documentNumber": "PNOEE-39901012239-MOCK-Q",

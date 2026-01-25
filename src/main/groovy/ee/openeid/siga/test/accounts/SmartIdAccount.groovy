@@ -6,6 +6,8 @@ class SmartIdAccount {
     String documentNumber
     String country
     String personalCode
+    String commonName
+    String serialNumber
 
     static SmartIdAccount fromMap(String key, Map accountData) {
         SmartIdAccount account = new SmartIdAccount()
@@ -13,6 +15,8 @@ class SmartIdAccount {
         account.documentNumber = accountData.documentNumber
         account.country = accountData.country
         account.personalCode = accountData.personalCode
+        account.commonName = accountData.commonName
+        account.serialNumber = accountData.documentNumber.toString().split('-').take(2).join('-')
         return account
     }
 

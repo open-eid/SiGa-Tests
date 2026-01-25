@@ -3,7 +3,8 @@
     "mock_ee": {
       "documentNumber": "PNOEE-30303039914-MOCK-Q",
       "country": "EE",
-      "personalCode": "30303039914"
+      "personalCode": "30303039914",
+      "commonName": "TESTNUMBER,OK"
     },
     "mock_other_accounts": {
       "documentNumber": "PNOEE-30303039816-MOCK-Q",
