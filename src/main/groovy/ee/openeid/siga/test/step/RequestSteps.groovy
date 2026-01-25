@@ -208,7 +208,7 @@ abstract class RequestSteps {
     @Step("Sign with Smart-ID successfully")
     Response sidSigningSuccessful(Flow flow, Map certificateChoiceRequestBody) {
         String documentNumber = getSidDocumentNumber(flow, certificateChoiceRequestBody)
-        Response startSigning = startSidSigning(flow, RequestData.sidSigningRequestDefaultBody(documentNumber))
+        Response startSigning = startSidSigning(flow, RequestData.sidStartSigningRequestDefaultBody(documentNumber))
         pollForSidSigningStatus(flow, startSigning.path("generatedSignatureId"))
         return flow.getSidStatus()
     }

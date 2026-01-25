@@ -109,7 +109,7 @@ class RequestData {
          "country"         : SmartIdAccount.defaultSigner().country]
     }
 
-    static Map sidSigningRequestDefaultBody(String documentNumber) {
+    static Map sidStartSigningRequestDefaultBody(String documentNumber=SmartIdAccount.defaultSigner().getDocumentNumber()) {
         ["documentNumber"  : documentNumber,
          "signatureProfile": "LT"]
     }

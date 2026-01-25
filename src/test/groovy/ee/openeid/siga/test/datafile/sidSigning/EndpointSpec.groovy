@@ -77,15 +77,14 @@ class EndpointSpec extends GenericSpecification {
 
     @Story("SID start signing HTTP method check")
     def "SID start signing with method #method is #result"() {
-        given: "create container and get document number"
+        given: "create container"
         datafile.createDefaultContainer(flow)
-        String sidDocumentNumber = datafile.getSidDocumentNumber(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
 
         when: "try starting signing with HTTP method"
         Response startSigningResponse = datafileRequests.startSidSigningRequest(
                 flow,
                 method,
-                RequestData.sidSigningRequestDefaultBody(sidDocumentNumber))
+                RequestData.sidStartSigningRequestDefaultBody())
                 .request(method)
 
         then: "request is allowed/not allowed"
@@ -107,8 +106,7 @@ class EndpointSpec extends GenericSpecification {
     def "SID signing status with method #method is #result"() {
         given: "create container and start signing"
         datafile.createDefaultContainer(flow)
-        String sidDocumentNumber = datafile.getSidDocumentNumber(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
-        Response startSigningResponse = datafile.startSidSigning(flow, RequestData.sidSigningRequestDefaultBody(sidDocumentNumber))
+        Response startSigningResponse = datafile.startSidSigning(flow, RequestData.sidStartSigningRequestDefaultBody())
 
         when: "try getting signing status with HTTP method"
         Response sidSigningStatus = datafileRequests.getSidSigningStatusRequest(

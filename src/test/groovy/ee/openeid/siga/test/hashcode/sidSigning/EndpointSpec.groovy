@@ -1,7 +1,6 @@
 package ee.openeid.siga.test.hashcode.sidSigning
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.accounts.SmartIdAccount
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -23,13 +22,13 @@ class EndpointSpec extends GenericSpecification {
     }
 
     def "SID signing request not allowed with invalid profile: #profile"() {
-        given: "Upload container and use default SID Demo account"
+        given: "Create default container"
         hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.sidSigningRequestDefaultBody(SmartIdAccount.defaultSigner().documentNumber)
+        Map startSigningRequestBody = RequestData.sidStartSigningRequestDefaultBody()
 
         when: "Try signing with invalid profile"
-        signingRequestBody["signatureProfile"] = profile
-        Response response = hashcode.tryStartSidSigning(flow, signingRequestBody)
+        startSigningRequestBody["signatureProfile"] = profile
+        Response response = hashcode.tryStartSidSigning(flow, startSigningRequestBody)
 
         then: "Request validation error is returned"
         RequestErrorValidator.validate(response, RequestError.INVALID_PROFILE)
@@ -97,13 +96,12 @@ class EndpointSpec extends GenericSpecification {
     def "SID start signing with method #method is #result"() {
         given:
         hashcode.createDefaultContainer(flow)
-        String sidDocumentNumber = hashcode.getSidDocumentNumber(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
 
         when:
         Response startSigningResponse = hashcodeRequests.startSidSigningRequest(
                 flow,
                 method,
-                RequestData.sidSigningRequestDefaultBody(sidDocumentNumber))
+                RequestData.sidStartSigningRequestDefaultBody())
                 .request(method)
 
         then:
@@ -125,8 +123,7 @@ class EndpointSpec extends GenericSpecification {
     def "SID signing status with method #method is #result"() {
         given:
         hashcode.createDefaultContainer(flow)
-        String sidDocumentNumber = hashcode.getSidDocumentNumber(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
-        Response startSigningResponse = hashcode.startSidSigning(flow, RequestData.sidSigningRequestDefaultBody(sidDocumentNumber))
+        Response startSigningResponse = hashcode.startSidSigning(flow, RequestData.sidStartSigningRequestDefaultBody())
 
         when:
         Response sidSigningStatus = hashcodeRequests.getSidSigningStatusRequest(
