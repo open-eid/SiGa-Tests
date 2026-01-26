@@ -96,9 +96,9 @@ abstract class SigaRequests {
         return sigaRequestBase(flow, method, endpoint, requestBody)
     }
 
-    RequestSpecification startMidSigningRequest(Flow flow, Method method, Map requestBody) {
+    RequestSpecification startMidSigningRequest(Flow flow, Method method, Map startMidSigningRequestBody) {
         String endpoint = "${getBasePath()}/${flow.getContainerId()}/mobileidsigning"
-        return sigaRequestBase(flow, method, endpoint, requestBody)
+        return sigaRequestBase(flow, method, endpoint, startMidSigningRequestBody)
     }
 
     RequestSpecification getMidSigningStatusRequest(Flow flow, Method method, String signatureId) {

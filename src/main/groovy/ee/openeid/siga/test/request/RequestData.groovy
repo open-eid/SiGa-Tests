@@ -63,13 +63,13 @@ class RequestData {
          postalCode     : "Suunakood 0123456789"]
     }
 
-    static Map midSigningRequestBody(String personIdentifier,
-                                     String phoneNo,
-                                     String language = "EST",
-                                     String signatureProfile = "LT",
-                                     List<String> roles = null,
-                                     String messageToDisplay = null,
-                                     Map signatureProductionPlace = null) {
+    static Map midStartSigningRequestBody(String personIdentifier,
+                                          String phoneNo,
+                                          String language = "EST",
+                                          String signatureProfile = "LT",
+                                          List<String> roles = null,
+                                          String messageToDisplay = null,
+                                          Map signatureProductionPlace = null) {
         Map body = ["personIdentifier": personIdentifier,
                     "phoneNo"         : phoneNo,
                     "language"        : language,
@@ -87,12 +87,8 @@ class RequestData {
         return body
     }
 
-    static Map midSigningRequestBodyMinimal(String personIdentifier, String phoneNo) {
-        return midSigningRequestBody(personIdentifier, phoneNo)
-    }
-
-    static Map midSigningRequestDefaultBody() {
-        return midSigningRequestBody("60001019906", "+37200000766")
+    static Map midStartSigningRequestDefaultBody(String personIdentifier = "60001019906", String phoneNo = "+37200000766") {
+        return midStartSigningRequestBody(personIdentifier, phoneNo)
     }
 
     static Map remoteSigningStartDefaultRequest() {
@@ -109,7 +105,7 @@ class RequestData {
          "country"         : SmartIdAccount.defaultSigner().country]
     }
 
-    static Map sidStartSigningRequestDefaultBody(String documentNumber=SmartIdAccount.defaultSigner().getDocumentNumber()) {
+    static Map sidStartSigningRequestDefaultBody(String documentNumber = SmartIdAccount.defaultSigner().getDocumentNumber()) {
         ["documentNumber"  : documentNumber,
          "signatureProfile": "LT"]
     }

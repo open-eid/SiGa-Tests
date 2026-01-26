@@ -26,7 +26,7 @@ class ValidationSpec extends GenericSpecification {
                 RequestData.uploadDatafileRequestBodyFromFile("TEST_ESTEID2025_ASiC-E_XAdES_LT+LTA.asice"))
 
         when: "MID sign"
-        datafile.midSigning(flow, RequestData.midSigningRequestDefaultBody())
+        datafile.midSigning(flow, RequestData.midStartSigningRequestDefaultBody())
 
         then: "validate container to have valid signatures"
         datafile.validateContainerInSession(flow).then()

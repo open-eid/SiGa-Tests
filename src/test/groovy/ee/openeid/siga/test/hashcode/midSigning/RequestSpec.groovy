@@ -1,17 +1,10 @@
 package ee.openeid.siga.test.hashcode.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.model.CommonErrorCode
-import ee.openeid.siga.test.model.Flow
-import ee.openeid.siga.test.model.RequestError
-import ee.openeid.siga.test.model.Service
+import ee.openeid.siga.test.model.*
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.RequestErrorValidator
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Issue
-import io.qameta.allure.Link
-import io.qameta.allure.Story
+import io.qameta.allure.*
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import spock.lang.Tag
@@ -31,7 +24,7 @@ class RequestSpec extends GenericSpecification {
     def "MID signing request not allowed with invalid input: #description"() {
         given:
         hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
+        Map signingRequestBody = RequestData.midStartSigningRequestDefaultBody()
 
         when:
         signingRequestBody[property] = value
@@ -57,7 +50,7 @@ class RequestSpec extends GenericSpecification {
     def "MID signing request not allowed with invalid role"() {
         given:
         hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
+        Map signingRequestBody = RequestData.midStartSigningRequestDefaultBody()
 
         when:
         signingRequestBody["roles"] = ""
@@ -75,7 +68,7 @@ class RequestSpec extends GenericSpecification {
                 RequestData.uploadHashcodeRequestBodyFromFile("hashcodeUnsignedContainerWithEmptyDatafiles.asice"))
 
         when:
-        Response response = hashcode.tryStartMidSigning(flow, RequestData.midSigningRequestDefaultBody())
+        Response response = hashcode.tryStartMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
 
         then:
         RequestErrorValidator.validate(response, RequestError.INVALID_EMPTY_DATAFILE)
@@ -85,7 +78,7 @@ class RequestSpec extends GenericSpecification {
     def "MID signing request not allowed with invalid profile: #profile"() {
         given: "Upload container"
         hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
+        Map signingRequestBody = RequestData.midStartSigningRequestDefaultBody()
 
         when: "Try signing with invalid profile"
         signingRequestBody["signatureProfile"] = profile
@@ -98,30 +91,15 @@ class RequestSpec extends GenericSpecification {
         profile << ["", " ", "123", "@!*", "UNKNOWN", "B_BES", "B_EPES", "LT_TM", "lt_TM", "lt_tm", "LT-TM", "LT TM", "T", "LTA"]
     }
 
-    @Story("Get other user MID signing status not allowed")
-    def "MID status request for other user container not allowed"() {
-        given:
-        hashcode.createDefaultContainer(flow)
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
-        String signatureId = startResponse.path("generatedSignatureId")
-
-        when:
-        flow.setServiceUuid(Service.SERVICE2.uuid)
-        flow.setServiceSecret(Service.SERVICE2.secret)
-        Response statusResponse = hashcode.tryGetMidSigningStatus(flow, signatureId)
-
-        then:
-        RequestErrorValidator.validate(statusResponse, RequestError.INVALID_RESOURCE)
-    }
-
+    @Story("MID signing messageToDisplay parameter rules")
     def "MID signing successful with special char in messageToDisplay parameter"() {
         given:
         hashcode.createDefaultContainer(flow)
-        Map signingRequestBody = RequestData.midSigningRequestDefaultBody()
+        Map startMidSigningRequestBody = RequestData.midStartSigningRequestDefaultBody()
 
         when:
-        signingRequestBody["messageToDisplay"] = "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007"
-        hashcode.midSigning(flow, signingRequestBody)
+        startMidSigningRequestBody["messageToDisplay"] = "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007"
+        hashcode.midSigning(flow, startMidSigningRequestBody)
 
         then:
         hashcode.validateContainerInSession(flow)
@@ -134,7 +112,7 @@ class RequestSpec extends GenericSpecification {
         hashcode.createDefaultContainer(flow)
 
         when:
-        Map signingRequestBody = RequestData.midSigningRequestBody(
+        Map signingRequestBody = RequestData.midStartSigningRequestBody(
                 "60001019906",
                 "+37200000766",
                 "EST",

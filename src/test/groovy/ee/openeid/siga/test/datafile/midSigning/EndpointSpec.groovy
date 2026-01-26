@@ -26,7 +26,7 @@ class EndpointSpec extends GenericSpecification {
         datafile.createDefaultContainer(flow)
 
         when: "try starting signing with HTTP method"
-        Response response = datafileRequests.startMidSigningRequest(flow, method, RequestData.midSigningRequestDefaultBody()).request(method)
+        Response response = datafileRequests.startMidSigningRequest(flow, method, RequestData.midStartSigningRequestDefaultBody()).request(method)
 
         then: "request is allowed/not allowed"
         response.then().statusCode(httpStatus)
@@ -47,7 +47,7 @@ class EndpointSpec extends GenericSpecification {
     def "Get MID signing status with method #method is #result"() {
         given: "create container and start signing"
         datafile.createDefaultContainer(flow)
-        Response startResponse = datafile.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
+        Response startResponse = datafile.startMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
         when: "try getting signing status with HTTP method"

@@ -110,12 +110,12 @@ abstract class RequestSteps {
 
     // MID SIGNING
     @Step("Start MID signing")
-    Response tryStartMidSigning(Flow flow, Map requestBody) {
-        return getInstance().startMidSigningRequest(flow, Method.POST, requestBody).post()
+    Response tryStartMidSigning(Flow flow, Map startMidSigningRequestBody) {
+        return getInstance().startMidSigningRequest(flow, Method.POST, startMidSigningRequestBody).post()
     }
 
-    Response startMidSigning(Flow flow, Map requestBody) {
-        Response response = tryStartMidSigning(flow, requestBody)
+    Response startMidSigning(Flow flow, Map startMidSigningRequestBody) {
+        Response response = tryStartMidSigning(flow, startMidSigningRequestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
@@ -136,11 +136,11 @@ abstract class RequestSteps {
     }
 
     def midSigning(Flow flow, String personId, String phoneNo) {
-        midSigning(flow, RequestData.midSigningRequestBodyMinimal(personId, phoneNo))
+        midSigning(flow, RequestData.midStartSigningRequestDefaultBody(personId, phoneNo))
     }
 
-    def midSigning(Flow flow, Map requestBody) {
-        Response response = startMidSigning(flow, requestBody)
+    def midSigning(Flow flow, Map startMidSigningRequestBody) {
+        Response response = startMidSigning(flow, startMidSigningRequestBody)
         pollForMidSigningStatus(flow, response.path("generatedSignatureId"))
     }
 

@@ -41,7 +41,7 @@ class ValidationSpec extends GenericSpecification {
                 RequestData.uploadHashcodeRequestBodyFromFile("hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LT+LTA.asice"))
 
         when: "MID sign"
-        hashcode.midSigning(flow, RequestData.midSigningRequestDefaultBody())
+        hashcode.midSigning(flow, RequestData.midStartSigningRequestDefaultBody())
 
         then: "validate container to have valid signatures"
         hashcode.validateContainerInSession(flow).then()
@@ -91,10 +91,10 @@ class ValidationSpec extends GenericSpecification {
         when:
         //Valid signature
         Response responseValidSignature = hashcode.startMidSigning(flow,
-                RequestData.midSigningRequestBodyMinimal("60001019906", "+37200000766"))
+                RequestData.midStartSigningRequestDefaultBody())
         //Valid or invalid signature
         Response responseSignature2 = hashcode.startMidSigning(flow,
-                RequestData.midSigningRequestBodyMinimal(personId, phoneNo))
+                RequestData.midStartSigningRequestDefaultBody(personId, phoneNo))
 
         hashcode.pollForMidSigningStatus(flow, responseValidSignature.path("generatedSignatureId"))
         hashcode.pollForMidSigningStatus(flow, responseSignature2.path("generatedSignatureId"))
@@ -160,7 +160,7 @@ class ValidationSpec extends GenericSpecification {
     def "MID signing not allowed if datafile #datafileAction after signing started"() {
         given:
         hashcode.uploadContainer(flow, RequestData.uploadHashcodeRequestBodyFromFile("hashcodeWithoutSignature.asice"))
-        Response startResponse = hashcode.startMidSigning(flow, RequestData.midSigningRequestDefaultBody())
+        Response startResponse = hashcode.startMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
         when:
