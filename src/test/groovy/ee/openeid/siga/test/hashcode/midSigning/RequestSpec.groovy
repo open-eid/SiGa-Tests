@@ -92,19 +92,35 @@ class RequestSpec extends GenericSpecification {
     }
 
     @Story("MID signing messageToDisplay parameter rules")
-    def "MID signing successful with special char in messageToDisplay parameter"() {
+    def "MID start signing with messageToDisplay as #description is #result"() {
         given:
         hashcode.createDefaultContainer(flow)
         Map startMidSigningRequestBody = RequestData.midStartSigningRequestDefaultBody()
 
         when:
-        startMidSigningRequestBody["messageToDisplay"] = "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007"
-        hashcode.midSigning(flow, startMidSigningRequestBody)
+        startMidSigningRequestBody["messageToDisplay"] = value
+        Response startMidSigningResponse = hashcode.tryStartMidSigning(flow, startMidSigningRequestBody)
 
         then:
-        hashcode.validateContainerInSession(flow)
-                .then()
-                .body("validationConclusion.validSignaturesCount", is(1))
+        switch (result) {
+            case "allowed":
+                startMidSigningResponse.then().statusCode(HttpStatus.SC_OK)
+                break
+            case "not allowed":
+                RequestErrorValidator.validate(startMidSigningResponse, RequestError.INVALID_MID_MESSAGE_LENGTH)
+        }
+
+        where:
+        description                     | value                                                                                                   || result
+        "empty"                         | ""                                                                                                      || "allowed"
+        "special chars"                 | "/ ` ? * \\ < > | \" : \u0017 \u0000 \u0007"                                                            || "allowed"
+        "GSM-7 extension chars"         | "€[]^|{}\\"                                                                                             || "allowed"
+        "length < 100 (ASCII) chars"    | "99 CHARS Auth#123,45 EUR. Ref:INV-2026-01-26; OK? Auth#123,45 EUR. Ref:INV-2026-01-26; OK? Auth#123"   || "allowed"
+        "length = 100 (ASCII) chars"    | "100 CHARS Auth#123,45 EUR. Ref:INV-2026-01-26; OK? Auth#123,45 EUR. Ref:INV-2026-01-26; OK? Auth#123"  || "allowed"
+        "length > 100 (ASCII) chars"    | "101 CHARS Auth#123,45 EUR. Ref:INV-2026-01-26; OK? Auth#123,45 EUR. Ref:INV-2026-01-26; OK? Auth#123," || "not allowed"
+        "length < 100 (Cyrillic) chars" | "99 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,"   || "allowed"
+        "length = 100 (Cyrillic) chars" | "100 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,"  || "allowed"
+        "length > 100 (Cyrillic) chars" | "101 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,1" || "not allowed"
     }
 
     def "MID signing successful with all parameters in request"() {

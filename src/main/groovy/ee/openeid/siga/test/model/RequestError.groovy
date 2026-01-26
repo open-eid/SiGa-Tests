@@ -6,6 +6,7 @@ enum RequestError {
     INVALID_PHONE(CommonErrorCode.INVALID_REQUEST, "Invalid phone No."),
     INVALID_LANGUAGE(CommonErrorCode.INVALID_REQUEST, "Invalid Mobile-Id language"),
     INVALID_PROFILE(CommonErrorCode.INVALID_REQUEST, "Invalid signature profile"),
+    INVALID_MID_MESSAGE_LENGTH(CommonErrorCode.INVALID_REQUEST, "Mobile ID messageToDisplay exceeded maximum allowed length of 100 characters."),
     INVALID_EMPTY_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to sign container with empty datafiles"),
     INVALID_TYPE_MID(CommonErrorCode.INVALID_SESSION_DATA, "Unable to finalize signature for signing type: MOBILE_ID"),
     INVALID_CHANGED_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to finalize signature. Container data files have been changed after signing was initiated. Repeat signing process"),
