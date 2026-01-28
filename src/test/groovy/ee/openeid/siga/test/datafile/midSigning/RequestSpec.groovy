@@ -10,6 +10,7 @@ import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import spock.lang.Tag
 
+@Tag("datafileContainer")
 @Tag("mobileId")
 @Epic("Mobile-ID signing (datafile)")
 @Feature("MID request validation")
