@@ -55,21 +55,21 @@ class ValidationSpec extends GenericSpecification {
     }
 
     @Story("Timestamped composite ASiC-S returns timestamps")
-    def "Get timestamps of timestamped composite ASiC-S with timestamped ASiC-S returns both ASiC-S´s timestamps"() {
-        given: "upload composite ASiC-S with timestamped ASiC-S"
+    def "Get timestamps of timestamped ASiC-S returns timestamps for outer and first nested ASiC-S containers only"() {
+        given: "upload composite ASiC-S with multiple levels of timestamped ASiC-S´s"
         datafile.uploadContainer(flow,
-                RequestData.uploadDatafileRequestBodyFromFile("timestampedAsicsWithTimestampedAsics.asics"))
+                RequestData.uploadDatafileRequestBodyFromFile("Valid2xNestedAsics.asics"))
 
         when: "get timestamps"
         def timestampsResponse = datafile.getTimestampList(flow)
 
-        then: "list contains timestamps form outer and inner ASiC-S"
+        then: "list contains only outer and first level ASiC-S container timestamps"
         timestampsResponse.then()
                 .body("timestamps", hasSize(2))
-                .body("timestamps[0].id", is("T-E6EA21B335D2777199B1012E5F91E46011C606522B9984BECC7232492E303A93"))
-                .body("timestamps[0].creationTime", is("2024-10-24T08:33:03Z"))
-                .body("timestamps[1].id", is("T-42947EFAAE38B6E849E3744679C60ED81F917AD942D9FCB838AD3DA5AE7701AE"))
-                .body("timestamps[1].creationTime", is("2024-10-24T08:28:08Z"))
+                .body("timestamps[0].id", is("T-4BE52AA7A9250931E062C14342CDB0C80A2EA67DF8066812A4751AC195556B97"))
+                .body("timestamps[0].creationTime", is("2024-12-04T13:53:05Z"))
+                .body("timestamps[1].id", is("T-8014AB4205514250D10343EAF685E7C74459EA3809CDCBF16F9F520F58228A05"))
+                .body("timestamps[1].creationTime", is("2024-12-03T14:35:00Z"))
     }
 
     @Story("Timestamped ASiC-S returns timestamps")
