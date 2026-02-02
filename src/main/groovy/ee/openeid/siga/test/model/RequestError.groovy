@@ -31,6 +31,12 @@ enum RequestError {
     DUPLICATE_DATAFILE("DUPLICATE_DATA_FILE_EXCEPTION", "Duplicate data files not allowed: {0}"),
     DATAFILE_NOT_FOUND("RESOURCE_NOT_FOUND_EXCEPTION", "Data file named {0} not found"),
 
+    //HASHCODE ERRORS
+    INVALID_HASH_CONTAINER(CommonErrorCode.INVALID_CONTAINER, "Hashcode container is invalid"),
+    INVALID_HASH_CONTAINER_2(CommonErrorCode.INVALID_CONTAINER, "Invalid hashcode container"),
+    INVALID_CONTAINER_NO_HASHES(CommonErrorCode.INVALID_CONTAINER, "Container must have data file hashes"),
+    INVALID_ZIP_FORMAT(CommonErrorCode.INVALID_CONTAINER, "Unable to open hashcode container"),
+
     final String errorCode
     final String errorMessage
 
