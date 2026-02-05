@@ -32,9 +32,9 @@ class SmartIdAccounts {
         InputStream is = openLocation(location)
         Map sidAccounts = new JsonSlurper().parse(is) as Map
 
-        // minimal validation (fail fast)
-        assert sidAccounts?.accounts instanceof Map
-        assert sidAccounts?.roles instanceof Map
+        // Minimal validation (fail fast)
+        assert (sidAccounts?.accounts instanceof Map)
+        assert (sidAccounts?.roles instanceof Map)
 
         cachedAccounts = sidAccounts
         return cachedAccounts
