@@ -24,13 +24,15 @@ class SmartIdAccounts {
     }
 
     private static Map load() {
-        if (cachedAccounts != null) return cachedAccounts
+        // Load accounts once and use cache when loaded
+        if (cachedAccounts) return cachedAccounts
 
+        // Get SID test accounts file location
         String location = conf.testSidAccountsFilePath()
-        assert location: "Missing property test-sid-accounts-file"
+        assert location: "Missing property test-sid-accounts-file in application.properties."
 
-        InputStream is = openLocation(location)
-        Map sidAccounts = new JsonSlurper().parse(is) as Map
+        // Read SID test accounts info from JSON file
+        Map sidAccounts = new JsonSlurper().parse(openLocation(location)) as Map
 
         // Minimal validation (fail fast)
         assert (sidAccounts?.accounts instanceof Map)

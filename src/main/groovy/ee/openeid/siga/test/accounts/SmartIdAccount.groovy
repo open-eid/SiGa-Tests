@@ -9,14 +9,16 @@ class SmartIdAccount {
     String commonName
     String serialNumber
 
-    static SmartIdAccount fromMap(String key, Map accountData) {
+    static SmartIdAccount fromMap(String accountKey, Map accountData) {
         SmartIdAccount account = new SmartIdAccount()
-        account.key = key
-        account.documentNumber = accountData.documentNumber
-        account.country = accountData.country
-        account.personalCode = accountData.personalCode
-        account.commonName = accountData.commonName
-        account.serialNumber = accountData.documentNumber.toString().split('-').take(2).join('-')
+        account.with {
+            key = accountKey
+            documentNumber = accountData.documentNumber
+            country = accountData.country
+            personalCode = accountData.personalCode
+            commonName = accountData.commonName
+            serialNumber = accountData.documentNumber.toString().split('-').take(2).join('-')
+        }
         return account
     }
 
