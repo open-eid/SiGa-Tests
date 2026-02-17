@@ -11,7 +11,7 @@ import spock.lang.Tag
 
 @Tag("datafileContainer")
 @Tag("smartId")
-@Epic("Smart-ID signing (hashcode)")
+@Epic("Smart-ID signing (datafile)")
 @Feature("SID endpoint validation")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
