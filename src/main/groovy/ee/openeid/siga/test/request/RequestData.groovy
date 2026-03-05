@@ -53,13 +53,13 @@ class RequestData {
         ]
     }
 
-    static Map addDatafileRequestBody(List dataFiles) {
-        [dataFiles: dataFiles]
-    }
-
     static Map dataFileMap(String fileName, String fileContent) {
         [fileName   : fileName,
          fileContent: fileContent]
+    }
+
+    static Map addDatafileRequestBody(List dataFiles) {
+        [dataFiles: dataFiles]
     }
 
     static Map signatureProductionPlace() {

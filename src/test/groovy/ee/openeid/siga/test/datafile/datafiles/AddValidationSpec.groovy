@@ -105,7 +105,7 @@ class AddValidationSpec extends GenericSpecification {
 
         TestData.FILE_EXTENSIONS.eachWithIndex { ext, i ->
             def expectedMimeType = MimeType.fromFileName("*.$ext").mimeTypeString
-            assertThat(expectedMimeType, is(manifest.getString("manifest:manifest.manifest:file-entry[${2 + i}].@manifest:media-type")))
+            assertThat(manifest.getString("manifest:manifest.manifest:file-entry[${2 + i}].@manifest:media-type"), is(expectedMimeType))
         }
     }
 
