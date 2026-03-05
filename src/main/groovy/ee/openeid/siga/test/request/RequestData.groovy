@@ -47,6 +47,12 @@ class RequestData {
         ]
     }
 
+    static Map createDatafileRequestBody(String containerName, String fileName, String fileContent) {
+        [containerName: containerName,
+         dataFiles    : [dataFileMap(fileName, fileContent)]
+        ]
+    }
+
     static Map addDatafileRequestBody(List dataFiles) {
         [dataFiles: dataFiles]
     }

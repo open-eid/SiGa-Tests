@@ -15,8 +15,13 @@ abstract class RequestSteps {
 
     // CONTAINER ACTIONS
     @Step("Create container")
-    Response createContainer(Flow flow, Map requestBody) {
+    Response tryCreateContainer(Flow flow, Map requestBody) {
         Response response = getInstance().createContainerRequest(flow, Method.POST, requestBody).post()
+        return response
+    }
+
+    Response createContainer(Flow flow, Map requestBody) {
+        Response response = tryCreateContainer(flow, requestBody)
         response.then().statusCode(HttpStatus.SC_OK)
         flow.containerId = response.path("containerId")?.toString() ?: flow.containerId
         return response

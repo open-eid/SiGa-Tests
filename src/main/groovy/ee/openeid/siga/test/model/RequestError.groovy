@@ -30,6 +30,9 @@ enum RequestError {
     INVALID_JSON(CommonErrorCode.INVALID_REQUEST, "Request body is invalid. Please provide properly formatted data with all required fields."),
     DUPLICATE_DATAFILE("DUPLICATE_DATA_FILE_EXCEPTION", "Duplicate data files not allowed: {0}"),
     DATAFILE_NOT_FOUND("RESOURCE_NOT_FOUND_EXCEPTION", "Data file named {0} not found"),
+    NO_DATAFILE(CommonErrorCode.INVALID_REQUEST, "Must be at least one data file in request"),
+    INVALID_CONTAINER_NAME(CommonErrorCode.INVALID_REQUEST, "Container name is invalid"),
+    INVALID_FILE_NAME(CommonErrorCode.INVALID_REQUEST, "File name is invalid"),
 
     //HASHCODE ERRORS
     INVALID_HASH_CONTAINER(CommonErrorCode.INVALID_CONTAINER, "Hashcode container is invalid"),
