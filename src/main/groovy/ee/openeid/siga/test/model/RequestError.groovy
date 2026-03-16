@@ -13,7 +13,7 @@ enum RequestError {
     INVALID_RESOURCE("RESOURCE_NOT_FOUND_EXCEPTION", "Session not found"),
     MISSING_SIGNATURES(CommonErrorCode.INVALID_CONTAINER, "Missing signatures"),
     INVALID_CERT("INVALID_CERTIFICATE_EXCEPTION", "Remote signing endpoint prohibits signing with Mobile-Id/Smart-Id certificate"),
-    INVALID_CONTAINER(CommonErrorCode.INVALID_CONTAINER, "Invalid container"),
+    INVALID_CONTAINER(CommonErrorCode.INVALID_CONTAINER, "Invalid container{0}"),
 
     //AUGMENT ERRORS
     NO_SIGNATURES(CommonErrorCode.INVALID_SESSION_DATA, "Unable to augment. Container does not contain any signatures"),
@@ -29,10 +29,13 @@ enum RequestError {
     INVALID_DATAFILE_CONTENT(CommonErrorCode.INVALID_REQUEST, "Base64 content is invalid"),
     INVALID_JSON(CommonErrorCode.INVALID_REQUEST, "Request body is invalid. Please provide properly formatted data with all required fields."),
     DUPLICATE_DATAFILE("DUPLICATE_DATA_FILE_EXCEPTION", "Duplicate data files not allowed: {0}"),
+    DUPLICATE_DATAFILE_CONTAINER("DUPLICATE_DATA_FILE_EXCEPTION", "Container contains duplicate data file: {0}"),
+    DUPLICATE_DATAFILE_MANIFEST("DUPLICATE_DATA_FILE_EXCEPTION", "duplicate entry in manifest file: {0}"),
     DATAFILE_NOT_FOUND("RESOURCE_NOT_FOUND_EXCEPTION", "Data file named {0} not found"),
     NO_DATAFILE(CommonErrorCode.INVALID_REQUEST, "Must be at least one data file in request"),
     INVALID_CONTAINER_NAME(CommonErrorCode.INVALID_REQUEST, "Container name is invalid"),
     INVALID_FILE_NAME(CommonErrorCode.INVALID_REQUEST, "File name is invalid"),
+    INVALID_FILE_CONTENT(CommonErrorCode.INVALID_REQUEST, "File content is invalid"),
 
     //HASHCODE ERRORS
     INVALID_HASH_CONTAINER(CommonErrorCode.INVALID_CONTAINER, "Hashcode container is invalid"),
@@ -50,7 +53,7 @@ enum RequestError {
 
     String getMessage(Object... args) {
         if (args.length == 0) {
-            return errorMessage
+            return errorMessage.replaceAll(/\{(\d+)\}/, "")
         } else {
             return errorMessage.replaceAll(/\{(\d+)\}/) { match, index -> args[index as int] }
         }
