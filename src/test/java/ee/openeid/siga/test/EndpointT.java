@@ -9,7 +9,6 @@ import ee.openeid.siga.webapp.json.GetHashcodeContainerSmartIdCertificateChoiceS
 import io.restassured.response.Response;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -35,7 +34,6 @@ class EndpointT extends TestBase {
         flow = SigaApiFlow.buildForTestClient1Service1();
     }
 
-    @Disabled("SIGA-1268")
     @Test
     void urlPathWithTrailingSlashIsAllowed() throws Exception {
         String containerEndpointWithSlash = getContainerEndpoint() + "/";
