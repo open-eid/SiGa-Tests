@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.datafile.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.helper.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -51,6 +52,26 @@ class RequestSpec extends GenericSpecification {
         "length < 100 (Cyrillic) chars" | "99 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,"   || "allowed"
         "length = 100 (Cyrillic) chars" | "100 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,"  || "allowed"
         "length > 100 (Cyrillic) chars" | "101 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,1" || "not allowed"
+    }
+
+    @Story("Deleting container cancels ongoing Mobile-ID signing process")
+    def "Ongoing Mobile-ID signing cannot continue after container is deleted"() {
+        given: "upload the container and start signing"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(TestData.DEFAULT_ASICE_CONTAINER_NAME))
+        Response startResponse = datafile.tryStartMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
+        String signatureId = startResponse.path("generatedSignatureId")
+
+        and: "get status"
+        datafile.getMidSigningStatus(flow, signatureId)
+
+        when: "delete the container"
+        datafile.deleteContainer(flow)
+
+        and: "request status again"
+        Response response = datafile.tryGetMidSigningStatus(flow, signatureId)
+
+        then: "error is returned"
+        RequestErrorValidator.validate(response, RequestError.INVALID_RESOURCE)
     }
 
 }

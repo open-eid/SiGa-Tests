@@ -41,15 +41,25 @@ abstract class RequestSteps {
     }
 
     @Step("Get container")
-    Response getContainer(Flow flow) {
+    Response tryGetContainer(Flow flow) {
         Response response = getInstance().getContainerRequest(flow, Method.GET).get()
+        return response
+    }
+
+    Response getContainer(Flow flow) {
+        Response response = tryGetContainer(flow)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 
     @Step("Delete container")
+    Response tryDeleteContainer(Flow flow) {
+        Response response = getInstance().deleteContainerRequest(flow, Method.DELETE).delete()
+        return response
+    }
+
     Response deleteContainer(Flow flow) {
-        Response response = getInstance().deleteContainerRequest(flow, Method.GET).delete()
+        Response response = tryDeleteContainer(flow)
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
@@ -129,6 +139,12 @@ abstract class RequestSteps {
     Response tryGetMidSigningStatus(Flow flow, String signatureId) {
         Response response = getInstance().getMidSigningStatusRequest(flow, Method.GET, signatureId).get()
         flow.setMidStatus(response)
+        return response
+    }
+
+    Response getMidSigningStatus(Flow flow, String signatureId) {
+        Response response = tryGetMidSigningStatus(flow, signatureId)
+        response.then().statusCode(HttpStatus.SC_OK)
         return response
     }
 

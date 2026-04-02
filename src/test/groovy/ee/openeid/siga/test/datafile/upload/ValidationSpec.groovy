@@ -54,6 +54,7 @@ class ValidationSpec extends GenericSpecification {
         containerType | containerName
         "ASiC-E"      | TestData.DEFAULT_ASICE_CONTAINER_NAME
         "ASiC-S"      | TestData.DEFAULT_ASICS_CONTAINER_NAME
+        "BDOC"        | "valid-bdoc-tm-newer.bdoc"
     }
 
     @Issue("SIGA-1277")
