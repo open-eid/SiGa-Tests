@@ -1,7 +1,6 @@
 package ee.openeid.siga.test.datafile.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.helper.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -10,6 +9,9 @@ import io.qameta.allure.*
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 import spock.lang.Tag
+
+import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_LENGTH
+import static org.hamcrest.CoreMatchers.equalTo
 
 @Tag("datafileContainer")
 @Tag("mobileId")
@@ -54,10 +56,28 @@ class RequestSpec extends GenericSpecification {
         "length > 100 (Cyrillic) chars" | "101 CHARS Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,23. Код:2026-01-26; ОК? Подтвердите#1,1" || "not allowed"
     }
 
+    @Story("Retrieving container is successful during ongoing Mobile-ID signing")
+    def "Retrieving container during Mobile-ID signing returns unchanged container"() {
+        given: "upload the container and start signing"
+        datafile.uploadDefaultContainer(flow)
+        Response startResponse = datafile.startMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
+        String signatureId = startResponse.path("generatedSignatureId")
+
+        and: "get status"
+        datafile.getMidSigningStatus(flow, signatureId)
+
+        when: "retrieve container"
+        Response response = datafile.getContainer(flow)
+
+        then: "retrieved container is unchanged"
+        response.then()
+                .body("container.length()", equalTo(DEFAULT_ASICE_CONTAINER_LENGTH))
+    }
+
     @Story("Deleting container cancels ongoing Mobile-ID signing process")
     def "Ongoing Mobile-ID signing cannot continue after container is deleted"() {
         given: "upload the container and start signing"
-        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile(TestData.DEFAULT_ASICE_CONTAINER_NAME))
+        datafile.uploadDefaultContainer(flow)
         Response startResponse = datafile.tryStartMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
         String signatureId = startResponse.path("generatedSignatureId")
 
