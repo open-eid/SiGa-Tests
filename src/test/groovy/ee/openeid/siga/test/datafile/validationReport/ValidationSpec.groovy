@@ -25,7 +25,7 @@ class ValidationSpec extends GenericSpecification {
     def "Validation report corresponds to schema: #containerType"() {
         expect:
         datafile.validateContainerFromFile(flow, containerName).then()
-                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("static/ValidationReportSchema.json"))
+                .body(JsonSchemaValidator.matchesJsonSchemaInClasspath("schemas/ValidationReportSchema.json"))
 
         where:
         containerType                  | containerName
