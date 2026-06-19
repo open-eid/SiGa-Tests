@@ -54,6 +54,16 @@ class MonitoringSpec extends GenericSpecification {
                 .body("status", is("UP"))
     }
 
+    @Story("Prometheus monitoring")
+    def "Verify prometheus valid response"() {
+        expect: "prometheus response returns valid response"
+        Steps.getPrometheusInfo().then()
+                .body(containsString("# HELP"))
+                .body(containsString("jvm_memory_used_bytes"))
+                .body(containsString("http_server_requests_seconds"))
+                .body(containsString("tomcat_"))
+    }
+
     @Step("GET {endpoint} with Accept {accept}")
     static Response get(String endpoint, String accept) {
         return given()
