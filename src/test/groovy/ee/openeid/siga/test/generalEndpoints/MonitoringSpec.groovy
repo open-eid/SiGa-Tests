@@ -45,6 +45,15 @@ class MonitoringSpec extends GenericSpecification {
         "v2"    | "details"    | "schemas/MonitorHealthV2Schema.json"
     }
 
+    @Story("Heartbeat response validation")
+    def "Heartbeat response structure matches schema and status is UP"() {
+        expect: "valid response is returned"
+        Steps.getHeartbeatInfo().then()
+                .contentType("application/vnd.spring-boot.actuator.v3+json")
+                .body(matchesJsonSchemaInClasspath("schemas/MonitorHeartbeatSchema.json"))
+                .body("status", is("UP"))
+    }
+
     @Step("GET {endpoint} with Accept {accept}")
     static Response get(String endpoint, String accept) {
         return given()
