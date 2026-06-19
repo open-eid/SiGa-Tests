@@ -1,0 +1,201 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "details": {
+      "type": "object",
+      "properties": {
+        "db": {
+          "type": "object",
+          "properties": {
+            "details": {
+              "type": "object",
+              "properties": {
+                "database": {
+                  "type": "string",
+                  "enum": [
+                    "PostgreSQL"
+                  ]
+                },
+                "validationQuery": {
+                  "type": "string",
+                  "enum": [
+                    "isValid()"
+                  ]
+                }
+              },
+              "required": [
+                "database",
+                "validationQuery"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "UP",
+                "DOWN"
+              ]
+            }
+          },
+          "required": [
+            "details",
+            "status"
+          ]
+        },
+        "ignite": {
+          "type": "object",
+          "properties": {
+            "details": {
+              "type": "object",
+              "properties": {
+                "igniteActiveContainers": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "required": [
+                "igniteActiveContainers"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "UP",
+                "DOWN"
+              ]
+            }
+          },
+          "required": [
+            "details",
+            "status"
+          ]
+        },
+        "livenessState": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "UP",
+                "DOWN"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        },
+        "metaInfo": {
+          "type": "object",
+          "properties": {
+            "details": {
+              "type": "object",
+              "properties": {
+                "webappName": {
+                  "type": "string",
+                  "enum": [
+                    "siga-webapp"
+                  ]
+                },
+                "version": {
+                  "type": "string",
+                  "pattern": "^\\d+\\.\\d+\\.\\d+$"
+                },
+                "buildTime": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "startTime": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "currentTime": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "webappName",
+                "version",
+                "buildTime",
+                "startTime",
+                "currentTime"
+              ]
+            },
+            "status": {
+              "type": "string",
+              "enum": [
+                "UP",
+                "DOWN"
+              ]
+            }
+          },
+          "required": [
+            "details",
+            "status"
+          ]
+        },
+        "readinessState": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "UP",
+                "DOWN"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        },
+        "siva": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": [
+                "UP",
+                "DOWN"
+              ]
+            }
+          },
+          "required": [
+            "status"
+          ]
+        }
+      },
+      "required": [
+        "db",
+        "ignite",
+        "livenessState",
+        "metaInfo",
+        "readinessState",
+        "siva"
+      ]
+    },
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "liveness",
+          "readiness"
+        ]
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "UP",
+        "DOWN"
+      ]
+    }
+  },
+  "required": [
+    "details",
+    "groups",
+    "status"
+  ]
+}
