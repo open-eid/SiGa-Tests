@@ -15,9 +15,16 @@ class Steps {
         return response
     }
 
-    @Step("Get health info")
-    static Response getHealthInfo() {
-        Response response = Requests.get("/actuator/health")
+    @Step("Get heartbeat info")
+    static Response getHeartbeatInfo() {
+        Response response = Requests.get("/actuator/heartbeat")
+        response.then().statusCode(HttpStatus.SC_OK)
+        return response
+    }
+
+    @Step("Get prometheus info")
+    static Response getPrometheusInfo() {
+        Response response = Requests.get("/actuator/prometheus")
         response.then().statusCode(HttpStatus.SC_OK)
         return response
     }

@@ -33,7 +33,7 @@ https://github.com/open-eid/SiGa#running-siga-with-docker, then the default conf
 
 ## Running tests
 
-**NB!** [MonitoringT](src/test/java/ee/openeid/siga/test/MonitoringT.java) tests do not pass locally as SIVA status is
+**NB!** [MonitoringSpec](src/test/groovy/ee/openeid/siga/test/MonitoringSpec.groovy) tests do not pass locally as SIVA status is
 always DOWN.
 
 ### Using Maven
