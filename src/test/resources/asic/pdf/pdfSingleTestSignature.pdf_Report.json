@@ -41,6 +41,9 @@
         ],
         "claimedSigningTime": "2020-05-27T09:59:07Z",
         "warnings": [
+          {
+            "content": "The authority info access is not present!"
+          }
         ],
         "info": {
           "bestSignatureTime": "2020-05-27T09:59:09Z",
