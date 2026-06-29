@@ -5,129 +5,111 @@
       "policyName": "POLv4",
       "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
     },
-    "validationTime": "${json-unit.ignore}",
-    "validatedDocument": {
-      "filename": "containerWithMultipleSignatures.asice",
-      "fileHash": null,
-      "hashAlgo": null
-    },
-    "validationLevel": "ARCHIVAL_DATA",
-    "validationWarnings": [
-      {
-        "content": "This is validation service demo. Use it for testing purposes only"
-      },
-      {
-        "content": "Container \"mimetype\" file must not be compressed"
-      }
-    ],
     "signatureForm": "ASiC-E",
     "signatures": [
       {
-        "id": "S0",
-        "signatureFormat": "XAdES_BASELINE_LT",
-        "signatureLevel": "QESIG",
-        "signedBy": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865",
-        "subjectDistinguishedName": {
-          "serialNumber": "11404176865",
-          "commonName": "ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"
-        },
-        "indication": "TOTAL-PASSED",
-        "subIndication": null,
+        "claimedSigningTime": "2026-06-29T17:47:33Z",
         "errors": [
         ],
+        "id": "id-d4768b7fd374bd9535e27580f46e06bd",
+        "indication": "TOTAL-PASSED",
+        "info": {
+          "archiveTimeStamps": [
+          ],
+          "bestSignatureTime": "2026-06-29T17:47:43Z"
+        },
+        "signatureFormat": "XAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
         "signatureScopes": [
           {
-            "name": "test.xml",
-            "scope": "FULL",
-            "content": "Full document"
-          },
-          {
+            "content": "Full document",
             "name": "test.txt",
-            "scope": "FULL",
-            "content": "Full document"
+            "scope": "FULL"
           }
         ],
-        "claimedSigningTime": "2014-11-17T14:11:47Z",
+        "signedBy": "O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001019906",
+        "subIndication": null,
+        "subjectDistinguishedName": {
+          "commonName": "MARY ÄNN,O’CONNEŽ-ŠUSLIK TESTNUMBER",
+          "serialNumber": "PNOEE-60001019906"
+        },
         "warnings": [
-        ],
-        "info": {
-          "bestSignatureTime": "2014-11-17T14:11:46Z",
-          "archiveTimeStamps": [
-          ]
-        }
+        ]
       },
       {
-        "id": "id-bec591d4978fe37e34586c42d2dc996a",
-        "signatureFormat": "XAdES_BASELINE_LT",
-        "signatureLevel": "QESIG",
-        "signedBy": "JÕEORG,JAAK-KRISTJAN,38001085718",
-        "subjectDistinguishedName": {
-          "serialNumber": "PNOEE-38001085718",
-          "commonName": "JÕEORG,JAAK-KRISTJAN,38001085718"
-        },
-        "indication": "TOTAL-PASSED",
-        "subIndication": null,
+        "claimedSigningTime": "2026-06-29T17:49:14Z",
         "errors": [
         ],
+        "id": "id-81f54637282cf589fd090ea15f8aadcd",
+        "indication": "TOTAL-PASSED",
+        "info": {
+          "archiveTimeStamps": [
+          ],
+          "bestSignatureTime": "2026-06-29T17:49:19Z"
+        },
+        "signatureFormat": "XAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
         "signatureScopes": [
           {
-            "name": "test.xml",
-            "scope": "FULL",
-            "content": "Full document"
-          },
-          {
+            "content": "Full document",
             "name": "test.txt",
-            "scope": "FULL",
-            "content": "Full document"
+            "scope": "FULL"
           }
         ],
-        "claimedSigningTime": "2019-08-28T11:50:21Z",
+        "signedBy": "TESTNUMBER,OK,30303039914",
+        "subIndication": null,
+        "subjectDistinguishedName": {
+          "commonName": "TESTNUMBER,OK",
+          "serialNumber": "PNOEE-30303039914"
+        },
         "warnings": [
-        ],
-        "info": {
-          "bestSignatureTime": "2019-08-28T11:50:23Z",
-          "archiveTimeStamps": [
-          ]
-        }
+        ]
       },
       {
-        "id": "id-416aca42e4f53758868a06011cc2c04a",
-        "signatureFormat": "XAdES_BASELINE_LT",
-        "signatureLevel": "QESIG",
-        "signedBy": "JÕEORG,JAAK-KRISTJAN,38001085718",
-        "subjectDistinguishedName": {
-          "serialNumber": "PNOEE-38001085718",
-          "commonName": "JÕEORG,JAAK-KRISTJAN,38001085718"
-        },
-        "indication": "TOTAL-PASSED",
-        "subIndication": null,
+        "claimedSigningTime": "2026-06-29T17:50:23Z",
         "errors": [
         ],
+        "id": "id-a776fb86ccea52d9b47be8b1c50bcae1",
+        "indication": "TOTAL-PASSED",
+        "info": {
+          "archiveTimeStamps": [
+          ],
+          "bestSignatureTime": "2026-06-29T17:50:28Z"
+        },
+        "signatureFormat": "XAdES_BASELINE_LT",
+        "signatureLevel": "QESIG",
         "signatureScopes": [
           {
-            "name": "test.xml",
-            "scope": "FULL",
-            "content": "Full document"
-          },
-          {
+            "content": "Full document",
             "name": "test.txt",
-            "scope": "FULL",
-            "content": "Full document"
+            "scope": "FULL"
           }
         ],
-        "claimedSigningTime": "2019-08-28T11:50:22Z",
+        "signedBy": "JÕEORG,JAAK-KRISTJAN,38001085718",
+        "subIndication": null,
+        "subjectDistinguishedName": {
+          "commonName": "JÕEORG,JAAK-KRISTJAN,38001085718",
+          "serialNumber": "PNOEE-38001085718"
+        },
         "warnings": [
-        ],
-        "info": {
-          "bestSignatureTime": "2019-08-28T11:50:24Z",
-          "archiveTimeStamps": [
-          ]
-        }
+        ]
       }
     ],
+    "signaturesCount": 3,
     "timeStampTokens": [
     ],
     "validSignaturesCount": 3,
-    "signaturesCount": 3
+    "validatedDocument": {
+      "fileHash": null,
+      "filename": "containerWithMultipleSignatures.asice",
+      "hashAlgo": null
+    },
+    "validationLevel": "ARCHIVAL_DATA",
+    "validationTime": "${json-unit.ignore}",
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      }
+    ]
   }
 }
