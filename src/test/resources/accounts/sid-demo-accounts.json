@@ -1,7 +1,7 @@
 {
   "accounts": {
     "demo_test_sk_eid_q_2024e": {
-      "documentNumber": "PNOEE-40504040001-DEM0-Q",
+      "documentNumber": "PNOEE-40504040001-DEM2-Q",
       "country": "EE",
       "personalCode": "40504040001",
       "commonName": "TEST,OK"
@@ -17,7 +17,7 @@
       "personalCode": "30403039928"
     },
     "demo_user_lithuania": {
-      "documentNumber": "PNOLT-40504040001-MOCK-Q",
+      "documentNumber": "PNOLT-40504040001-DEM2-Q",
       "country": "LT",
       "personalCode": "40504040001"
     }
