@@ -38,7 +38,6 @@ class ValidationSpec extends GenericSpecification {
         "Signed PDF"                   | "pdfSingleTestSignature.pdf"
     }
 
-    //TODO: SIGA-1125 - comment in errors paths, if fixed
     def "Timestamped ASiC-S validation report contains all new timestamp token info"() {
         when:
         Response validationResponse = datafile.validateContainerFromFile(flow,
@@ -50,8 +49,8 @@ class ValidationSpec extends GenericSpecification {
                 .body("timeStampTokens[0].subIndication", is("HASH_FAILURE"))
                 .body("timeStampTokens[0].timestampLevel", is("QTSA"))
                 .body("timeStampTokens[0].warning", hasSize(0))
-//                .body("timeStampTokens[0].errors", hasSize(1))
-//                .body("timeStampTokens[0].errors[0].content[0]", is("The time-stamp message imprint is not intact!"))
+                .body("timeStampTokens[0].errors", hasSize(1))
+                .body("timeStampTokens[0].errors.content", contains("The time-stamp message imprint is not intact!"))
                 .body("timeStampTokens[0].certificates", hasSize(1))
                 .body("timeStampTokens[0].certificates[0].commonName", is("DEMO SK TIMESTAMPING AUTHORITY 2023E"))
                 .body("timeStampTokens[0].certificates[0].type", is("CONTENT_TIMESTAMP"))
