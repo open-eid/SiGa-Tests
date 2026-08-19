@@ -33,7 +33,7 @@ class MonitoringSpec extends GenericSpecification {
         get("/actuator/health", mediaType).then()
                 .contentType(mediaType)
                 .body(matchesJsonSchemaInClasspath(schema))
-                .body("${root}.ignite.status", is("UP"))
+                .body("${root}.sessionStorage.status", is("UP"))
                 .body("${root}.metaInfo.status", is("UP"))
                 .body("${root}.siva.status", is("UP"))
                 .body("${root}.db.status", is("UP"))
