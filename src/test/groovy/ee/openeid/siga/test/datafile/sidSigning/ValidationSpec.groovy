@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.datafile.sidSigning
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -15,7 +16,7 @@ import static org.hamcrest.Matchers.is
 @Tag("datafileContainer")
 @Tag("smartId")
 @Epic("Smart-ID signing (datafile)")
-@Feature("SID endpoint validation")
+@Feature("SID signing validation")
 class ValidationSpec extends GenericSpecification {
     private Flow flow
 
@@ -65,4 +66,29 @@ class ValidationSpec extends GenericSpecification {
         "deleted"       | _
         "added"         | _
     }
+
+    @Story("SID signing for ASiC-S containers is not allowed")
+    def "Starting SID signing for ASiC-S is not allowed"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
+
+        when: "try starting SID signing"
+        Response response = datafile.tryStartSidSigning(flow, RequestData.sidStartSigningRequestDefaultBody())
+
+        then: "error is returned"
+        RequestErrorValidator.validate(response, RequestError.INVALID_CONTAINER_TYPE)
+    }
+
+    @Story("SID signing for ASiC-S containers is not allowed")
+    def "Starting SID certificate choice for ASiC-S is not allowed"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
+
+        when: "try starting SID certificate choice"
+        Response response = datafile.tryStartSidCertificateChoice(flow, RequestData.sidCertificateChoiceRequestDefaultBody())
+
+        then: "error is returned"
+        RequestErrorValidator.validate(response, RequestError.INVALID_CONTAINER_TYPE)
+    }
+
 }

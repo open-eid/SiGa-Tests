@@ -22,7 +22,6 @@ import static ee.openeid.siga.test.helper.TestData.CERTIFICATE_CHOICE;
 import static ee.openeid.siga.test.helper.TestData.CLIENT_EXCEPTION;
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
-import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.EXPIRED_TRANSACTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
@@ -202,15 +201,6 @@ class SmartIdSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void postWithSmartIdCertificateChoiceAsicsContainerFails() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
-
-        Response response = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest(SmartIdAccount.defaultSigner().getPersonalCode(), "EE"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
-    }
-
-    @Test
     void postWithSmartIdCertificateChoiceSymbolsInPersonIdentifier() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postSidCertificateChoice(flow, smartIdCertificateChoiceRequest(".!:", "EE"));
@@ -359,7 +349,7 @@ class SmartIdSigningAsicContainerT extends TestBase {
     }
 
     @ParameterizedTest(name = "Starting SID signing ASIC container not successful if messageToDisplay field contains char''{0}''")
-    @ValueSource(strings = {"\u0000","\n", "\r"})
+    @ValueSource(strings = {"\u0000", "\n", "\r"})
     void signSmartIdAsicContainerInSessionWithSpecialCharInMessageToDisplayFails(String specialChar) throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
 
@@ -470,15 +460,6 @@ class SmartIdSigningAsicContainerT extends TestBase {
         Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOLT-10101020001-K87V-NQ"));
 
         expectError(response, 400, CLIENT_EXCEPTION);
-    }
-
-    @Test
-    void signAsicsContainerWithSmartIdFails() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
-
-        Response response = postSmartIdSigningInSession(flow, smartIdSigningRequestWithDefault("LT", "PNOEE-30403039917-MOCK-Q"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
     }
 
     @Test
