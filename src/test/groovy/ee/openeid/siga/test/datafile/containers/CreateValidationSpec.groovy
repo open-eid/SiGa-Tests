@@ -5,6 +5,7 @@ import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.ContainerUtil
 import eu.europa.esig.dss.enumerations.MimeType
+import eu.europa.esig.dss.enumerations.MimeTypeEnum
 import io.qameta.allure.*
 import io.restassured.path.xml.XmlPath
 import io.restassured.response.Response
@@ -12,7 +13,6 @@ import org.apache.http.HttpStatus
 import spock.lang.Tag
 
 import static org.hamcrest.MatcherAssert.assertThat
-import static org.hamcrest.Matchers.equalTo
 import static org.hamcrest.Matchers.is
 
 @Tag("datafileContainer")
@@ -48,6 +48,29 @@ class CreateValidationSpec extends GenericSpecification {
         response.then().statusCode(HttpStatus.SC_OK)
     }
 
+    @Story("Creating container with ASiC-S extension always creates ASiC-E container")
+    def "Creating container with #description creates an ASiC-E container"() {
+        given: "request container with ASiC-S extension in container name"
+        Map requestBody = RequestData.createDatafileRequestBody(containerName, "testFile.txt", "dGVzdGZhaWw=")
+
+        when: "create and retrieve the container"
+        datafile.createContainer(flow, requestBody)
+        Response response = datafile.getContainer(flow)
+
+        then: "created container is ASiC-E, despite the ASiC-S extension"
+        String mimeType = new String(ContainerUtil.extractEntryBytesFromBase64Container(
+                response.path("container").toString(), "mimetype"))
+        assertThat(mimeType, is(MimeTypeEnum.ASICE.mimeTypeString))
+
+        and: "container name remains unchanged"
+        response.then().body("containerName", is(containerName))
+
+        where:
+        description        | containerName
+        ".asics extension" | "containerTest.asics"
+        ".scs extension"   | "containerTest.scs"
+    }
+
     @Story("Setting datafile MIME type based on extension when creating a container")
     def "Correct datafile MIME type should be set in the manifest for #ext"() {
         given:
@@ -67,4 +90,5 @@ class CreateValidationSpec extends GenericSpecification {
         where:
         ext << [".txt", ".xml", ".html", ".pkcs7", ".p7s", ".pdf", ".asics", ".scs", ".asice", ".sce", ".bdoc", ".odt", ".ods", ".png", ".jpg", ".jpeg", ".tst", ".unknown"]
     }
+
 }
