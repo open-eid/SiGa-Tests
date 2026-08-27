@@ -5,9 +5,7 @@ import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
 import ee.openeid.siga.test.util.RequestErrorValidator
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Story
+import io.qameta.allure.*
 import io.restassured.response.Response
 import spock.lang.Tag
 
@@ -60,11 +58,11 @@ class AsicsChecksSpec extends GenericSpecification {
                 .body("timeStampTokens[1].signedTime", withinOneHourOfCurrentTime())
 
         where:
-        nestedContainerType | fileName                                    | firstTsTime
+        nestedContainerType | fileName                                     | firstTsTime
         "ASiC-S"            | "timestampedAsicsWithTimestampedAsics.asics" | "2024-10-24T08:33:03Z"
-        "ASiC-E"            | "timestampedAsicsWithAsice.asics" | "2025-01-13T17:28:36Z"
-        "BDOC"              | "asicsContainerWithBdocAndTimestamp.asics"  | "2024-03-27T12:42:57Z"
-        "DDOC"              | "ValidDDOCinsideAsics.asics"                | "2025-04-04T08:23:44Z"
+        "ASiC-E"            | "timestampedAsicsWithAsice.asics"            | "2025-01-13T17:28:36Z"
+        "BDOC"              | "asicsContainerWithBdocAndTimestamp.asics"   | "2024-03-27T12:42:57Z"
+        "DDOC"              | "ValidDDOCinsideAsics.asics"                 | "2025-04-04T08:23:44Z"
     }
 
     @Story("Allowed nested container types in ASiC-S are ASiC, BDOC and DDOC")
@@ -85,6 +83,5 @@ class AsicsChecksSpec extends GenericSpecification {
         "DOCX"         | "timestampedAsicsWithDocx.asics"
         "CDOC"         | "timestampedAsicsWithCdoc.asics"
     }
-
 
 }
