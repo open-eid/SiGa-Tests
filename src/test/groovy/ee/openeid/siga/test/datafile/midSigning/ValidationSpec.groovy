@@ -1,9 +1,13 @@
 package ee.openeid.siga.test.datafile.midSigning
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
+import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.*
+import io.restassured.response.Response
 import spock.lang.Tag
 
 import static org.hamcrest.Matchers.is
@@ -32,4 +36,17 @@ class ValidationSpec extends GenericSpecification {
         datafile.validateContainerInSession(flow).then()
                 .body("validationConclusion.validSignaturesCount", is(2))
     }
+
+    @Story("MID signing for ASiC-S containers is not allowed")
+    def "Starting MID signing for ASiC-S is not allowed"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
+
+        when: "try starting MID signing"
+        Response response = datafile.tryStartMidSigning(flow, RequestData.midStartSigningRequestDefaultBody())
+
+        then: "error is returned"
+        RequestErrorValidator.validate(response, RequestError.INVALID_CONTAINER_TYPE)
+    }
+
 }

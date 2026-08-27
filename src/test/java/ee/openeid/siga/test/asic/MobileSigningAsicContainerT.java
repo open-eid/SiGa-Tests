@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
-import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.EXPIRED_TRANSACTION;
 import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.INVALID_SESSION_DATA_EXCEPTION;
@@ -159,15 +158,6 @@ class MobileSigningAsicContainerT extends TestBase {
     }
 
     @Test
-    void mobileIdSignAsicsContainerFails() throws Exception {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
-
-        Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019947", "+37207110066", "LT"));
-
-        expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION, "ASiC-S container signing is not allowed.");
-    }
-
-    @Test
     void mobileIdSendingFailed() throws Exception {
         postCreateContainer(flow, asicContainersDataRequestWithDefault());
         Response response = postMidSigningInSession(flow, midSigningRequestWithDefault("60001019947", "+37207110066", "LT"));
@@ -176,7 +166,6 @@ class MobileSigningAsicContainerT extends TestBase {
 
         expectMidStatus(response, SENDING_ERROR);
     }
-
 
     @Test
     void mobileIdUserCancel() throws Exception {
