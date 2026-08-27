@@ -1,9 +1,13 @@
 package ee.openeid.siga.test.datafile.remoteSigning
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
+import ee.openeid.siga.test.util.RequestErrorValidator
 import io.qameta.allure.*
+import io.restassured.response.Response
 import spock.lang.Tag
 
 import static org.hamcrest.Matchers.is
@@ -31,4 +35,23 @@ class ValidationSpec extends GenericSpecification {
         datafile.validateContainerInSession(flow).then()
                 .body("validationConclusion.validSignaturesCount", is(2))
     }
+
+    @Story("Remote signing for ASiC-S containers is not allowed")
+    def "Starting remote signing for #containerDesc ASiC-S is not allowed"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, containerName)
+
+        when: "try starting remote signing"
+        Response response = datafile.tryStartRemoteSigning(flow, RequestData.remoteSigningStartDefaultRequest())
+
+        then: "error is returned"
+        RequestErrorValidator.validate(response, RequestError.INVALID_CONTAINER_TYPE)
+
+        where:
+        containerDesc                | containerName
+        "timestamped"                | TestData.DEFAULT_ASICS_CONTAINER_NAME
+        "signed"                     | "asicsContainerWithLtSignatureWithoutTST.scs"
+        "unsigned and untimestamped" | "0xSIG_0xTST_asics.asics"
+    }
+
 }

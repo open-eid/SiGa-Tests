@@ -10,6 +10,7 @@ enum RequestError {
     INVALID_EMPTY_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to sign container with empty datafiles"),
     INVALID_TYPE_MID(CommonErrorCode.INVALID_SESSION_DATA, "Unable to finalize signature for signing type: MOBILE_ID"),
     INVALID_CHANGED_DATAFILE(CommonErrorCode.INVALID_SESSION_DATA, "Unable to finalize signature. Container data files have been changed after signing was initiated. Repeat signing process"),
+    INVALID_CONTAINER_TYPE(CommonErrorCode.INVALID_SESSION_DATA, "ASiC-S container signing is not allowed."),
     INVALID_RESOURCE("RESOURCE_NOT_FOUND_EXCEPTION", "Session not found"),
     MISSING_SIGNATURES(CommonErrorCode.INVALID_CONTAINER, "Missing signatures"),
     INVALID_CERT("INVALID_CERTIFICATE_EXCEPTION", "Remote signing endpoint prohibits signing with Mobile-Id/Smart-Id certificate"),
