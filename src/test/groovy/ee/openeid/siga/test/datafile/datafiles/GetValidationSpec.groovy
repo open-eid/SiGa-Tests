@@ -4,9 +4,7 @@ import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.request.RequestData
-import io.qameta.allure.Epic
-import io.qameta.allure.Feature
-import io.qameta.allure.Story
+import io.qameta.allure.*
 import io.restassured.response.Response
 import spock.lang.Tag
 
@@ -78,6 +76,19 @@ class GetValidationSpec extends GenericSpecification {
         "CDOC"       | "timestampedAsicsWithCdoc.asics"      | "test.cdoc"
         "DOCX"       | "timestampedAsicsWithDocx.asics"      | "Test.docx"
         "PDF"        | "timestampedAsicsWithSignedPdf.asics" | "pdfSingleSignature.pdf"
+    }
+
+    @Story("Get signed ASiC-S nested container data files")
+    def "Signed ASiC-S returns the nested container as data file"() {
+        given: "upload signed ASiC-S container"
+        datafile.uploadContainer(flow, RequestData.uploadDatafileRequestBodyFromFile("signedAsicsWithSignedDdoc.scs"))
+
+        when: "get data files"
+        Response response = datafile.getDataFilesList(flow)
+
+        then: "the nested container itself is returned, not its data files"
+        response.then().body("dataFiles.fileName", contains("ddocSingleSignature.ddoc"),
+                        "dataFiles[0].fileContent", startsWith("PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz"))
     }
 
     @Story("Get ASiC-E container data files")
