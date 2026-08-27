@@ -1,7 +1,7 @@
 package ee.openeid.siga.test.datafile.upload
 
 import ee.openeid.siga.test.GenericSpecification
-import ee.openeid.siga.test.helper.TestData
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.model.RequestError
 import ee.openeid.siga.test.request.RequestData
@@ -33,12 +33,16 @@ class ValidationSpec extends GenericSpecification {
         RequestErrorValidator.validate(response, RequestError.INVALID_CONTAINER)
 
         where:
-        description                     | fileName
-        "XAdES signature and timestamp" | "XadesMixedWithTst.asics"
-        "CAdES signature and timestamp" | "CadesMixedWithTst.asics"
-        "CAdES signature"               | "cadesAsicsWithDdoc.asics"
-        "additional folder"             | "AdditionalFolderInAsics.asics"
-        "datafile missing"              | "DataFileMissingAsics.asics"
+        description                         | fileName
+        "XAdES signature and timestamp"     | "XadesMixedWithTst.asics"
+        "CAdES signature and timestamp"     | "CadesMixedWithTst.asics"
+        "CAdES signature"                   | "cadesAsicsWithDdoc.asics"
+        "additional folder"                 | "AdditionalFolderInAsics.asics"
+        "datafile missing"                  | "DataFileMissingAsics.asics"
+        "two datafiles"                     | "TwoDataFilesAsics.asics"
+        "META-INF not in root"              | "MetaInfNotInRoot.asics"
+        "evidence record xml and timestamp" | "evidencerecordXmlMixedWithTST.asics"
+        "evidence record ers and timestamp" | "evidencerecordErsMixedWithTST.asics"
     }
 
     @Story("Successful container upload should return a container ID")
@@ -97,4 +101,5 @@ class ValidationSpec extends GenericSpecification {
         then: "error is returned"
         RequestErrorValidator.validate(response, RequestError.INVALID_FILE_CONTENT)
     }
+
 }
