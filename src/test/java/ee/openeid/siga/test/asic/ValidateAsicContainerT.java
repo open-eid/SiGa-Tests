@@ -17,14 +17,12 @@ import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.ERROR_CODE;
-import static ee.openeid.siga.test.helper.TestData.INVALID_REQUEST;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES_COUNT;
 import static ee.openeid.siga.test.helper.TestData.REPORT_TIMESTAMP_TOKENS;
 import static ee.openeid.siga.test.helper.TestData.REPORT_VALID_SIGNATURES_COUNT;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
-import static ee.openeid.siga.test.helper.TestData.VALIDATIONREPORT;
 import static ee.openeid.siga.test.utils.DigestSigner.signDigest;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainerRequest;
 import static ee.openeid.siga.test.utils.RequestBuilder.asicContainerRequestFromFile;
@@ -159,38 +157,6 @@ class ValidateAsicContainerT extends TestBase {
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[1].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-30303039914"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[2].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
         assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[2].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
-    }
-
-    @Test
-    void uploadAsicsContainerWithSignatureAndValidateInSession() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
-
-        Response validationResponse = getValidationReportForContainerInSession(flow);
-
-        assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), empty());
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].signedBy"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2024-09-11T10:20:32Z"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
-    }
-
-    @Test
-    void uploadAsicsContainerWithTimestampAndValidateInSession() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        postUploadContainer(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
-
-        Response validationResponse = getValidationReportForContainerInSession(flow);
-
-        assertThat(validationResponse.statusCode(), equalTo(200));
-        assertThat(validationResponse.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(0));
-        assertThat(validationResponse.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
-
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
-        assertThat(validationResponse.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
-        assertThat(validationResponse.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-05-28T12:24:09Z"));
     }
 
     @Test

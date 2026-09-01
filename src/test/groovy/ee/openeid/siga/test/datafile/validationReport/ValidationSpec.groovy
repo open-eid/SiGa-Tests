@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.datafile.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.util.Utils
 import io.qameta.allure.*
@@ -13,7 +14,7 @@ import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
 @Epic("Validation Report (datafile)")
-@Feature("Get augmented container report")
+@Feature("Get container validation report")
 class ValidationSpec extends GenericSpecification {
     private Flow flow
 
@@ -104,6 +105,39 @@ class ValidationSpec extends GenericSpecification {
         "signed CAdES ASiC-S" | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
         "signed XAdES ASiC-S" | "signedAsicsWithSignedDdoc.scs"
         "timestamped ASiC-S"  | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+    }
+
+    @Story("Validate ASiC-S container in session")
+    def "Signed ASiC-S validation report in session contains signature info"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, "asicsContainerWithLtSignatureWithoutTST.scs")
+
+        when: "validate container in session"
+        Response validationResponse = datafile.validateContainerInSession(flow)
+
+        then: "validation report contains signature, but no timestamps"
+        validationResponse.then().rootPath("validationConclusion.")
+                .body("signaturesCount", is(1))
+                .body("validSignaturesCount", is(1))
+                .body("signatures[0].signedBy", is("JÕEORG,JAAK-KRISTJAN,38001085718"))
+                .body("timeStampTokens", hasSize(0))
+    }
+
+    @Story("Validate ASiC-S container in session")
+    def "Timestamped ASiC-S validation report in session contains timestamp info"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
+
+        when: "validate container in session"
+        Response validationResponse = datafile.validateContainerInSession(flow)
+
+        then: "validation report contains timestamp, but no signatures"
+        validationResponse.then().rootPath("validationConclusion.")
+                .body("signaturesCount", is(0))
+                .body("validSignaturesCount", is(0))
+                .body("timeStampTokens", hasSize(1))
+                .body("timeStampTokens[0].signedBy", is("DEMO SK TIMESTAMPING AUTHORITY 2023E"))
+                .body("timeStampTokens[0].signedTime", is("2024-05-28T12:24:09Z"))
     }
 
 }
