@@ -1,0 +1,53 @@
+{
+  "validationConclusion": {
+    "policy": {
+      "policyDescription": "Policy according most common requirements of Estonian Public Administration, to validate Qualified Electronic Signatures and Electronic Seals with Qualified Certificates (according to Regulation (EU) No 910/2014, aka eIDAS). I.e. signatures that have been recognized as Advanced electronic Signatures (AdES) and AdES supported by a Qualified Certificate (AdES/QC) do not produce a positive validation result, with exception for seals, where AdES/QC and above will produce positive result. Signatures and Seals which are not compliant with ETSI standards (referred by eIDAS) may produce unknown or invalid validation result. Validation process is based on eIDAS Article 32 and referred ETSI standards.",
+      "policyName": "POLv4",
+      "policyUrl": "http://open-eid.github.io/SiVa/siva3/appendix/validation_policy/#POLv4"
+    },
+    "signatureForm": "ASiC-S",
+    "signatures": [
+    ],
+    "signaturesCount": 0,
+    "timeStampTokens": [
+      {
+        "certificates": [
+          {
+            "commonName": "DEMO SK TIMESTAMPING AUTHORITY 2023E",
+            "content": "MIIDEjCCApigAwIBAgIQM7BQCImkdt18qWDYdbfOtjAKBggqhkjOPQQDAjBlMSAwHgYDVQQDDBdURVNUIG9mIFNLIFRTQSBDQSAyMDIzRTEXMBUGA1UEYQwOTlRSRUUtMTA3NDcwMTMxGzAZBgNVBAoMElNLIElEIFNvbHV0aW9ucyBBUzELMAkGA1UEBhMCRUUwHhcNMjMwNjE1MDcxMjA0WhcNMjkwNjE0MDcxMjAzWjByMS0wKwYDVQQDDCRERU1PIFNLIFRJTUVTVEFNUElORyBBVVRIT1JJVFkgMjAyM0UxFzAVBgNVBGEMDk5UUkVFLTEwNzQ3MDEzMRswGQYDVQQKDBJTSyBJRCBTb2x1dGlvbnMgQVMxCzAJBgNVBAYTAkVFMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEFlmfS6324KQUsz5xSbkG0PxwZfi94mYeuZkculhxkgmIAD3/sSOIoNqRTHg9Jl4tR2VNcMocjLRli474M6SKLqOCARswggEXMB8GA1UdIwQYMBaAFGkForSjh0uOXxhFLdWxlzTPZzu3MG8GCCsGAQUFBwEBBGMwYTA7BggrBgEFBQcwAoYvaHR0cHM6Ly9jLnNrLmVlL1RFU1Rfb2ZfU0tfVFNBX0NBXzIwMjNFLmRlci5jcnQwIgYIKwYBBQUHMAGGFmh0dHA6Ly9kZW1vLnNrLmVlL29jc3AwFgYDVR0lAQH/BAwwCgYIKwYBBQUHAwgwPAYDVR0fBDUwMzAxoC+gLYYraHR0cHM6Ly9jLnNrLmVlL1RFU1Rfb2ZfU0tfVFNBX0NBXzIwMjNFLmNybDAdBgNVHQ4EFgQUPmDgaUB5qWkDeoNoc62C/QKk93YwDgYDVR0PAQH/BAQDAgbAMAoGCCqGSM49BAMCA2gAMGUCMAK0/sP+jVQFNFakD4SeVy9xAZovv7T9WuaKfztgdefdJNMm8gaS9HpAa/wwVvnjqQIxAOU2sPULdJMNC6qw563eDasMq9fRUnAf17+/I+byednRNGW3SGYtyGWN8IKKBut4lA==",
+            "type": "CONTENT_TIMESTAMP"
+          }
+        ],
+        "errors": [
+        ],
+        "indication": "TOTAL-PASSED",
+        "signedBy": "DEMO SK TIMESTAMPING AUTHORITY 2023E",
+        "signedTime": "2024-05-28T12:24:09Z",
+        "subIndication": null,
+        "timestampLevel": "QTSA",
+        "timestampScopes": [
+          {
+            "content": "Full document",
+            "name": "test.txt",
+            "scope": "FULL"
+          }
+        ],
+        "warning": [
+        ]
+      }
+    ],
+    "validSignaturesCount": 0,
+    "validatedDocument": {
+      "fileHash": null,
+      "filename": "asicsContainerWithTxtFileAndTimestamp.asics",
+      "hashAlgo": null
+    },
+    "validationLevel": null,
+    "validationTime": "${json-unit.ignore}",
+    "validationWarnings": [
+      {
+        "content": "This is validation service demo. Use it for testing purposes only"
+      }
+    ]
+  }
+}

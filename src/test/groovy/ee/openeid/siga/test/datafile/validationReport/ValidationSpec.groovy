@@ -1,6 +1,7 @@
 package ee.openeid.siga.test.datafile.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
 import ee.openeid.siga.test.util.Utils
 import io.qameta.allure.*
@@ -9,11 +10,12 @@ import io.restassured.response.Response
 import spock.lang.Tag
 
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals
+import static net.javacrumbs.jsonunit.JsonAssert.whenIgnoringPaths
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
 @Epic("Validation Report (datafile)")
-@Feature("Get augmented container report")
+@Feature("Get container validation report")
 class ValidationSpec extends GenericSpecification {
     private Flow flow
 
@@ -38,6 +40,30 @@ class ValidationSpec extends GenericSpecification {
         "Signed PDF"                   | "pdfSingleTestSignature.pdf"
     }
 
+    @Story("Validation report contains all relevant info")
+    def "Validation report of '#containerType' contains all relevant info"() {
+        when:
+        Response validationResponse = datafile.validateContainerFromFile(flow, containerName)
+
+        then:
+        String expectedReport = new String(Utils.readFileFromResources("${containerName}_Report.json"))
+        String actualReport = validationResponse.then().extract().asString()
+        assertJsonEquals(expectedReport, actualReport)
+
+        where:
+        containerType                                        | containerName
+        "signed ASiC-E"                                      | "containerWithMultipleSignatures.asice"
+        "signed BDOC"                                        | "valid-bdoc-tm-newer.bdoc"
+        "signed DDOC"                                        | "ddocSingleSignature.ddoc"
+        "signed PDF"                                         | "pdfSingleTestSignature.pdf"
+        "signed CAdES ASiC-S"                                | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
+        "signed XAdES ASiC-S"                                | "signedAsicsWithSignedDdoc.scs"
+        "timestamped ASiC-S with single timestamp"           | TestData.DEFAULT_ASICS_CONTAINER_NAME
+        "timestamped composite ASiC-S with two timestamps"   | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+        "timestamped composite ASiC-S with nested signature" | "asicsContainerWithBdocAndTimestamp.asics"
+    }
+
+    @Story("Validation report contains timestamp token info")
     def "Timestamped ASiC-S validation report contains all new timestamp token info"() {
         when:
         Response validationResponse = datafile.validateContainerFromFile(flow,
@@ -64,6 +90,7 @@ class ValidationSpec extends GenericSpecification {
                 .body("timeStampTokens[1].certificates", hasSize(1))
     }
 
+    @Story("Validation report contains archive timestamp info")
     def "Augmented XAdES signature validation report contains new archiveTimeStamps info"() {
         when:
         Response validationResponse = datafile.validateContainerFromFile(flow,
@@ -86,24 +113,25 @@ class ValidationSpec extends GenericSpecification {
                 .body("archiveTimeStamps[1].content[0]", startsWith("MIIHPAYJKoZIhvcNAQcCoIIHLTCCBykCAQMxDTALBg"))
     }
 
-    def "Validation report of '#containerType' contains all relevant info"() {
-        when:
-        Response validationResponse = datafile.validateContainerFromFile(flow, containerName)
+    @Story("Validation report is the same in session and without session")
+    def "Validation report of uploaded '#containerType' is the same in session and without session"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, containerName)
 
-        then:
-        String expectedReport = new String(Utils.readFileFromResources("${containerName}_Report.json"))
-        String actualReport = validationResponse.then().extract().asString()
-        assertJsonEquals(expectedReport, actualReport)
+        when: "validate container in session and without session"
+        String inSessionReport = datafile.validateContainerInSession(flow).asString()
+        String withoutSessionReport = datafile.validateContainerFromFile(flow, containerName).asString()
+
+        then: "reports are the same apart from validation time"
+        assertJsonEquals(withoutSessionReport, inSessionReport, whenIgnoringPaths("validationConclusion.validationTime"))
 
         where:
-        containerType         | containerName
-        "signed ASiC-E"       | "containerWithMultipleSignatures.asice"
-        "signed BDOC"         | "valid-bdoc-tm-newer.bdoc"
-        "signed DDOC"         | "ddocSingleSignature.ddoc"
-        "signed PDF"          | "pdfSingleTestSignature.pdf"
-        "signed CAdES ASiC-S" | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
-        "signed XAdES ASiC-S" | "signedAsicsWithSignedDdoc.scs"
-        "timestamped ASiC-S"  | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+        containerType                                        | containerName
+        "signed XAdES ASiC-S"                                | "signedAsicsWithSignedDdoc.scs"
+        "timestamped ASiC-S with single timestamp"           | TestData.DEFAULT_ASICS_CONTAINER_NAME
+        "timestamped composite ASiC-S with two timestamps"   | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+        "timestamped composite ASiC-S with nested signature" | "asicsContainerWithBdocAndTimestamp.asics"
+        "timestamped ASiC-S with invalid timestamp"          | "2xTstFirstInvalidSecondNotCoveringNestedTimestampedAsics.asics"
     }
 
 }
