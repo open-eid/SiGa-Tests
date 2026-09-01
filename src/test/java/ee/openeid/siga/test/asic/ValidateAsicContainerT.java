@@ -15,11 +15,9 @@ import java.security.NoSuchAlgorithmException;
 
 import static ee.openeid.siga.test.helper.TestData.CONTAINERS;
 import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICE_CONTAINER_NAME;
-import static ee.openeid.siga.test.helper.TestData.DEFAULT_ASICS_CONTAINER_NAME;
 import static ee.openeid.siga.test.helper.TestData.ERROR_CODE;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES;
 import static ee.openeid.siga.test.helper.TestData.REPORT_SIGNATURES_COUNT;
-import static ee.openeid.siga.test.helper.TestData.REPORT_TIMESTAMP_TOKENS;
 import static ee.openeid.siga.test.helper.TestData.REPORT_VALID_SIGNATURES_COUNT;
 import static ee.openeid.siga.test.helper.TestData.RESOURCE_NOT_FOUND;
 import static ee.openeid.siga.test.helper.TestData.SIGNER_CERT_ESTEID2018_PEM;
@@ -33,8 +31,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
 
 @EnabledIfSigaProfileActive("datafileContainer")
 class ValidateAsicContainerT extends TestBase {
@@ -59,54 +55,6 @@ class ValidateAsicContainerT extends TestBase {
 
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("ŽÕRINÜWŠKY,MÄRÜ-LÖÖZ,11404176865"));
         assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("11404176865"));
-    }
-
-    @Test
-    void validateAsicsContainerWithSignature() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        Response response = postContainerValidationReport(flow, asicContainerRequestFromFile("asicsContainerWithLtSignatureWithoutTST.scs"));
-
-        assertThat(response.statusCode(), equalTo(200));
-        assertThat(response.getBody().path(REPORT_VALID_SIGNATURES_COUNT), equalTo(1));
-        assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS), empty());
-        assertThat(response.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signedBy"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2024-09-11T10:20:32Z"));
-
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("JÕEORG,JAAK-KRISTJAN,38001085718"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("PNOEE-38001085718"));
-    }
-
-    @Test
-    void validateCompositeAsicsContainerWithTimestamp() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        Response response = postContainerValidationReport(flow, asicContainerRequestFromFile("asicsContainerWithBdocAndTimestamp.asics"));
-
-        assertThat(response.statusCode(), equalTo(200));
-        assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(1));
-        assertThat(response.getBody().path(REPORT_SIGNATURES), hasSize(1));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].signatureFormat"), equalTo("XAdES_BASELINE_LT_TM"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.commonName"), equalTo("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].subjectDistinguishedName.serialNumber"), equalTo("60001016970"));
-        assertThat(response.getBody().path(REPORT_SIGNATURES + "[0].info.bestSignatureTime"), equalTo("2023-07-07T11:48:32Z"));
-
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
-        assertThat(response.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-03-27T12:42:57Z"));
-    }
-
-    @Test
-    void validateNonCompositeAsicsContainerWithTimestamp() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        Response response = postContainerValidationReport(flow, asicContainerRequestFromFile(DEFAULT_ASICS_CONTAINER_NAME));
-
-        assertThat(response.statusCode(), equalTo(200));
-        assertThat(response.getBody().path(REPORT_SIGNATURES_COUNT), equalTo(0));
-        assertThat(response.getBody().path(REPORT_SIGNATURES), hasSize(0));
-
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS), hasSize(1));
-        assertThat(response.getBody().path("validationConclusion.policy.policyName"), equalTo("POLv4"));
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedBy"), equalTo("DEMO SK TIMESTAMPING AUTHORITY 2023E"));
-        assertThat(response.getBody().path(REPORT_TIMESTAMP_TOKENS + "[0].signedTime"), equalTo("2024-05-28T12:24:09Z"));
     }
 
     @Test

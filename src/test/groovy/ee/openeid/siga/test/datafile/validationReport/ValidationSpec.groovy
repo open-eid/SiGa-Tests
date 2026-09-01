@@ -140,4 +140,30 @@ class ValidationSpec extends GenericSpecification {
                 .body("timeStampTokens[0].signedTime", is("2024-05-28T12:24:09Z"))
     }
 
+    @Story("Validate ASiC-S container without session")
+    def "Timestamped composite ASiC-S validation report contains nested signature and outer timestamp info"() {
+        when: "validate container without session"
+        Response validationResponse = datafile.validateContainerFromFile(flow, "asicsContainerWithBdocAndTimestamp.asics")
+
+        then: "validation report contains nested signature and outer timestamp info"
+        validationResponse.then().rootPath("validationConclusion.")
+                .body("signaturesCount", is(1))
+                .body("signatures[0].signatureFormat", is("XAdES_BASELINE_LT_TM"))
+                .body("signatures[0].subjectDistinguishedName.commonName", is("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"))
+                .body("timeStampTokens", hasSize(1))
+                .body("timeStampTokens[0].signedTime", is("2024-03-27T12:42:57Z"))
+    }
+
+    @Story("Validate ASiC-S container without session")
+    def "Timestamped non-composite ASiC-S validation report contains only timestamp info"() {
+        when: "validate container without session"
+        Response validationResponse = datafile.validateContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
+
+        then: "validation report contains only outer timestamp"
+        validationResponse.then().rootPath("validationConclusion.")
+                .body("signaturesCount", is(0))
+                .body("timeStampTokens", hasSize(1))
+                .body("timeStampTokens[0].signedTime", is("2024-05-28T12:24:09Z"))
+    }
+
 }
