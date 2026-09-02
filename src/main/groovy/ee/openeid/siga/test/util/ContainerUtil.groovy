@@ -8,10 +8,12 @@ import org.apache.commons.compress.utils.SeekableInMemoryByteChannel
 
 class ContainerUtil {
 
+    static ZipFile bytesToZipFile(byte[] zipBytes) {
+        return ZipFile.builder().setSeekableByteChannel(new SeekableInMemoryByteChannel(zipBytes)).get()
+    }
+
     static ZipFile base64ToZipFile(String base64Zip) {
-        byte[] zipBytes = Base64.decoder.decode(base64Zip)
-        ZipFile zipFile = ZipFile.builder().setSeekableByteChannel(new SeekableInMemoryByteChannel(zipBytes)).get()
-        return zipFile
+        return bytesToZipFile(Base64.decoder.decode(base64Zip))
     }
 
     static Set getZipStructure(ZipFile zipFile) {
@@ -50,4 +52,5 @@ class ContainerUtil {
     static XmlPath manifestAsXmlPath(String containerBase64String, String entryPath) {
         return manifestAsXmlPath(extractEntryBytesFromBase64Container(containerBase64String, entryPath))
     }
+
 }
