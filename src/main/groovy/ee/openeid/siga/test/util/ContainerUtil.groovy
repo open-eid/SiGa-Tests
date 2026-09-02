@@ -8,10 +8,12 @@ import org.apache.commons.compress.utils.SeekableInMemoryByteChannel
 
 class ContainerUtil {
 
+    static ZipFile bytesToZipFile(byte[] zipBytes) {
+        return ZipFile.builder().setSeekableByteChannel(new SeekableInMemoryByteChannel(zipBytes)).get()
+    }
+
     static ZipFile base64ToZipFile(String base64Zip) {
-        byte[] zipBytes = Base64.decoder.decode(base64Zip)
-        ZipFile zipFile = ZipFile.builder().setSeekableByteChannel(new SeekableInMemoryByteChannel(zipBytes)).get()
-        return zipFile
+        return bytesToZipFile(Base64.decoder.decode(base64Zip))
     }
 
     static Set getZipStructure(ZipFile zipFile) {
@@ -50,4 +52,25 @@ class ContainerUtil {
     static XmlPath manifestAsXmlPath(String containerBase64String, String entryPath) {
         return manifestAsXmlPath(extractEntryBytesFromBase64Container(containerBase64String, entryPath))
     }
+
+    static void assertZipFilesEqualInExactOrder(byte[] expectedZipBytes, byte[] actualZipBytes) {
+        bytesToZipFile(expectedZipBytes).withCloseable { ZipFile expectedZip ->
+            bytesToZipFile(actualZipBytes).withCloseable { ZipFile actualZip ->
+                List<ZipArchiveEntry> expectedEntries = expectedZip.entriesInPhysicalOrder.toList()
+                List<ZipArchiveEntry> actualEntries = actualZip.entriesInPhysicalOrder.toList()
+                assert expectedEntries*.name == actualEntries*.name:
+                        "ZIP entry names or order not equal"
+                expectedEntries.eachWithIndex { ZipArchiveEntry expectedEntry, int i ->
+                    ZipArchiveEntry actualEntry = actualEntries[i]
+                    assert expectedEntry.method == actualEntry.method:
+                            "ZIP entry compression method not equal: ${expectedEntry.name}"
+                    assert Arrays.equals(
+                            expectedZip.getInputStream(expectedEntry).readAllBytes(),
+                            actualZip.getInputStream(actualEntry).readAllBytes()):
+                            "ZIP entry bytes not equal: ${expectedEntry.name}"
+                }
+            }
+        }
+    }
+
 }
