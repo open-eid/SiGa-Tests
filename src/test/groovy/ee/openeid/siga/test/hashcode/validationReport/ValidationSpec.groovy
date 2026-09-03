@@ -9,7 +9,7 @@ import io.qameta.allure.*
 import io.restassured.module.jsv.JsonSchemaValidator
 import io.restassured.response.Response
 
-@Epic("Validation Report (hashcode)")
+@Epic("Validation report (hashcode)")
 @Feature("Get ASiC-E validation report")
 class ValidationSpec extends GenericSpecification {
     private Flow flow

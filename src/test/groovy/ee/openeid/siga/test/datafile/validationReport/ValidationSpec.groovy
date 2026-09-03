@@ -13,7 +13,7 @@ import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
-@Epic("Validation Report (datafile)")
+@Epic("Validation report (datafile)")
 @Feature("Get container validation report")
 class ValidationSpec extends GenericSpecification {
     private Flow flow
