@@ -10,7 +10,7 @@ import org.apache.http.HttpStatus
 import spock.lang.Tag
 
 @Tag("datafileContainer")
-@Epic("Validation Report (datafile)")
+@Epic("Validation report (datafile)")
 @Feature("Validation report endpoint validation")
 class EndpointSpec extends GenericSpecification {
     private Flow flow

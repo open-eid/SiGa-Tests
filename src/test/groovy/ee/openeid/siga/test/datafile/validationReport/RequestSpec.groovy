@@ -11,7 +11,7 @@ import io.restassured.response.Response
 import spock.lang.Tag
 
 @Tag("datafileContainer")
-@Epic("Validation Report (datafile)")
+@Epic("Validation report (datafile)")
 @Feature("Validation report request validation")
 class RequestSpec extends GenericSpecification {
     private Flow flow
