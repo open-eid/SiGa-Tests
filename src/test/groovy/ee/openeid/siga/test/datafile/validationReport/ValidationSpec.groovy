@@ -10,6 +10,7 @@ import io.restassured.response.Response
 import spock.lang.Tag
 
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals
+import static net.javacrumbs.jsonunit.JsonAssert.whenIgnoringPaths
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
@@ -39,6 +40,30 @@ class ValidationSpec extends GenericSpecification {
         "Signed PDF"                   | "pdfSingleTestSignature.pdf"
     }
 
+    @Story("Validation report contains all relevant info")
+    def "Validation report of '#containerType' contains all relevant info"() {
+        when:
+        Response validationResponse = datafile.validateContainerFromFile(flow, containerName)
+
+        then:
+        String expectedReport = new String(Utils.readFileFromResources("${containerName}_Report.json"))
+        String actualReport = validationResponse.then().extract().asString()
+        assertJsonEquals(expectedReport, actualReport)
+
+        where:
+        containerType                                        | containerName
+        "signed ASiC-E"                                      | "containerWithMultipleSignatures.asice"
+        "signed BDOC"                                        | "valid-bdoc-tm-newer.bdoc"
+        "signed DDOC"                                        | "ddocSingleSignature.ddoc"
+        "signed PDF"                                         | "pdfSingleTestSignature.pdf"
+        "signed CAdES ASiC-S"                                | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
+        "signed XAdES ASiC-S"                                | "signedAsicsWithSignedDdoc.scs"
+        "timestamped ASiC-S with single timestamp"           | TestData.DEFAULT_ASICS_CONTAINER_NAME
+        "timestamped composite ASiC-S with two timestamps"   | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+        "timestamped composite ASiC-S with nested signature" | "asicsContainerWithBdocAndTimestamp.asics"
+    }
+
+    @Story("Validation report contains timestamp token info")
     def "Timestamped ASiC-S validation report contains all new timestamp token info"() {
         when:
         Response validationResponse = datafile.validateContainerFromFile(flow,
@@ -65,6 +90,7 @@ class ValidationSpec extends GenericSpecification {
                 .body("timeStampTokens[1].certificates", hasSize(1))
     }
 
+    @Story("Validation report contains archive timestamp info")
     def "Augmented XAdES signature validation report contains new archiveTimeStamps info"() {
         when:
         Response validationResponse = datafile.validateContainerFromFile(flow,
@@ -87,83 +113,25 @@ class ValidationSpec extends GenericSpecification {
                 .body("archiveTimeStamps[1].content[0]", startsWith("MIIHPAYJKoZIhvcNAQcCoIIHLTCCBykCAQMxDTALBg"))
     }
 
-    def "Validation report of '#containerType' contains all relevant info"() {
-        when:
-        Response validationResponse = datafile.validateContainerFromFile(flow, containerName)
+    @Story("Validation report is the same in session and without session")
+    def "Validation report of uploaded '#containerType' is the same in session and without session"() {
+        given: "upload container"
+        datafile.uploadContainerFromFile(flow, containerName)
 
-        then:
-        String expectedReport = new String(Utils.readFileFromResources("${containerName}_Report.json"))
-        String actualReport = validationResponse.then().extract().asString()
-        assertJsonEquals(expectedReport, actualReport)
+        when: "validate container in session and without session"
+        String inSessionReport = datafile.validateContainerInSession(flow).asString()
+        String withoutSessionReport = datafile.validateContainerFromFile(flow, containerName).asString()
+
+        then: "reports are the same apart from validation time"
+        assertJsonEquals(withoutSessionReport, inSessionReport, whenIgnoringPaths("validationConclusion.validationTime"))
 
         where:
-        containerType         | containerName
-        "signed ASiC-E"       | "containerWithMultipleSignatures.asice"
-        "signed BDOC"         | "valid-bdoc-tm-newer.bdoc"
-        "signed DDOC"         | "ddocSingleSignature.ddoc"
-        "signed PDF"          | "pdfSingleTestSignature.pdf"
-        "signed CAdES ASiC-S" | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
-        "signed XAdES ASiC-S" | "signedAsicsWithSignedDdoc.scs"
-        "timestamped ASiC-S"  | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
-    }
-
-    @Story("Validate ASiC-S container in session")
-    def "Signed ASiC-S validation report in session contains signature info"() {
-        given: "upload container"
-        datafile.uploadContainerFromFile(flow, "asicsContainerWithLtSignatureWithoutTST.scs")
-
-        when: "validate container in session"
-        Response validationResponse = datafile.validateContainerInSession(flow)
-
-        then: "validation report contains signature, but no timestamps"
-        validationResponse.then().rootPath("validationConclusion.")
-                .body("signaturesCount", is(1))
-                .body("validSignaturesCount", is(1))
-                .body("signatures[0].signedBy", is("JÕEORG,JAAK-KRISTJAN,38001085718"))
-                .body("timeStampTokens", hasSize(0))
-    }
-
-    @Story("Validate ASiC-S container in session")
-    def "Timestamped ASiC-S validation report in session contains timestamp info"() {
-        given: "upload container"
-        datafile.uploadContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
-
-        when: "validate container in session"
-        Response validationResponse = datafile.validateContainerInSession(flow)
-
-        then: "validation report contains timestamp, but no signatures"
-        validationResponse.then().rootPath("validationConclusion.")
-                .body("signaturesCount", is(0))
-                .body("validSignaturesCount", is(0))
-                .body("timeStampTokens", hasSize(1))
-                .body("timeStampTokens[0].signedBy", is("DEMO SK TIMESTAMPING AUTHORITY 2023E"))
-                .body("timeStampTokens[0].signedTime", is("2024-05-28T12:24:09Z"))
-    }
-
-    @Story("Validate ASiC-S container without session")
-    def "Timestamped composite ASiC-S validation report contains nested signature and outer timestamp info"() {
-        when: "validate container without session"
-        Response validationResponse = datafile.validateContainerFromFile(flow, "asicsContainerWithBdocAndTimestamp.asics")
-
-        then: "validation report contains nested signature and outer timestamp info"
-        validationResponse.then().rootPath("validationConclusion.")
-                .body("signaturesCount", is(1))
-                .body("signatures[0].signatureFormat", is("XAdES_BASELINE_LT_TM"))
-                .body("signatures[0].subjectDistinguishedName.commonName", is("O’CONNEŽ-ŠUSLIK TESTNUMBER,MARY ÄNN,60001016970"))
-                .body("timeStampTokens", hasSize(1))
-                .body("timeStampTokens[0].signedTime", is("2024-03-27T12:42:57Z"))
-    }
-
-    @Story("Validate ASiC-S container without session")
-    def "Timestamped non-composite ASiC-S validation report contains only timestamp info"() {
-        when: "validate container without session"
-        Response validationResponse = datafile.validateContainerFromFile(flow, TestData.DEFAULT_ASICS_CONTAINER_NAME)
-
-        then: "validation report contains only outer timestamp"
-        validationResponse.then().rootPath("validationConclusion.")
-                .body("signaturesCount", is(0))
-                .body("timeStampTokens", hasSize(1))
-                .body("timeStampTokens[0].signedTime", is("2024-05-28T12:24:09Z"))
+        containerType                                        | containerName
+        "signed XAdES ASiC-S"                                | "signedAsicsWithSignedDdoc.scs"
+        "timestamped ASiC-S with single timestamp"           | TestData.DEFAULT_ASICS_CONTAINER_NAME
+        "timestamped composite ASiC-S with two timestamps"   | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+        "timestamped composite ASiC-S with nested signature" | "asicsContainerWithBdocAndTimestamp.asics"
+        "timestamped ASiC-S with invalid timestamp"          | "2xTstFirstInvalidSecondNotCoveringNestedTimestampedAsics.asics"
     }
 
 }
