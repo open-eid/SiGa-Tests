@@ -114,13 +114,11 @@ abstract class RequestSteps {
         return response
     }
 
-    Response remoteSigning(Flow flow, Map requestBody) {
+    String remoteSigning(Flow flow, Map requestBody) {
         Response response = startRemoteSigning(flow, requestBody)
-        return finalizeRemoteSigning(
-                flow,
-                RequestData.remoteSigningFinalizeRequest(DigestSigner.signDigest(response)),
-                response.path("generatedSignatureId")
-        )
+        String signatureId = response.path("generatedSignatureId")
+        finalizeRemoteSigning(flow, RequestData.remoteSigningFinalizeRequest(DigestSigner.signDigest(response)), signatureId)
+        return signatureId
     }
 
     // MID SIGNING
