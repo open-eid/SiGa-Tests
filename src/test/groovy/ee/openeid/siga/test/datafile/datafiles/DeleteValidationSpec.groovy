@@ -59,6 +59,7 @@ class DeleteValidationSpec extends GenericSpecification {
         datafile.getDataFilesList(flow).then().body("dataFiles.fileName", containsInAnyOrder("test.xml", "S !¤&()=+-,@£\$€.txt"))
     }
 
+    @Tag("SIGA-1401") // Remove once SIGA-1401 has been done
     @Story("Delete unsigned container data file")
     def "Deleting data file with special characters in file name is successful"() {
         given: "upload ASiC-E container"

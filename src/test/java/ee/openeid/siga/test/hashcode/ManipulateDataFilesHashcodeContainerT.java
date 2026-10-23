@@ -8,6 +8,7 @@ import io.restassured.response.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -170,6 +171,7 @@ class ManipulateDataFilesHashcodeContainerT extends TestBase {
         expectError(response, 400, INVALID_SESSION_DATA_EXCEPTION);
     }
 
+    @Tag("SIGA-1401") // Remove once SIGA-1401 has been done
     @Test
     void uploadHashcodeContainerWithSpecialCharactersAndTryToRemoveDataFile() throws JSONException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         postUploadContainer(flow, hashcodeContainerRequestFromFile("hashcodeNonconventionalCharactersInDataFile.asice"));
