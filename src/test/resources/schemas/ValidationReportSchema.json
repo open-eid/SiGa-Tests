@@ -44,6 +44,7 @@
             "null"
           ],
           "enum": [
+            "LONG_TERM_DATA",
             "ARCHIVAL_DATA",
             null
           ]
