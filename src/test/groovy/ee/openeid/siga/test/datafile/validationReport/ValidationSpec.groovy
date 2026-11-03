@@ -1,19 +1,22 @@
 package ee.openeid.siga.test.datafile.validationReport
 
 import ee.openeid.siga.test.GenericSpecification
+import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.SignatureFormat
 import ee.openeid.siga.test.util.Utils
 import io.qameta.allure.*
 import io.restassured.module.jsv.JsonSchemaValidator
 import io.restassured.response.Response
 import spock.lang.Tag
 
+import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals
 import static org.hamcrest.Matchers.*
 
 @Tag("datafileContainer")
-@Epic("Validation Report (datafile)")
-@Feature("Get augmented container report")
+@Epic("Validation report (datafile)")
+@Feature("Get container validation report")
 class ValidationSpec extends GenericSpecification {
     private Flow flow
 
@@ -104,6 +107,19 @@ class ValidationSpec extends GenericSpecification {
         "signed CAdES ASiC-S" | "TEST_ESTEID2018_ASiC-S_CAdES_LT.scs"
         "signed XAdES ASiC-S" | "signedAsicsWithSignedDdoc.scs"
         "timestamped ASiC-S"  | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
+    }
+
+    @Story("Datafile container is validated at ArchivalData validation level")
+    def "Validate LTA datafile container at ArchivalData validation level: LTA warning is not reported"() {
+        when: "validate container without session"
+        Response validationResponse = datafile.validateContainerFromFile(flow, "TEST_ESTEID2018_ASiC-E_XAdES_LTA+LTA.sce")
+
+        then: "container is validated at ArchivalData validation level without LTA warning"
+        validationResponse.then().rootPath("validationConclusion.")
+                .body("validationLevel", is("ARCHIVAL_DATA"))
+                .body("signatures", hasSize(2))
+                .body("signatures.signatureFormat", everyItem(matchesEnumName(SignatureFormat.XAdES_BASELINE_LTA)))
+                .body("signatures.warnings.content.flatten()", not(hasItem(TestData.LTA_ATS_NO_EFFECT_AT_LONG_TERM_DATA)))
     }
 
 }
