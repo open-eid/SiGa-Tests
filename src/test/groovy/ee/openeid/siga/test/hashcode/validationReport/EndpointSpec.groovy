@@ -8,8 +8,8 @@ import io.restassured.http.Method
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 
-@Epic("Validation Report (hashcode)")
-@Feature("Validation Report endpoint validation")
+@Epic("Validation report (hashcode)")
+@Feature("Validation report endpoint validation")
 class EndpointSpec extends GenericSpecification {
     private Flow flow
 
