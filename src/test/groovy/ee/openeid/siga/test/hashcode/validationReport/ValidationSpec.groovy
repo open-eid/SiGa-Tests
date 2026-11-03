@@ -32,7 +32,7 @@ class ValidationSpec extends GenericSpecification {
         containerType                              | containerName
         "Signed ASiC-E"                            | "hashcode.asice"
         "Signed DDOC"                              | "hashcodeDdocTest.ddoc" //In report validatedDocument field should be null
-        "Signed ASiC-E with LTA signature"         | "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA.asice"
+        "Signed ASiC-E with LTA signature"         | "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA_DigiDoc4.asice"
         "Signed ASiC-E with invalid LTA signature" | "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA_InvalidDatafileHash.asice"
     }
 
@@ -80,7 +80,7 @@ class ValidationSpec extends GenericSpecification {
         where:
         containerType                                         | containerName
         "signed ASiC-E with LT signature"                     | "hashcode.asice"
-        "signed ASiC-E with LTA signature"                    | "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA.asice"
+        "signed ASiC-E with LTA signature"                    | "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA_DigiDoc4.asice"
         "signed ASiC-E with LT and LTA signatures"            | "hashcode_TEST_ESTEID2018_ASiC-E_XAdES_LT+LTA.asice"
         "signed ASiC-E with LTA signature and empty datafile" | "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA_EmptyDatafileSize.asice"
     }

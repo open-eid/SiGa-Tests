@@ -51,7 +51,7 @@ class ValidationSpec extends GenericSpecification {
     @Story("Remote sign existing container")
     def "Remote sign hashcode container with existing LTA signature keeps archive timestamp"() {
         given: "upload container with LTA signature"
-        hashcode.uploadContainerFromFile(flow, "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA.asice")
+        hashcode.uploadContainerFromFile(flow, "hashcode_TEST_ESTEID2025_ASiC-E_XAdES_LTA_DigiDoc4.asice")
 
         when: "remote sign"
         hashcode.remoteSigning(flow, RequestData.remoteSigningStartDefaultRequest())
