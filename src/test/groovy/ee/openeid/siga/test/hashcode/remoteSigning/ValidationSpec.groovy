@@ -56,9 +56,8 @@ class ValidationSpec extends GenericSpecification {
         when: "remote sign"
         hashcode.remoteSigning(flow, RequestData.remoteSigningStartDefaultRequest())
 
-        then: "downloaded container keeps LTA signature with archive timestamp"
-        String containerBase64 = hashcode.getContainer(flow).path("container")
-        hashcode.validateContainer(flow, RequestData.uploadHashcodeRequestBody(containerBase64)).then().rootPath("validationConclusion.")
+        then: "existing LTA signature keeps archive timestamp after signing"
+        hashcode.validateContainerInSession(flow).then().rootPath("validationConclusion.")
                 .body("validSignaturesCount", is(2))
                 .body("signatures", hasSize(2))
                 .body("signatures.signatureFormat", containsInAnyOrder(
