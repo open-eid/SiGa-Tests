@@ -3,12 +3,14 @@ package ee.openeid.siga.test.datafile.validationReport
 import ee.openeid.siga.test.GenericSpecification
 import ee.openeid.siga.test.TestData
 import ee.openeid.siga.test.model.Flow
+import ee.openeid.siga.test.model.SignatureFormat
 import ee.openeid.siga.test.util.Utils
 import io.qameta.allure.*
 import io.restassured.module.jsv.JsonSchemaValidator
 import io.restassured.response.Response
 import spock.lang.Tag
 
+import static ee.openeid.siga.test.util.EnumNameMatcher.matchesEnumName
 import static net.javacrumbs.jsonunit.JsonAssert.assertJsonEquals
 import static net.javacrumbs.jsonunit.JsonAssert.whenIgnoringPaths
 import static org.hamcrest.Matchers.*
@@ -132,6 +134,19 @@ class ValidationSpec extends GenericSpecification {
         "timestamped composite ASiC-S with two timestamps"   | "2xTST-both-valid-2nd-tst-not-covering-nested-container.asics"
         "timestamped composite ASiC-S with nested signature" | "asicsContainerWithBdocAndTimestamp.asics"
         "timestamped ASiC-S with invalid timestamp"          | "2xTstFirstInvalidSecondNotCoveringNestedTimestampedAsics.asics"
+    }
+
+    @Story("Datafile container is validated at ArchivalData validation level")
+    def "Validate LTA datafile container at ArchivalData validation level: LTA warning is not reported"() {
+        when: "validate container without session"
+        Response validationResponse = datafile.validateContainerFromFile(flow, "TEST_ESTEID2018_ASiC-E_XAdES_LTA+LTA.sce")
+
+        then: "container is validated at ArchivalData validation level without LTA warning"
+        validationResponse.then().rootPath("validationConclusion.")
+                .body("validationLevel", is("ARCHIVAL_DATA"))
+                .body("signatures", hasSize(2))
+                .body("signatures.signatureFormat", everyItem(matchesEnumName(SignatureFormat.XAdES_BASELINE_LTA)))
+                .body("signatures.warnings.content.flatten()", not(hasItem(TestData.LTA_ATS_NO_EFFECT_AT_LONG_TERM_DATA)))
     }
 
 }
